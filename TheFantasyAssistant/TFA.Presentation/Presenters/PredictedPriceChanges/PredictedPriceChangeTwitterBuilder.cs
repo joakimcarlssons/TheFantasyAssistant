@@ -5,18 +5,17 @@ using TFA.Domain.Data;
 
 namespace TFA.Presentation.Presenters.PredictedPriceChanges;
 
-public class PredictedPriceChangeTwitterBuilder : AbstractContentBuilder<PredictedPriceChangeData, string>
+public sealed class PredictedPriceChangeTwitterBuilder : AbstractContentBuilder<PredictedPriceChangeData, string>
 {
-    /// <summary>
-    /// At the moment there are only support for FPL Price predictions.
-    /// If this is implemented for more fantasy types a Present model is needed including the Fantasy Type.
-    /// See <see cref="BaseDataPresentModel" /> as an example.
-    /// </summary>
-    private readonly FantasyType FantasyType = FantasyType.FPL;
+
+    private FantasyType FantasyType = FantasyType.Unknown;
     public override Presenter Presenter => Presenter.Twitter;
 
     public override IReadOnlyList<string> Build(PredictedPriceChangeData data)
-        => BuildTwitterContent(data);
+    {
+        FantasyType = data.FantasyType;
+        return BuildTwitterContent(data);
+    }
 
     private IReadOnlyList<string> BuildTwitterContent(PredictedPriceChangeData data)
         => [
@@ -28,11 +27,11 @@ public class PredictedPriceChangeTwitterBuilder : AbstractContentBuilder<Predict
         => new ContentBuilder()
                 .AppendStandardHeader(FantasyType, header)
                 .AppendTextLines(player =>
-                    $"{emoji} {player.Player.DisplayName} {(string.IsNullOrWhiteSpace(player.TeamShortName) ? string.Empty : ("#" + player.TeamShortName))}", risingPlayers);
+                    $"{emoji} {player.Player.DisplayName} #{player.TeamShortName}", risingPlayers);
 
     private string BuildPossiblePriceFallersContent(IReadOnlyList<PredictedPriceChangePlayer> fallingPlayers, string header, [ConstantExpected] string emoji)
         => new ContentBuilder()
                 .AppendStandardHeader(FantasyType, header)
                 .AppendTextLines(player =>
-                    $"{emoji} {player.Player.DisplayName} {(string.IsNullOrWhiteSpace(player.TeamShortName) ? string.Empty : ("#" + player.TeamShortName))}", fallingPlayers);
+                    $"{emoji} {player.Player.DisplayName} #{player.TeamShortName}", fallingPlayers);
 }

@@ -28,13 +28,14 @@ public class PredictedPriceChangeService(
         }
 
         return new PredictedPriceChangeData(
+            FantasyType.FPL,
             ExtractPriceChangingPlayers(hubPlayers.Value).Where(player => player.PriceTarget > 0).ToList(),
             ExtractPriceChangingPlayers(hubPlayers.Value).Where(player => player.PriceTarget < 0).ToList());
     }
 
     private IEnumerable<PredictedPriceChangePlayer> ExtractPriceChangingPlayers(IReadOnlyList<HubPlayerRequest> hubPlayers)
     {
-        foreach (HubPlayerRequest player in hubPlayers.Where(player => player.Details.PriceInfo?.PriceTarget >= 99 || player.Details.PriceInfo?.PriceTarget <= -99))
+        foreach (HubPlayerRequest player in hubPlayers.Where(player => player.Details.PriceInfo?.PredictedChangeDay == HubPredictedPriceChangeTimes.Tonight))
         {
             yield return mapper.Map<PredictedPriceChangePlayer>(player);
         }

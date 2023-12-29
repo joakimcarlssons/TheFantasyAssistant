@@ -24,7 +24,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
     private static DiscordPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, "Price Rises"))
+                .AppendStandardHeader(data.FantasyType, $"Price Rises - {DateTime.Now.Date}"))
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowUp} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m",
@@ -39,7 +39,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
     private static DiscordPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, "Price Fallers"))
+                .AppendStandardHeader(data.FantasyType, $"Price Fallers - {DateTime.Now.Date}"))
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowDown} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m",

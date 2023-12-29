@@ -3,6 +3,7 @@
 namespace TFA.Application.Features.PredictedPriceChanges;
 
 public sealed record PredictedPriceChangeData(
+    FantasyType FantasyType,
     IReadOnlyList<PredictedPriceChangePlayer> RisingPlayers,
     IReadOnlyList<PredictedPriceChangePlayer> FallingPlayers) : INotification, IPresentable;
 

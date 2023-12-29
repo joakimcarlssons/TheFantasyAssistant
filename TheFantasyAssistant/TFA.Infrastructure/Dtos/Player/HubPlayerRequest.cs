@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace TFA.Infrastructure.Dtos.Player;
+﻿namespace TFA.Infrastructure.Dtos.Player;
 
 public sealed record HubPlayerRequest(
     [property: JsonPropertyName("team")] HubPlayerTeam Team,
@@ -20,9 +18,19 @@ public sealed record HubPlayerData(
     [property: JsonPropertyName("prediction4GW")] decimal PredictedPointsNextFourGameweeks);
 
 public sealed record HubPlayerPriceInfo(
-    [property: JsonPropertyName("Target")] decimal PriceTarget);
+    [property: JsonPropertyName("Target")] decimal PriceTarget,
+    [property: JsonPropertyName("ChangeTime")] string PredictedChangeDay);
 
 public sealed record HubPlayerGameweekPrediction(
     [property: JsonPropertyName("gw")] int GameweekId,
     [property: JsonPropertyName("xmins")] int ExpectedMinutes,
     [property: JsonPropertyName("predicted_pts")] decimal PredictedPoints);
+
+
+public sealed class HubPredictedPriceChangeTimes
+{
+    /// <summary>
+    /// Indicates that a player will change in price the same day.
+    /// </summary>
+    public const string Tonight = "Tonight";
+}
