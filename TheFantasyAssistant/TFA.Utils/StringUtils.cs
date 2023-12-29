@@ -6,12 +6,6 @@ namespace TFA.Utils;
 
 public static partial class StringUtils
 {
-    public static decimal ToDecimal(this string? value, decimal backup = decimal.Zero)
-    {
-        return decimal.TryParse(value?.Replace(',', '.') ?? "0", CultureInfo.InvariantCulture, out decimal res)
-            ? res : backup;
-    }
-
     public static string NullIsEmpty(this string? s)
             => s is null ? string.Empty : s;
 

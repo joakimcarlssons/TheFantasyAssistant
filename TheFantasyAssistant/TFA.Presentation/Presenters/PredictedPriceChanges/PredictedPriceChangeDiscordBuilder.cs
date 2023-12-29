@@ -19,7 +19,8 @@ public sealed class PredictedPriceChangeDiscordBuilder : AbstractContentBuilder<
     private static DiscordPresentModel BuildPossiblePriceRisesContent(PredictedPriceChangeData data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, $"Possible Price Rises - {DateTime.Now.Date}"))
+                .AppendStandardHeader(data.FantasyType, $"Possible Price Rises"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowUpperLeft} {player.Player.DisplayName} #{player.TeamShortName}",
@@ -34,7 +35,8 @@ public sealed class PredictedPriceChangeDiscordBuilder : AbstractContentBuilder<
     private static DiscordPresentModel BuildPossiblePriceFallersContent(PredictedPriceChangeData data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, $"Possible Price Fallers - {DateTime.Now.Date}"))
+                .AppendStandardHeader(data.FantasyType, $"Possible Price Fallers"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowLowerLeft} {player.Player.DisplayName} #{player.TeamShortName}",

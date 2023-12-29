@@ -24,7 +24,8 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
     private static DiscordPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, $"Price Rises - {DateTime.Now.Date}"))
+                .AppendStandardHeader(data.FantasyType, $"Price Rises"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowUp} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m",
@@ -39,7 +40,8 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
     private static DiscordPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, $"Price Fallers - {DateTime.Now.Date}"))
+                .AppendStandardHeader(data.FantasyType, $"Price Fallers"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowDown} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m",
@@ -55,6 +57,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Players Available"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                  .AppendTextLines(player =>
                     $"{Emoji.WhiteCheckMark} {player.DisplayName} #{player.TeamShortName}",
@@ -70,6 +73,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Players Doubtful"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.Warning} {player.DisplayName} #{player.TeamShortName}",
@@ -85,6 +89,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Players Unavailable"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.X} {player.DisplayName} #{player.TeamShortName}",
@@ -100,6 +105,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "New Players"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.BustInSilhouette} {player.DisplayName} ({player.Position}) #{player.TeamShortName} - [£{player.Price}m]",
@@ -115,6 +121,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Transferred Players"))
+            .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowsCounterClockwise} {player.DisplayName} [#{player.PrevTeamShortName} {Emoji.ArrowRight} #{player.NewTeamShortName}]",
