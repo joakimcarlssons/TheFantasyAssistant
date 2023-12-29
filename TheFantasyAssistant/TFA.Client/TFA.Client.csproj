@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TFA.Infrastructure\TFA.Infrastructure.csproj" />
+    <ProjectReference Include="..\TFA.Application\TFA.Application.csproj" />
+    <ProjectReference Include="..\TFA.Presentation\TFA.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>
