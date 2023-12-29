@@ -18,6 +18,7 @@ public enum RunTime
     PM7 = 8,
     PM8 = 9,
     PM810 = 10,
+    Every5Minutes = 11,
 }
 
 /// <summary>

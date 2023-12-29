@@ -30,6 +30,9 @@ public sealed class Endpoints
     public const string FASDeadline = $"{Prefix}{Allsvenskan}/deadline";
     public const string FASGameweekFinished = $"{Prefix}{Allsvenskan}/gw-finished";
     public const string FASLeagueTableRefresh = $"{Prefix}{Allsvenskan}/league/table/{Refresh}";
+
+    // System endpoints
+    public const string StayAlive = $"{Prefix}stay-alive";
 }
 
 public sealed class EndpointTags
@@ -42,4 +45,5 @@ public sealed class EndpointTags
     public const string LeagueData = "League Data";
     public const string PredictedPriceChanges = "Predicted Price Changes";
     public const string Summaries = "Summaries";
+    public const string System = "System";
 }
