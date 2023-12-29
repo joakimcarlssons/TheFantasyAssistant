@@ -34,7 +34,7 @@ public static class ErrorOrExtensions
     /// </summary>
     public static IDictionary<string, string[]> ToErrorDictionary(this List<Error> errors)
     {
-        Dictionary<string, string[]> dic = new();
+        Dictionary<string, string[]> dic = [];
         foreach (Error error in errors)
         {
             dic.Add(error.Code, [error.Description]);

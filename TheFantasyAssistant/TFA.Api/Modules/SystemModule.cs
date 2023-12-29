@@ -12,10 +12,9 @@ public class SystemModule : IModule
     {
         app.MapPost(Endpoints.StayAlive,
         [Tags(EndpointTags.System)]  
-        (ILogger<SystemModule> logger, IEmailService emailService) =>
+        (ILogger<SystemModule> logger) =>
         {
             logger.LogInformation("Staying alive, staying alive...");
-            emailService.SendExceptionEmail(new Exception("Staying alive, staying alive..."));
             return Results.Accepted();
         });
     }
