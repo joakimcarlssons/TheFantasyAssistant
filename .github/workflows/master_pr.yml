@@ -1,0 +1,96 @@
+# Workflow builds and runs tests upon merge request
+
+name: Build and test services on PR to master
+
+on:
+  pull_request:
+    branches:
+      - master
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+
+jobs:
+
+# BUILD
+  build_scheduler:
+    name: 'Build TFA Scheduler'
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: '6.0.x'
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          include-prerelease: true
+
+      - name: Build
+        run: dotnet build "./TheFantasyAssistant/TFA.Scheduler/TFA.Scheduler.csproj" -c Release
+  
+  ##
+
+  build_scraper:
+    name: 'Build TFA Scraper'
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: '6.0.x'
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          include-prerelease: true
+
+      - name: Build
+        run: dotnet build "./TheFantasyAssistant/TFA.Scraper/TFA.Scraper.csproj" -c Release
+
+  ##
+
+  build_api:
+    name: 'Build TFA API'
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_VERSION: '8.0.x'
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          include-prerelease: true
+
+      - name: Build
+        run: dotnet build "./TheFantasyAssistant/TFA.API/TFA.API.csproj" -c Release
+  
+  ##
+
+  run_unit_tests:
+    name: 'Run Tests'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          include-prerelease: true
+      
+      - name: 'Api Tests'
+        run: dotnet test "./TheFantasyAssistant/TFA.ApiTests/TFA.ApiTests.csproj"
+
+      - name: 'Architecture Tests'
+        run: dotnet test "./TheFantasyAssistant/TFA.ArchitectureTests/TFA.ArchitectureTests.csproj"
+
+      - name: 'Unit Tests'
+        run: dotnet test "./TheFantasyAssistant/TFA.UnitTests/TFA.UnitTests.csproj"

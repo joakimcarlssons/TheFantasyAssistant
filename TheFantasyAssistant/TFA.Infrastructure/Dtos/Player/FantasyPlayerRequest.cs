@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using TFA.Infrastructure.Dtos.Fixture;
+﻿using TFA.Infrastructure.Dtos.Fixture;
 
 namespace TFA.Infrastructure.Dtos.Player;
 

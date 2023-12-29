@@ -33,6 +33,7 @@ public class BaseDataMappings : IRegister
 
         config.ForType<(Player Player, Team Team, decimal PrevPrice), PlayerPriceChange>()
             .MapToConstructor(true)
+            .Map(dest => dest.PlayerId, src => src.Player.Id)
             .Map(dest => dest.PreviousPrice, src => src.PrevPrice)
             .Map(dest => dest.CurrentPrice, src => src.Player.Price)
             .Map(dest => dest.TeamId, src => src.Team.Id)
@@ -41,17 +42,20 @@ public class BaseDataMappings : IRegister
 
         config.ForType<(Player Player, Team Team), PlayerStatusChange>()
             .MapToConstructor(true)
+            .Map(dest => dest.PlayerId, src => src.Player.Id)
             .Map(dest => dest.TeamShortName, src => src.Team.ShortName)
             .Map(dest => dest, src => src.Player);
 
         config.ForType<(Player Player, Team Team), NewPlayer>()
             .MapToConstructor(true)
+            .Map(dest => dest.PlayerId, src => src.Player.Id)
             .Map(dest => dest.TeamShortName, src => src.Team.ShortName)
             .Map(dest => dest.Position, src => src.Player.Position.TransformPlayerPosition())
             .Map(dest => dest, src => src.Player);
 
         config.ForType<(Player Player, Team NewTeam, Team PrevTeam), PlayerTransfer>()
             .MapToConstructor(true)
+            .Map(dest => dest.PlayerId, src => src.Player.Id)
             .Map(dest => dest.PrevTeamId, src => src.PrevTeam.Id)
             .Map(dest => dest.PrevTeamShortName, src => src.PrevTeam.ShortName)
             .Map(dest => dest.NewTeamId, src => src.NewTeam.Id)
