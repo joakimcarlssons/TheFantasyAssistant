@@ -69,7 +69,7 @@ jobs:
           include-prerelease: true
 
       - name: Build
-        run: dotnet build "./TheFantasyAssistant/TFA.API/TFA.API.csproj" -c Release
+        run: dotnet build "./TheFantasyAssistant/TFA.Api/TFA.Api.csproj" -c Release
   
   ##
 
