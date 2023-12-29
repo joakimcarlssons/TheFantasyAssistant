@@ -33,6 +33,7 @@ public sealed class RunTimes
     internal const string Every3Hours = "5 */3 * * *";
     internal const string Every6Hours = "0 */6 * * *";
     internal const string Every12Hours = "0 */12 * * *";
+    internal const string Every5Minutes = "*/5 * * * *";
 
     internal const string PM6 = "0 18 * * *";
     internal const string PM7 = "0 19 * * *";

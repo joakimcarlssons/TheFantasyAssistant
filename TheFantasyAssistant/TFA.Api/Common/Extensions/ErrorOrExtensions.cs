@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using TFA.Application.Common.Extensions;
+using TFA.Application.Errors;
 
 namespace TFA.Api.Common.Extensions;
 
@@ -16,6 +17,12 @@ public static class ErrorOrExtensions
             _ => Results.Accepted(),
             errors =>
             {
+                if (errors.Count == 1 && errors[0].NumericType == ErrorTypes.Skipped)
+                {
+                    // If the error is just that the job is skipped, do nothing.
+                    return Results.Accepted();
+                }
+
                 logger.LogError("The following errors was found when processing data: {Errors}", errors.ToErrorString());
                 return Results.ValidationProblem(
                         statusCode: StatusCodes.Status422UnprocessableEntity,
