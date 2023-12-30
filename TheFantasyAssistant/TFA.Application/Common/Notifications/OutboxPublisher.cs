@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using TFA.Application.Config;
 using TFA.Application.Interfaces.Services;
 
 namespace TFA.Application.Common.Notifications;
@@ -11,7 +9,7 @@ public class OutboxPublisher(
 {
     public Task Publish(IEnumerable<NotificationHandlerExecutor> handlerExecutors, INotification notification, CancellationToken cancellationToken)
     {
-        Thread thread = new(async () =>
+        new Thread(async () =>
         {
             foreach (NotificationHandlerExecutor handler in handlerExecutors)
             {
@@ -29,9 +27,9 @@ public class OutboxPublisher(
         })
         {
             IsBackground = true,
-        };
+        }
+        .Start();
 
-        thread.Start();
         return Task.CompletedTask;
     }
 }

@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using TFA.Application.Interfaces.Services;
 using TFA.Discord;
-using TFA.Discord.Config;
 
 namespace TFA.Presentation.Presenters;
 

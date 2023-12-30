@@ -88,7 +88,7 @@ public class RequestService : IRequestService
             request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
             return _httpClient.SendAsync(request, cancellationToken);
         }
-        catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+        catch (TaskCanceledException)
         {
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout));
         }
