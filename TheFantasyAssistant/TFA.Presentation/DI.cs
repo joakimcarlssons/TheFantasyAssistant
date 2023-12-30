@@ -13,7 +13,7 @@ public static class Presentation
     {
         services
             .AddTwitter<TwitterService>()
-            .AddDiscord();
+            .AddDiscord(typeof(AssemblyReference).Assembly);
 
         services
             .AddPresenters()

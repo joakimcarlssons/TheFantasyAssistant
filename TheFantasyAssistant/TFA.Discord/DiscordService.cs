@@ -29,7 +29,13 @@ public class DiscordService : IDiscordService
         _env = env;
 
         // Connect the client as soon as possible
-        Task.Run(() => _client.ConnectAsync());
+        Task.Run(() =>
+        {
+            if (_options.ConnectClient.Equals("True", StringComparison.InvariantCultureIgnoreCase))
+            {
+                _client.ConnectAsync();
+            }
+        });
     }
 
     public async Task SendMessageAsync(string message, [ConstantExpected] string channelName)

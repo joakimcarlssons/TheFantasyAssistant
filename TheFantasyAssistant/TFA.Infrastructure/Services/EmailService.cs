@@ -6,11 +6,19 @@ using TFA.Application.Config;
 
 namespace TFA.Infrastructure.Services;
 
-public class EmailService(
-    ILogger<EmailService> logger,
-    IOptions<EmailOptions> options) : IEmailService
+public class EmailService : IEmailService
 {
-    private readonly EmailOptions _options = options.Value;
+    private readonly ILogger<EmailService> _logger;
+    private readonly EmailOptions _options;
+
+    public static IEmailService? Instance;
+
+    public EmailService(ILogger<EmailService> logger, IOptions<EmailOptions> options)
+    {
+        Instance = this;
+        _logger = logger;
+        _options = options.Value;
+    }
 
     public async Task<SendResponse?> Send(SmtpMessageSettings emailSettings)
     {
@@ -19,7 +27,7 @@ public class EmailService(
             if (!Env.IsProduction())
             {
                 // Only send emails in production;
-                logger.LogInformation("Sending email {Email}", emailSettings.Body);
+                _logger.LogInformation("Sending email {Email}", emailSettings.Body);
                 return null;
             }
 
@@ -34,7 +42,7 @@ public class EmailService(
         }
         catch (Exception ex)
         {
-            logger.LogError("{Exception}", ex.Message);
+            _logger.LogError("{Exception}", ex.Message);
             throw;
         }
     }
@@ -61,6 +69,13 @@ public class EmailService(
             _options.Username,
             ex.ConstructExceptionSubject(),
             ex.ConstructExceptionMessage()));
+
+    public Task<SendResponse?> SendErrorMessage(string subject, string body)
+        => Send(new EmailMessage(
+            EmailType.Error,
+            _options.Username,
+            subject,
+            body));
 
     private SmtpSender SetDefaultSender()
         => new(() => new SmtpClient(_options.Host)

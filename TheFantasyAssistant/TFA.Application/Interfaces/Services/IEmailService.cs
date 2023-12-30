@@ -8,6 +8,7 @@ public interface IEmailService
     Task<SendResponse?> Send(SmtpMessageSettings settings);
     Task<SendResponse?> Send(EmailMessage email);
     Task<SendResponse?> SendExceptionEmail(Exception ex);
+    Task<SendResponse?> SendErrorMessage(string subject, string body);
 }
 
 public sealed record EmailMessage(

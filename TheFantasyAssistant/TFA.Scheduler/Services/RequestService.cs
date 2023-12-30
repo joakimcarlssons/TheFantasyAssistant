@@ -67,7 +67,7 @@ public class RequestService : IRequestService
         }
         catch (Exception ex)
         {
-            await _email.SendAsync($"{EmailTypes.Error}: {ex.Message}", $"{ex.Message}\n\n{ex.StackTrace}");
+            await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name}", $"{ex.Message}\n\n{ex.StackTrace}");
         }
     }
 
@@ -77,13 +77,24 @@ public class RequestService : IRequestService
     /// <param name="service">The service to be triggered</param>
     private Task<HttpResponseMessage> TriggerRequest(ServiceOption service, CancellationToken cancellationToken)
     {
-        HttpRequestMessage request = new()
+        try
         {
-            RequestUri = new Uri($"{_apiOptions.Url}{service.UrlSuffix}"),
-            Method = HttpMethod.Post,
-        };
+            HttpRequestMessage request = new()
+            {
+                RequestUri = new Uri($"{_apiOptions.Url}{service.UrlSuffix}"),
+                Method = HttpMethod.Post,
+            };
 
-        request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
-        return _httpClient.SendAsync(request, cancellationToken);
+            request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
+            return _httpClient.SendAsync(request, cancellationToken);
+        }
+        catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+        {
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout));
+        }
+        catch
+        {
+            throw;
+        }
     }
 }

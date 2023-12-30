@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using TFA.Application.Common.Extensions;
 using TFA.Application.Errors;
+using TFA.Infrastructure.Services;
 
 namespace TFA.Api.Common.Extensions;
 
@@ -23,7 +24,16 @@ public static class ErrorOrExtensions
                     return Results.Accepted();
                 }
 
-                logger.LogError("The following errors was found when processing data: {Errors}", errors.ToErrorString());
+                // Todo: Implement emailing as part of error log
+                //logger.LogError("The following errors was found when processing data: {Errors}", errors.ToErrorString());
+
+                if (EmailService.Instance is { } email)
+                {
+                    email.SendErrorMessage(
+                        "Errors when processing data",
+                        $"The following errors was found when processing data: {errors.ToErrorString()}");
+                }
+
                 return Results.ValidationProblem(
                         statusCode: StatusCodes.Status422UnprocessableEntity,
                         errors: errors.ToErrorDictionary());
