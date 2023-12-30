@@ -9,7 +9,8 @@ public static class DI
     {
         services.AddDataServices()
             .AddCustomHttpClient<IFotmobService, FotmobService>()
-            .AddCustomHttpClient<IGameweekDetailsService, GameweekDetailsService>();
+            .AddCustomHttpClient<IGameweekDetailsService, GameweekDetailsService>()
+            .AddScoped<ISourceFetcherService, SourceFetcherService>();
 
         services.AddScoped<IFirebaseRepository, FirebaseRepository>();
         services.AddSingleton<IEmailService, EmailService>();

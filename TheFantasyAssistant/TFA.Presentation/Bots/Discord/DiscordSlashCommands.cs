@@ -4,8 +4,7 @@ using DSharpPlus.SlashCommands;
 
 namespace TFA.Presentation.Bots.Discord;
 
-[SlashModuleLifespan(SlashModuleLifespan.Singleton)]
-public class DiscordSlashCommands() : ApplicationCommandModule
+public class DiscordSlashCommands : ApplicationCommandModule
 {
     [SlashCommand("Ping", "Ping to get pong")]
     public static async Task PingPongCommand(InteractionContext ctx)

@@ -2,6 +2,7 @@
 using Firebase.Auth.Providers;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
+using TFA.Application.Common.Extensions;
 using TFA.Application.Interfaces.Repositories;
 
 namespace TFA.Infrastructure.Repositories;
@@ -14,8 +15,14 @@ public class FirebaseRepository : IFirebaseRepository
     private readonly IHttpClientFactory _clientFactory;
     private readonly FirebaseOptions _firebaseOptions;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly ISourceFetcherService _sourceFetcher;
 
-    public FirebaseRepository(ILogger<FirebaseRepository> logger, IMemoryCache cache, IHttpClientFactory clientFactory, IOptions<FirebaseOptions> firebaseOptions)
+    public FirebaseRepository(
+        ILogger<FirebaseRepository> logger, 
+        IMemoryCache cache, 
+        IHttpClientFactory clientFactory, 
+        IOptions<FirebaseOptions> firebaseOptions,
+        ISourceFetcherService sourceFetcher)
     {
         _logger = logger;
         _cache = cache;
@@ -28,6 +35,7 @@ public class FirebaseRepository : IFirebaseRepository
         {
             PropertyNameCaseInsensitive = true,
         };
+        _sourceFetcher = sourceFetcher;
     }
 
     /// <inheritdoc />
@@ -85,7 +93,17 @@ public class FirebaseRepository : IFirebaseRepository
         }
         else
         {
-            throw new NotImplementedException();
+            if (await _sourceFetcher.GetSourceData<TData>(key, cancellationToken) is { } sourceData)
+            {
+                if (!sourceData.IsError)
+                {
+                    await Add(key, sourceData.Value, cancellationToken);
+                    return sourceData.Value;
+                }
+            }
+
+            _logger.LogError("Source data was returned with errors: {Errors}", sourceData.Errors.ToErrorString());
+            throw new InvalidDataException(typeof(TData).Name);
         }
     }
 

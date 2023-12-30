@@ -81,6 +81,15 @@ public static class DataKeysHandler
                     FantasyType.Allsvenskan => DataKeys.FAS_LATEST_CHECKED_FINISHED_GAMEWEEK,
                     _ => throw new FantasyTypeNotSupportedException()
                 },
+
             _ => throw new NotImplementedException("Provided key type does not exist"),
+        };
+
+    public static FantasyType GetFantasyType(string key)
+        => key switch
+        {
+            string when key.StartsWith("fpl") => FantasyType.FPL,
+            string when key.StartsWith("fas") => FantasyType.Allsvenskan,
+            _ => FantasyType.Unknown
         };
 }
