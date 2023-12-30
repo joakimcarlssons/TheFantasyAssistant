@@ -26,6 +26,10 @@ public class RequestService : IRequestService
     public RequestService(HttpClient httpClient, IOptions<ApiOptions> apiOptions, IOptions<List<ServiceOption>> services, IEmailService email)
     {
         _httpClient = httpClient;
+
+        // Adjust the timeout since it can vary some depending on if the app is sleeping or not
+        _httpClient.Timeout = TimeSpan.FromMinutes(3);
+
         _services = services.Value;
         _apiOptions = apiOptions.Value;
         _email = email;
@@ -41,8 +45,6 @@ public class RequestService : IRequestService
     {
         try
         {
-            var reqs = _services.Where(s => s.RunTime == runTime);
-
             // Trigger all scheduled requests
             HttpResponseMessage[] failedRequests = (await Task
                 .WhenAll(_services

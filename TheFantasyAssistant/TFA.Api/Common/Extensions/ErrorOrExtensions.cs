@@ -17,7 +17,7 @@ public static class ErrorOrExtensions
             _ => Results.Accepted(),
             errors =>
             {
-                if (errors.Count == 1 && errors[0].NumericType == ErrorTypes.Skipped)
+                if (errors.Any(error => error == Errors.Service.Skipped))
                 {
                     // If the error is just that the job is skipped, do nothing.
                     return Results.Accepted();
