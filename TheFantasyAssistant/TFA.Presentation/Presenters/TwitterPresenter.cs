@@ -1,11 +1,12 @@
-﻿using TFA.Application.Interfaces.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TFA.Application.Interfaces.Services;
 using TFA.Twitter;
 
 namespace TFA.Presentation.Presenters;
 
 public class TwitterPresenter(
-    IServiceProvider serviceProvider,
-    ITwitterService twitterService) : AbstractPresenter(serviceProvider)
+    IServiceScopeFactory scopeFactory,
+    ITwitterService twitterService) : AbstractPresenter(scopeFactory)
 {
     public override string Key => PresenterKeys.Twitter;
 

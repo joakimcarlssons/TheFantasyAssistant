@@ -3,7 +3,7 @@ using TFA.Application.Interfaces.Services;
 
 namespace TFA.Presentation.Presenters;
 
-public abstract class AbstractPresenter(IServiceProvider serviceProvider) : IPresenter
+public abstract class AbstractPresenter(IServiceScopeFactory scopeFactory) : IPresenter
 {
     public abstract string Key { get; }
 
@@ -11,7 +11,7 @@ public abstract class AbstractPresenter(IServiceProvider serviceProvider) : IPre
 
     protected IEnumerable<T> BuildContent<T>(IPresentable data, Presenter presenter)
     {
-        using IServiceScope serviceScope = serviceProvider.CreateScope();
+        using IServiceScope serviceScope = scopeFactory.CreateScope();
         foreach (T content in serviceScope.ServiceProvider.InvokeContentBuilderBuildMethod<T>(data, presenter))
         {
             yield return content;
@@ -22,7 +22,7 @@ public abstract class AbstractPresenter(IServiceProvider serviceProvider) : IPre
 
     protected IEnumerable<T> BuildContent<T>(IPresentable data, Presenter presenter, Func<T, bool> sanitizer)
     {
-        using IServiceScope serviceScope = serviceProvider.CreateScope();
+        using IServiceScope serviceScope = scopeFactory.CreateScope();
         foreach (T content in serviceScope.ServiceProvider.InvokeContentBuilderBuildMethod<T>(data, presenter, sanitizer))
         {
             yield return content;

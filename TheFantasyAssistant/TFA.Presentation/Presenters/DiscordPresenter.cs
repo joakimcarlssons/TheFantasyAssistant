@@ -1,4 +1,5 @@
 ﻿using DSharpPlus.Entities;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using TFA.Application.Interfaces.Services;
 using TFA.Discord;
@@ -6,8 +7,8 @@ using TFA.Discord;
 namespace TFA.Presentation.Presenters;
 
 public class DiscordPresenter(
-    IServiceProvider serviceProvider,
-    IDiscordService discordService) : AbstractPresenter(serviceProvider)
+    IServiceScopeFactory scopeFactory,
+    IDiscordService discordService) : AbstractPresenter(scopeFactory)
 {
     public override string Key => PresenterKeys.Discord;
 
