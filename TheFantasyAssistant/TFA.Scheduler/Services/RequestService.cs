@@ -48,7 +48,7 @@ public class RequestService : IRequestService
             // Trigger all scheduled requests
             HttpResponseMessage[] failedRequests = (await Task
                 .WhenAll(_services
-                    .Where(service => service.RunTime == runTime)
+                    .Where(service => service.RunTime == runTime && service.Enabled)
                     .Select(service => TriggerRequest(service, cancellationToken))))
 
                 // Extract all failed request
@@ -65,6 +65,7 @@ public class RequestService : IRequestService
                 await _email.SendAsync(message, message);
             }
         }
+
         catch (Exception ex)
         {
             await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name}", $"{ex.Message}\n\n{ex.StackTrace}");
@@ -94,7 +95,8 @@ public class RequestService : IRequestService
         }
         catch
         {
-            throw;
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+            //throw;
         }
     }
 }
