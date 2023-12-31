@@ -76,7 +76,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
-                    $"{Emoji.Warning} {player.DisplayName} #{player.TeamShortName}",
+                    $"{Emoji.Warning} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $" - [{player.News}]" : string.Empty)}",
                     data.Data.PlayerStatusChanges.DoubtfulPlayers)),
             data.FantasyType switch
             {
@@ -92,7 +92,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
-                    $"{Emoji.X} {player.DisplayName} #{player.TeamShortName}",
+                    $"{Emoji.X} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $" - [{player.News}]" : string.Empty)}",
                     data.Data.PlayerStatusChanges.UnavailablePlayers)),
             data.FantasyType switch
             {
