@@ -17,6 +17,7 @@ public abstract class AbstractSummaryService<TData> : IDataService<ErrorOr<TData
         fantasyData, 
         int fromGameweekId, 
         int toGameweekId,
+        int numberOfTeams,
         Func<KeyedBaseData, Team, Fixture, bool, TTeamOpponent> teamOpponentMapper,
         Func<Team, IReadOnlyList<TTeamOpponent>, int, TTeamToTarget> teamToTargetMapper)
         where TTeamOpponent : SummaryTeamOpponent
@@ -57,6 +58,7 @@ public abstract class AbstractSummaryService<TData> : IDataService<ErrorOr<TData
         })
             .OrderByDescending(team => team.NumberOfOpponents)
             .ThenBy(team => team.TotalDifficulty)
+            .Take(numberOfTeams)
             .ToList();
     }
 

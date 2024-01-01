@@ -6,11 +6,11 @@ using TFA.Domain.Exceptions;
 
 namespace TFA.Presentation.Presenters.BaseData;
 
-public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPresentModel, DiscordPresentModel>
+public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPresentModel, DiscordEmbedPresentModel>
 {
     public override Presenter Presenter => Presenter.Discord;
 
-    public override IReadOnlyList<DiscordPresentModel> Build(BaseDataPresentModel data)
+    public override IReadOnlyList<DiscordEmbedPresentModel> Build(BaseDataPresentModel data)
         => [
             BuildPlayerPriceRiseContent(data),
             BuildPlayerPriceFallContent(data),
@@ -21,7 +21,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             BuildTransferredPlayersContent(data)
         ];
 
-    private static DiscordPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, $"Price Rises"))
@@ -37,7 +37,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, $"Price Fallers"))
@@ -53,7 +53,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildPlayerStatusAvailableChangeContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildPlayerStatusAvailableChangeContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Players Available"))
@@ -69,7 +69,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildPlayerStatusDoubtfulChangeContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildPlayerStatusDoubtfulChangeContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Players Doubtful"))
@@ -85,7 +85,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildPlayerStatusUnavailableChangeContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildPlayerStatusUnavailableChangeContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Players Unavailable"))
@@ -101,7 +101,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildNewPlayersContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildNewPlayersContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "New Players"))
@@ -117,7 +117,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildTransferredPlayersContent(BaseDataPresentModel data)
+    private static DiscordEmbedPresentModel BuildTransferredPlayersContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, "Transferred Players"))

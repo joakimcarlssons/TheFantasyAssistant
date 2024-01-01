@@ -6,17 +6,17 @@ using TFA.Domain.Exceptions;
 
 namespace TFA.Presentation.Presenters.PredictedPriceChanges;
 
-public sealed class PredictedPriceChangeDiscordBuilder : AbstractContentBuilder<PredictedPriceChangeData, DiscordPresentModel>
+public sealed class PredictedPriceChangeDiscordBuilder : AbstractContentBuilder<PredictedPriceChangeData, DiscordEmbedPresentModel>
 {
     public override Presenter Presenter => Presenter.Discord;
 
-    public override IReadOnlyList<DiscordPresentModel> Build(PredictedPriceChangeData data)
+    public override IReadOnlyList<DiscordEmbedPresentModel> Build(PredictedPriceChangeData data)
         => [
             BuildPossiblePriceRisesContent(data),
             BuildPossiblePriceFallersContent(data)
         ];
 
-    private static DiscordPresentModel BuildPossiblePriceRisesContent(PredictedPriceChangeData data)
+    private static DiscordEmbedPresentModel BuildPossiblePriceRisesContent(PredictedPriceChangeData data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, $"Possible Price Rises"))
@@ -32,7 +32,7 @@ public sealed class PredictedPriceChangeDiscordBuilder : AbstractContentBuilder<
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private static DiscordPresentModel BuildPossiblePriceFallersContent(PredictedPriceChangeData data)
+    private static DiscordEmbedPresentModel BuildPossiblePriceFallersContent(PredictedPriceChangeData data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
                 .AppendStandardHeader(data.FantasyType, $"Possible Price Fallers"))

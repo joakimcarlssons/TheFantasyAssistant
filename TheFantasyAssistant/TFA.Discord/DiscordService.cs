@@ -11,6 +11,7 @@ public interface IDiscordService
 {
     Task SendMessageAsync(string message, string channelName);
     Task SendMessageAsync(DiscordEmbedBuilder embed, string channelName);
+    Task SendMessageAsync(DiscordMessageBuilder content, string channelName);
 }
 
 public class DiscordService : IDiscordService
@@ -48,6 +49,12 @@ public class DiscordService : IDiscordService
     {
         DiscordChannel channel = await _client.GetChannelAsync(GetChannelId(channelName));
         await channel.SendMessageAsync(embed);
+    }
+
+    public async Task SendMessageAsync(DiscordMessageBuilder content, [ConstantExpected] string channelName)
+    {
+        DiscordChannel channel = await _client.GetChannelAsync(GetChannelId(channelName));
+        await channel.SendMessageAsync(content);
     }
 
     /// <summary>

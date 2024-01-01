@@ -67,12 +67,14 @@ public sealed class DeadlineSummaryService(
                 fantasyData.Value, 
                 nextGameweek.Id, 
                 nextGameweek.Id,
+                numberOfTeams: 4,
                 MapOpponent,
                 MapTeamToTarget),
             GetTeamsOrderedByFixtureDifficulty(
                 fantasyData.Value, 
                 nextGameweek.Id + 1, 
                 nextGameweek.Id + 3,
+                numberOfTeams: 3,
                 MapOpponent,
                 MapTeamToTarget));
     }

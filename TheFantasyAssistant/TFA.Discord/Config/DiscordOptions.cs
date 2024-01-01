@@ -48,8 +48,13 @@ public sealed class DiscordChannelOption
 public sealed class DiscordChannels
 {
     public const string Dev = "dev";
+
     public const string FPLPriceChanges = "fpl-price-changes";
     public const string FPLUpdates = "fpl-updates";
-    public const string AllsvenskanPriceChanges = "fantasy-allsvenskan-price-changes";
-    public const string AllsvenskanUpdates = "fantasy-allsvenskan-updates";
+    public const string FPLSummaries = "fpl-summaries";
+
+    public const string AllsvenskanPriceChanges = "fas-price-changes";
+    public const string AllsvenskanUpdates = "fas-updates";
+    public const string AllsvenskanSummaries = "fas-summaries";
+
 }

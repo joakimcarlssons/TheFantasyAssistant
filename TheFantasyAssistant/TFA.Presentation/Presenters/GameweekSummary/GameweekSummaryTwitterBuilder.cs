@@ -14,7 +14,7 @@ public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSumm
             .. BuildGameweekSummaryTopPerformingPlayersContent(data),
             BuildGameweekSummaryTeamsWithBestUpcomingFixturesInfoContent(data),
             .. BuildGameweekSummaryTeamsWithBestUpcomingFixturesContent(data),
-            BuildGameweekSummaryEndContent(data)
+            BuildGameweekSummaryEndContent()
        ];
 
     private static string BuildGameweekSummaryStartContent(GameweekSummaryData data)
@@ -27,7 +27,7 @@ public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSumm
             .AppendLineBreaks(2)
             .AppendText($"{Emoji.Thread} {Emoji.ArrowDownSmall}");
 
-    private static string BuildGameweekSummaryEndContent(GameweekSummaryData data)
+    private static string BuildGameweekSummaryEndContent()
         => new ContentBuilder()
             .AppendText("If you find this information helpful in any way please leave a like or retweet.")
             .AppendLineBreaks(2)
@@ -41,7 +41,7 @@ public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSumm
                 "Below are the players with the highest points accumulated during the last gameweek. " +
                 "Additionally the stats of the games the player played is listed.");
 
-    private static IReadOnlyList<string> BuildGameweekSummaryTopPerformingPlayersContent(GameweekSummaryData data)
+    private static IEnumerable<string> BuildGameweekSummaryTopPerformingPlayersContent(GameweekSummaryData data)
         => data.TopPerformingPlayers.Select(player =>
             new ContentBuilder()
                 .AppendCustomText(() => new ContentBuilder()
@@ -67,8 +67,7 @@ public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSumm
                     .AppendTextConditionally($"{Emoji.BlackSmallSquare} Recoveries: {player.Recoveries}\n", player.Recoveries > 0)
                     .AppendTextConditionally($"{Emoji.BlackSmallSquare} Interceptions: {player.Interceptions}\n", player.Interceptions > 0)
                     .AppendTextConditionally($"{Emoji.BlackSmallSquare} Clearances: {player.Clearances}", player.Clearances > 0))
-            .Build())
-            .ToList();
+                    .Build());
 
     private static string BuildGameweekSummaryTeamsWithBestUpcomingFixturesInfoContent(GameweekSummaryData data)
         => new ContentBuilder()
@@ -77,8 +76,9 @@ public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSumm
                 "Below are the teams with the best upcoming fixtures. " +
                 "The fixture difficulty is based on the teams placing in the table and it's initial difficulty index.");
 
-    private static IReadOnlyList<string> BuildGameweekSummaryTeamsWithBestUpcomingFixturesContent(GameweekSummaryData data)
+    private static IEnumerable<string> BuildGameweekSummaryTeamsWithBestUpcomingFixturesContent(GameweekSummaryData data)
         => data.TeamsWithBestUpcomingFixtures
+            .Take(5)
             .Where(team => team.Opponents.Count > 0)
             .Select(team =>
                 new ContentBuilder()
@@ -87,6 +87,5 @@ public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSumm
                     .AppendTextLines(opponent => 
                         $"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} {opponent.Gameweek} - {opponent.OpponentShortName} ({(opponent.IsHome ? "H" : "A")})",
                         team.Opponents)
-                .Build())
-            .ToList();
+                .Build());
 }

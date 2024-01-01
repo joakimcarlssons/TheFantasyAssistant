@@ -61,27 +61,6 @@ public class RequestService : IRequestService
                     await _email.SendAsync(message, message);
                 }
             }
-
-
-            // Trigger all scheduled requests
-            //HttpResponseMessage[] failedRequests = (await Task
-            //    .WhenAll(_services
-            //        .Where(service => service.RunTime == runTime && service.Enabled)
-            //        .Select(service => TriggerRequest(service, cancellationToken))))
-
-            //    // Extract all failed request
-            //    .Where(req => !req.IsSuccessStatusCode)
-            //    .ToArray();
-
-            //foreach (HttpResponseMessage failedRequest in failedRequests)
-            //{
-            //    // Handle failed request
-            //    Uri requestUri = failedRequest.RequestMessage.RequestUri;
-            //    HttpStatusCode statusCode = failedRequest.StatusCode;
-
-            //    string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
-            //    await _email.SendAsync(message, message);
-            //}
         }
 
         catch (Exception ex)

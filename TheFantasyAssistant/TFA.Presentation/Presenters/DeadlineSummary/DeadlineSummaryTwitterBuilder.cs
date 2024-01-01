@@ -12,7 +12,7 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
         => [
             BuildDeadlineStartContent(data),
             BuildPlayersToTargetInfoContent(data),
-            BuildPlayersToTargetContent(data),
+            .. BuildPlayersToTargetContent(data),
             BuildPlayersRiskingSuspensionContent(data),
             BuildTeamToTargetContent(data),
             BuildTeamsWithBestUpcomingFixturesContent(data),
@@ -42,26 +42,28 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
 
     private static string BuildPlayersToTargetInfoContent(DeadlineSummaryData data)
         => new ContentBuilder()
-            .AppendStandardHeader(data.FantasyType, $"Players To Target GW{data.Gameweek}")
+            .AppendStandardHeader(data.FantasyType, $"Players To Target GW{data.Gameweek.Id}")
             .AppendText(
                 "Below are the players with the highest expected points in the upcoming gameweek." +
                 "To help you even further, additional statistics are added for each player.");
 
-    private static string BuildPlayersToTargetContent(DeadlineSummaryData data)
-        => new ContentBuilder()
-            .AppendTextLines(player => 
-                $"{Emoji.Star} {player.DisplayName} #{player.TeamShortName}\n\n" +
-                $"{Emoji.BlackSmallSquare} xPoints: {player.ExpectedPoints}\n" +
-                $"{Emoji.BlackSmallSquare} Form: {player.Form}\n" +
-                $"{Emoji.BlackSmallSquare} xGoals/90 min: {player.ExpectedGoalsPer90}\n" +
-                $"{Emoji.BlackSmallSquare} xAssists/90 min: {player.ExpectedAssistsPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Shots/90 min: {player.ExpectedShotsPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Shots on target/90 min: {player.ExpectedShotsOnTargetPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Chances created/90 min: {player.ChancesCreatedPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Blocks/90 min: {player.BlocksPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Interceptions/90 min: {player.InterceptionsPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Clearances/90 min: {player.ClearancesPer90}", 
-                data.PlayersToTarget);
+    private static IEnumerable<string> BuildPlayersToTargetContent(DeadlineSummaryData data)
+        => data.PlayersToTarget.Select(player =>
+            new ContentBuilder()
+                .AppendCustomText(() => new ContentBuilder()
+                    .AppendText($"{Emoji.Star} {player.DisplayName} #{player.TeamShortName}"))
+                    .AppendLineBreaks(2)
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} xPoints: {player.ExpectedPoints}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Form: {player.Form}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} xGoals/90 min: {player.ExpectedGoalsPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} xAssists/90 min: {player.ExpectedAssistsPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Shots/90 min: {player.ExpectedShotsPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Shots on target/90 min: {player.ExpectedShotsOnTargetPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Chances created/90 min: {player.ChancesCreatedPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Blocks/90 min: {player.BlocksPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Interceptions/90 min: {player.InterceptionsPer90}")
+                    .AppendTextWithLineBreak($"{Emoji.BlackSmallSquare} Clearances/90 min: {player.ClearancesPer90}")
+                .Build());
 
     private static string BuildPlayersRiskingSuspensionContent(DeadlineSummaryData data)
         => new ContentBuilder()
@@ -72,7 +74,7 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
 
     private static string BuildTeamToTargetContent(DeadlineSummaryData data)
         => new ContentBuilder()
-            .AppendStandardHeader(data.FantasyType, $"Best fixtures GW{data.Gameweek}")
+            .AppendStandardHeader(data.FantasyType, $"Best fixtures GW{data.Gameweek.Id}")
             .AppendCustomText(() => AppendTeamsWithBestFixturesContent(data.TeamsToTarget));
 
     private static string BuildTeamsWithBestUpcomingFixturesContent(DeadlineSummaryData data)
@@ -80,7 +82,7 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
             .AppendStandardHeader(data.FantasyType, "Best upcoming fixtures")
             .AppendCustomText(() => AppendTeamsWithBestFixturesContent(data.TeamsWithBestUpcomingFixtures));
 
-    private static string AppendTeamsWithBestFixturesContent(IReadOnlyList<DeadlineSummaryTeamToTarget> teams)
+    private static string AppendTeamsWithBestFixturesContent(IEnumerable<DeadlineSummaryTeamToTarget> teams)
     {
         StringBuilder sb = new();
 
