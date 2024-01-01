@@ -18,7 +18,7 @@ public enum RunTime
     PM7 = 8,
     PM8 = 9,
     PM810 = 10,
-    Every10Minutes = 11,
+    Every5Minutes = 11,
 }
 
 /// <summary>
@@ -33,7 +33,7 @@ public sealed class RunTimes
     internal const string Every3Hours = "5 */3 * * *";
     internal const string Every6Hours = "0 */6 * * *";
     internal const string Every12Hours = "0 */12 * * *";
-    internal const string Every10Minutes = "*/10 * * * *";
+    internal const string Every5Minutes = "*/5 * * * *";
 
     internal const string PM6 = "0 18 * * *";
     internal const string PM7 = "0 19 * * *";

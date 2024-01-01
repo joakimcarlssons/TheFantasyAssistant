@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Microsoft.WindowsAzure.Storage.File.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,32 +44,49 @@ public class RequestService : IRequestService
     /// <param name="runTime">The <see cref="RunTime"/> of the requests to be made.</param>
     public async Task HandleScheduledRequests(RunTime runTime, CancellationToken cancellationToken)
     {
+        string latestTriggeredRequestUrlSuffix = string.Empty;
+
         try
         {
-            // Trigger all scheduled requests
-            HttpResponseMessage[] failedRequests = (await Task
-                .WhenAll(_services
-                    .Where(service => service.RunTime == runTime && service.Enabled)
-                    .Select(service => TriggerRequest(service, cancellationToken))))
-
-                // Extract all failed request
-                .Where(req => !req.IsSuccessStatusCode)
-                .ToArray();
-
-            foreach (HttpResponseMessage failedRequest in failedRequests)
+            foreach (ServiceOption service in _services.Where(s => s.RunTime == runTime && s.Enabled))
             {
-                // Handle failed request
-                Uri requestUri = failedRequest.RequestMessage.RequestUri;
-                HttpStatusCode statusCode = failedRequest.StatusCode;
+                latestTriggeredRequestUrlSuffix = service.UrlSuffix;
+                if (await TriggerRequest(service, cancellationToken) is { IsSuccessStatusCode: false } failedRequest)
+                {
+                    // Handle failed request
+                    Uri requestUri = failedRequest.RequestMessage.RequestUri;
+                    HttpStatusCode statusCode = failedRequest.StatusCode;
 
-                string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
-                await _email.SendAsync(message, message);
+                    string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
+                    await _email.SendAsync(message, message);
+                }
             }
+
+
+            // Trigger all scheduled requests
+            //HttpResponseMessage[] failedRequests = (await Task
+            //    .WhenAll(_services
+            //        .Where(service => service.RunTime == runTime && service.Enabled)
+            //        .Select(service => TriggerRequest(service, cancellationToken))))
+
+            //    // Extract all failed request
+            //    .Where(req => !req.IsSuccessStatusCode)
+            //    .ToArray();
+
+            //foreach (HttpResponseMessage failedRequest in failedRequests)
+            //{
+            //    // Handle failed request
+            //    Uri requestUri = failedRequest.RequestMessage.RequestUri;
+            //    HttpStatusCode statusCode = failedRequest.StatusCode;
+
+            //    string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
+            //    await _email.SendAsync(message, message);
+            //}
         }
 
         catch (Exception ex)
         {
-            await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name}", $"{ex.Message}\n\n{ex.StackTrace}");
+            await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when caling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
         }
     }
 
