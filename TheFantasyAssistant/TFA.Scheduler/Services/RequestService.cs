@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage.File.Protocol;
+using Polly;
+using Polly.Retry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,7 +64,6 @@ public class RequestService : IRequestService
                 }
             }
         }
-
         catch (Exception ex)
         {
             await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when caling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
@@ -73,7 +74,7 @@ public class RequestService : IRequestService
     /// Setting up a request towards a given service and triggers a request.
     /// </summary>
     /// <param name="service">The service to be triggered</param>
-    private Task<HttpResponseMessage> TriggerRequest(ServiceOption service, CancellationToken cancellationToken)
+    private async Task<HttpResponseMessage> TriggerRequest(ServiceOption service, CancellationToken cancellationToken)
     {
         try
         {
@@ -84,16 +85,23 @@ public class RequestService : IRequestService
             };
 
             request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
-            return _httpClient.SendAsync(request, cancellationToken);
+
+            AsyncRetryPolicy policy = Policy
+                .Handle<Exception>()
+                .RetryAsync(1);
+
+            PolicyResult<HttpResponseMessage> result = await policy.ExecuteAndCaptureAsync(() =>
+                _httpClient.SendAsync(request, cancellationToken));
+
+            return result.Result;
         }
         catch (TaskCanceledException)
         {
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout));
+            return new HttpResponseMessage(HttpStatusCode.RequestTimeout);
         }
         catch
         {
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-            //throw;
+            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
         }
     }
 }
