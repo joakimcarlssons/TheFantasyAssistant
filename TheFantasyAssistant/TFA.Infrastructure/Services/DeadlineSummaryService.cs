@@ -17,8 +17,6 @@ public sealed class DeadlineSummaryService(
     IBaseDataService baseData,
     IFotmobService fotmob,
     IFirebaseRepository db) : AbstractSummaryService<DeadlineSummaryData>
-    
-    //IDataService<ErrorOr<DeadlineSummaryData>>
 {
     public override async Task<ErrorOr<DeadlineSummaryData>> GetData(FantasyType fantasyType, CancellationToken cancellationToken = default)
     {

@@ -1,7 +1,10 @@
 global using Xunit;
+global using NSubstitute;
+global using FluentAssertions;
 
 global using TFA.UnitTests.Extensions;
 global using TFA.UnitTests.Builders;
+global using TFA.UnitTests.Fixtures;
 
 global using TFA.Domain.Data;
 global using TFA.Domain.Models.Players;

@@ -7,7 +7,7 @@ namespace TFA.UnitTests.Extensions
     {
         public static Mapper GetMapper()
         {
-            var config = TypeAdapterConfig.GlobalSettings;
+            TypeAdapterConfig config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Infrastructure.AssemblyReference.Assembly);
             return new Mapper(config);
         }
