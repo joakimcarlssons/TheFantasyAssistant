@@ -89,7 +89,10 @@ public abstract class AbstractTwitterService(
     protected async Task<ITweet?> SendTweetAsync(TweetRequestParams tweetParams)
     {
         if (!twitterOptions.SendInDev && isDevelopment)
+        {
+            Console.WriteLine(tweetParams.Text);
             return null;
+        }
 
         TwitterClient client = new(twitterOptions.ConsumerKey, twitterOptions.ConsumerSecret, twitterOptions.AccessToken, twitterOptions.TokenSecret);
 
@@ -118,6 +121,12 @@ public abstract class AbstractTwitterService(
         }
 
         string[] splitTweet = tweetToSplit.Split('\n');
+        if (splitTweet.Length <= 1)
+        {
+            // If the tweet is not splittable,
+            // Return an empty list to avoid tweeting.
+            return [];
+        }
 
         // Move the last line of the tweet...
         if (currentHandledTweetIndex + 1 < tweets.Count)

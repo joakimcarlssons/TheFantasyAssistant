@@ -1,6 +1,4 @@
-﻿using MapsterMapper;
-
-namespace TFA.UnitTests.Fixtures;
+﻿namespace TFA.UnitTests.Fixtures;
 
 internal class MappingFixture : IDisposable
 {
@@ -9,7 +7,5 @@ internal class MappingFixture : IDisposable
         MapsterHelpers.GetMapper();
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 }

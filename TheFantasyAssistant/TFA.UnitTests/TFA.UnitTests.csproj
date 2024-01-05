@@ -26,8 +26,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TFA.Application\TFA.Application.csproj" />
+    <ProjectReference Include="..\TFA.Discord\TFA.Discord.csproj" />
     <ProjectReference Include="..\TFA.Infrastructure\TFA.Infrastructure.csproj" />
     <ProjectReference Include="..\TFA.Presentation\TFA.Presentation.csproj" />
+    <ProjectReference Include="..\TFA.Twitter\TFA.Twitter.csproj" />
   </ItemGroup>
 
 </Project>
