@@ -44,9 +44,9 @@ public class Startup : FunctionsStartup
         {
             loggingBuilder.AddSerilog(new LoggerConfiguration()
                 .WriteTo.Seq(
-                    config.GetRequiredSection("Serilog:Url").Value,
+                    config.GetSection("Serilog:Url").Value,
                     LogEventLevel.Error,
-                    apiKey: config.GetRequiredSection("Serilog:ApiKey").Value)
+                    apiKey: config.GetSection("Serilog:ApiKey").Value)
                 .CreateLogger());
         });
     }
