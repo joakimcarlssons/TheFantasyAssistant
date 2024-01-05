@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using Polly;
-using Polly.Retry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
