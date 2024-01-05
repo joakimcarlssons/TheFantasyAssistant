@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage.File.Protocol;
 using Polly;
 using Polly.Retry;
@@ -25,8 +26,9 @@ public class RequestService : IRequestService
     private readonly ApiOptions _apiOptions;
     private readonly IReadOnlyList<ServiceOption> _services;
     private readonly IEmailService _email;
+    private readonly ILogger<RequestService> _logger;
 
-    public RequestService(HttpClient httpClient, IOptions<ApiOptions> apiOptions, IOptions<List<ServiceOption>> services, IEmailService email)
+    public RequestService(HttpClient httpClient, IOptions<ApiOptions> apiOptions, IOptions<List<ServiceOption>> services, IEmailService email, ILogger<RequestService> logger)
     {
         _httpClient = httpClient;
 
@@ -36,7 +38,7 @@ public class RequestService : IRequestService
         _services = services.Value;
         _apiOptions = apiOptions.Value;
         _email = email;
-
+        _logger = logger;
     }
 
     /// <summary>
@@ -88,7 +90,10 @@ public class RequestService : IRequestService
 
             AsyncRetryPolicy policy = Policy
                 .Handle<Exception>()
-                .RetryAsync(1);
+                .RetryAsync(1, (ex, retryCount) =>
+                {
+                    _logger.LogError("Request failed on attempt {Attempt} with error: {Excepton}", retryCount, ex.Message);
+                });
 
             PolicyResult<HttpResponseMessage> result = await policy.ExecuteAndCaptureAsync(() =>
                 _httpClient.SendAsync(request, cancellationToken));

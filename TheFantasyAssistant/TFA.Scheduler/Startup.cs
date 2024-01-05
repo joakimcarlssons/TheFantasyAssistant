@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using TFA.Scheduler.Config;
 using TFA.Scheduler.Services;
+using Serilog;
+using Serilog.Events;
 
 [assembly: FunctionsStartup(typeof(TFA.Scheduler.Startup))]
 namespace TFA.Scheduler;
@@ -37,6 +39,16 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton<IEmailService, EmailService>();
         builder.Services.AddHttpClient<IRequestService, RequestService>();
         builder.Services.AddSingleton<SchedulerService>();
+
+        builder.Services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.AddSerilog(new LoggerConfiguration()
+                .WriteTo.Seq(
+                    config.GetRequiredSection("Serilog:Url").Value,
+                    LogEventLevel.Error,
+                    apiKey: config.GetRequiredSection("Serilog:ApiKey").Value)
+                .CreateLogger());
+        });
     }
 }
 
