@@ -43,14 +43,14 @@ WebApplication app = builder.Build();
     app.UseStatusCodePages();
     app.UseExceptionHandler();
 
+    app.MapHealthChecks("/health", new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
 }
-
-app.MapHealthChecks("/health", new HealthCheckOptions
-{
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
 
 app.UseMiddleware<ApiKeyAuthMiddleware>();
 app.AddModules<Program>();

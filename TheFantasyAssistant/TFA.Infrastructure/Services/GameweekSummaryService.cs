@@ -45,7 +45,7 @@ public sealed class GameweekSummaryService(
         ILookup<int, FixtureDetails> fixtureDetailsById = (await fotmob.GetFixtureDetailsForGameweek(fantasyData.Value, latestCheckedDeadlineGameweek, fantasyType, cancellationToken))
             .ToLookup(fixture => fixture.FixtureId);
 
-        List<GameweekSummaryPlayer> topPerformingPlayers = new();
+        List<GameweekSummaryPlayer> topPerformingPlayers = [];
         await foreach (FantasyGameweekLivePlayerRequest player in GetTopPerformingPlayers(fantasyType, latestCheckedDeadlineGameweek.Id, 10))
         {
             IReadOnlyList<FixtureDetails> playerFotmobFixtureDetails = player.GameweekDetails?

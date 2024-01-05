@@ -21,7 +21,7 @@ public static class ErrorOrExtensions
                 if (errors.Any(error => error == Errors.Service.Skipped))
                 {
                     // If the error is just that the job is skipped, do nothing.
-                    return Results.Accepted();
+                    return Results.Ok("Job skipped.");
                 }
 
                 // Todo: Implement emailing as part of error log

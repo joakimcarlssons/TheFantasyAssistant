@@ -2,7 +2,6 @@
 using TFA.Application.Features.Deadline;
 using TFA.Discord.Config;
 using TFA.Domain.Data;
-using TFA.Domain.Exceptions;
 
 namespace TFA.Presentation.Presenters.DeadlineSummary;
 

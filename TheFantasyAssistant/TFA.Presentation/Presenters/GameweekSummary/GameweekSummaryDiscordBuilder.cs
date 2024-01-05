@@ -34,7 +34,12 @@ public class GameweekSummaryDiscordBuilder : AbstractContentBuilder<GameweekSumm
         return new DiscordFilePresentModel(
             $"GameweekSummary_{data.Gameweek.Id}.txt",
             content,
-            DiscordChannels.Dev);
+            data.FantasyType switch
+            {
+                FantasyType.FPL => DiscordChannels.FPLSummaries,
+                FantasyType.Allsvenskan => DiscordChannels.AllsvenskanSummaries,
+                _ => throw new FantasyTypeNotSupportedException()
+            });
     }
 
     private static string BuildToPerformingPlayersContent(GameweekSummaryData data)
