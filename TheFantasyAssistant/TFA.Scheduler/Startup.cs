@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using TFA.Scheduler.Config;
 using TFA.Scheduler.Services;
-using Serilog;
-using Serilog.Events;
+using Polly.Extensions.Http;
+using Polly;
 
 [assembly: FunctionsStartup(typeof(TFA.Scheduler.Startup))]
 namespace TFA.Scheduler;
@@ -37,7 +37,11 @@ public class Startup : FunctionsStartup
         builder.Services.Configure<EmailOptions>(config.GetSection(EmailOptions.Key));
 
         builder.Services.AddSingleton<IEmailService, EmailService>();
-        builder.Services.AddHttpClient<IRequestService, RequestService>();
+        builder.Services.AddHttpClient<IRequestService, RequestService>()
+            .AddPolicyHandler(HttpPolicyExtensions.HandleTransientHttpError()
+                .WaitAndRetryAsync(
+                    retryCount: 1,
+                    sleepDurationProvider: retry => TimeSpan.FromSeconds(10)));
         builder.Services.AddSingleton<SchedulerService>();
 
         //builder.Services.AddLogging(loggingBuilder =>

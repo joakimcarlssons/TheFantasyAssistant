@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage.File.Protocol;
+﻿using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 using System;
@@ -74,7 +72,7 @@ public class RequestService : IRequestService
     /// Setting up a request towards a given service and triggers a request.
     /// </summary>
     /// <param name="service">The service to be triggered</param>
-    private async Task<HttpResponseMessage> TriggerRequest(ServiceOption service, CancellationToken cancellationToken)
+    private Task<HttpResponseMessage> TriggerRequest(ServiceOption service, CancellationToken cancellationToken)
     {
         try
         {
@@ -86,25 +84,15 @@ public class RequestService : IRequestService
 
             request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
 
-            AsyncRetryPolicy policy = Policy
-                .Handle<Exception>()
-                .RetryAsync(1, (ex, retryCount) =>
-                {
-                    // Do something for every retry if necessary...
-                });
-
-            PolicyResult<HttpResponseMessage> result = await policy.ExecuteAndCaptureAsync(() =>
-                _httpClient.SendAsync(request, cancellationToken));
-
-            return result.Result;
+            return _httpClient.SendAsync(request, cancellationToken);
         }
         catch (TaskCanceledException)
         {
-            return new HttpResponseMessage(HttpStatusCode.RequestTimeout);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout));
         }
         catch
         {
-            return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
         }
     }
 }
