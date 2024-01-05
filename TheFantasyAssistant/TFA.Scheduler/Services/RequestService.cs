@@ -92,7 +92,7 @@ public class RequestService : IRequestService
                 .Handle<Exception>()
                 .RetryAsync(1, (ex, retryCount) =>
                 {
-                    _logger.LogError("Request failed on attempt {Attempt} with error: {Excepton}", retryCount, ex.Message);
+                    _logger.LogError("Request failed on attempt {Attempt} with error: {Exception}", retryCount, ex.Message);
                 });
 
             PolicyResult<HttpResponseMessage> result = await policy.ExecuteAndCaptureAsync(() =>

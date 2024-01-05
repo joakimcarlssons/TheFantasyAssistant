@@ -10,4 +10,7 @@ public static partial class Logging
 
     [LoggerMessage(LogLevel.Information, "Skipped job {SkippedJob} with reason: {Reason}")]
     public static partial void LogJobSkipped(this ILogger logger, Type SkippedJob, string Reason);
+
+    [LoggerMessage(LogLevel.Warning, "Request failed on retry {RetryAttempt} with exception: {RetryReason}")]
+    public static partial void LogClientRetry(this ILogger logger, int RetryAttempt, string RetryReason);
 }

@@ -1,5 +1,7 @@
 ﻿using TFA.Application.Interfaces.Repositories;
 using TFA.Application.Config;
+using Polly.Extensions.Http;
+using Polly;
 
 namespace TFA.Infrastructure;
 
@@ -82,10 +84,22 @@ public static class DI
         where TInterface : class
         where TImplementation : class, TInterface
     {
-        services.AddHttpClient<TInterface, TImplementation>().ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler
-        {
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-        });
+        services.AddHttpClient<TInterface, TImplementation>()
+            .AddPolicyHandler(HttpPolicyExtensions.HandleTransientHttpError()
+                .WaitAndRetryAsync(
+                    retryCount: 3, 
+                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(5), 
+                    onRetry: (result, timeSpan, retryAttempt, context) =>
+                {
+                    services
+                        .BuildServiceProvider()
+                        .GetService<ILogger<TImplementation>>()?
+                        .LogClientRetry(retryAttempt, result.Exception.Message);
+                }))
+            .ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+            });
 
         return services;
     }

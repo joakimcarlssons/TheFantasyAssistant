@@ -11,11 +11,12 @@ public class DevModule : IModule
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
         //app.MapPost("dataService",
-        //[Tags(EndpointTags.Development)] 
+        //[Tags(EndpointTags.Development)]
         //async (
         //    IFotmobService dataService,
         //    CancellationToken cancellationToken) =>
         //{
+        //    await dataService.GetFotmobLeagueTable(FantasyType.Unknown, cancellationToken);
         //    return Results.Ok();
         //});
     }
