@@ -40,15 +40,15 @@ public class Startup : FunctionsStartup
         builder.Services.AddHttpClient<IRequestService, RequestService>();
         builder.Services.AddSingleton<SchedulerService>();
 
-        builder.Services.AddLogging(loggingBuilder =>
-        {
-            loggingBuilder.AddSerilog(new LoggerConfiguration()
-                .WriteTo.Seq(
-                    config.GetSection("Serilog:Url").Value,
-                    LogEventLevel.Error,
-                    apiKey: config.GetSection("Serilog:ApiKey").Value)
-                .CreateLogger());
-        });
+        //builder.Services.AddLogging(loggingBuilder =>
+        //{
+        //    loggingBuilder.AddSerilog(new LoggerConfiguration()
+        //        .WriteTo.Seq(
+        //            config.GetSection("Serilog:Url").Value,
+        //            LogEventLevel.Error,
+        //            apiKey: config.GetSection("Serilog:ApiKey").Value)
+        //        .CreateLogger());
+        //});
     }
 }
 

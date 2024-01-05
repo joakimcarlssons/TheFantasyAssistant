@@ -26,9 +26,8 @@ public class RequestService : IRequestService
     private readonly ApiOptions _apiOptions;
     private readonly IReadOnlyList<ServiceOption> _services;
     private readonly IEmailService _email;
-    private readonly ILogger<RequestService> _logger;
 
-    public RequestService(HttpClient httpClient, IOptions<ApiOptions> apiOptions, IOptions<List<ServiceOption>> services, IEmailService email, ILogger<RequestService> logger)
+    public RequestService(HttpClient httpClient, IOptions<ApiOptions> apiOptions, IOptions<List<ServiceOption>> services, IEmailService email)
     {
         _httpClient = httpClient;
 
@@ -38,7 +37,6 @@ public class RequestService : IRequestService
         _services = services.Value;
         _apiOptions = apiOptions.Value;
         _email = email;
-        _logger = logger;
     }
 
     /// <summary>
@@ -92,7 +90,7 @@ public class RequestService : IRequestService
                 .Handle<Exception>()
                 .RetryAsync(1, (ex, retryCount) =>
                 {
-                    _logger.LogError("Request failed on attempt {Attempt} with error: {Exception}", retryCount, ex.Message);
+                    // Do something for every retry if necessary...
                 });
 
             PolicyResult<HttpResponseMessage> result = await policy.ExecuteAndCaptureAsync(() =>
