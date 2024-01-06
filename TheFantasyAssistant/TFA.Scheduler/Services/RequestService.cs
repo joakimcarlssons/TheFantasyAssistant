@@ -69,7 +69,7 @@ public class RequestService : IRequestService
         }
         catch (Exception ex)
         {
-            await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when caling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
+            await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when calling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
         }
     }
 
