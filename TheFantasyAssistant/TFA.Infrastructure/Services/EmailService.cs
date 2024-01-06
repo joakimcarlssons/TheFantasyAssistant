@@ -70,7 +70,7 @@ public class EmailService : IEmailService
             ex.ConstructExceptionSubject(),
             ex.ConstructExceptionMessage()));
 
-    public Task<SendResponse?> SendErrorMessage(string subject, string body)
+    public Task<SendResponse?> SendErrorEmail(string subject, string body)
         => Send(new EmailMessage(
             EmailType.Error,
             _options.Username,

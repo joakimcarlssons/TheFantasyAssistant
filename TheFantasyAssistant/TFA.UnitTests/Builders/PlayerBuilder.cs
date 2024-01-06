@@ -95,4 +95,22 @@ internal class PlayerBuilder : AbstractFakerBuilder<Player>
         _model.RuleFor(p => p.SelectedByPercent, _ => selectedByPercent);
         return this;
     }
+
+    public PlayerBuilder WithFirstName(string firstName)
+    {
+        _model.RuleFor(p => p.FirstName, _ => firstName);
+        return this;
+    }
+
+    public PlayerBuilder WithLastName(string lastName)
+    {
+        _model.RuleFor(p => p.LastName, _ => lastName);
+        return this;
+    }
+
+    public PlayerBuilder WithFullName(string fullName)
+    {
+        _model.RuleFor(p => p.FullName, _ => fullName);
+        return this;
+    }
 }

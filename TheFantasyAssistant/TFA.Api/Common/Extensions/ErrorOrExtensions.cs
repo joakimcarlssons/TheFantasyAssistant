@@ -29,7 +29,7 @@ public static class ErrorOrExtensions
 
                 if (EmailService.Instance is { } email)
                 {
-                    email.SendErrorMessage(
+                    email.SendErrorEmail(
                         "Errors when processing data",
                         $"The following errors was found when processing data: {errors.ToErrorString()}");
                 }

@@ -10,7 +10,7 @@ public static class BaseDataQueryFilters
     => players
         .Where(p =>
             (p.DisplayName?.Contains(filter.Name, StringComparison.InvariantCultureIgnoreCase) ?? true)
-            && (p.FullName?.Contains(filter.Name, StringComparison.InvariantCultureIgnoreCase) ?? true))
+            || (p.FullName?.Contains(filter.Name, StringComparison.InvariantCultureIgnoreCase) ?? true))
         .Skip((filter.Page - 1) * filter.PageSize)
         .Take(filter.PageSize);
 

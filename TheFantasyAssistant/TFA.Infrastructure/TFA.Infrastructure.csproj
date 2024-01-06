@@ -26,4 +26,8 @@
     <ProjectReference Include="..\TFA.Application\TFA.Application.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="TFA.UnitTests" />
+	</ItemGroup>
+
 </Project>

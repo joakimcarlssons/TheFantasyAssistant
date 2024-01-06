@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using TFA.Application.Common.Data;
-using TFA.Domain.Exceptions;
 using TFA.Domain.Models.Fixtures;
 using TFA.Domain.Models.Players;
 using TFA.Domain.Models.Teams;
@@ -230,7 +229,8 @@ internal static class CustomFotmobMapper
             return false;
         }
 
-        foreach (string name in allNames)
+        // Reverse the list of names since it's a less chance of picking the wrong one when starting with the last name
+        foreach (string name in allNames.Reverse())
         {
             // Check player full name
             if (TryMatch(playerFullNameMap, p => p.PlayerNames.Contains(name), out Player? p1))
@@ -255,10 +255,17 @@ internal static class CustomFotmobMapper
             {
                 return p4;
             }
+
+            // Check exact match of display name
+            if (allNames.Length == 1
+                && TryMatch(playerDisplayNameNameMap, p => string.Join(' ', p.PlayerNames) == name, out Player? p5))
+            {
+                return p5;
+            }
         }
 
+        EmailService.Instance?.SendErrorEmail("Failed to map Fotmob player", $"The player with name {fotmobPlayerName} in team {team.Name} could not be mapped.");
         return null;
-        //throw new MappingException($"Failed to map Fotmob player with name {fotmobPlayerName} in team {team.Name}");
     }
 
     internal static FixtureDetails ToFixtureDetails(
