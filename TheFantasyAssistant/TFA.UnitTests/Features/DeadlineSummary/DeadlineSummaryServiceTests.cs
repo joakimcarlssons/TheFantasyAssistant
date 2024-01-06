@@ -70,7 +70,7 @@ public class DeadlineSummaryServiceTests : IClassFixture<MappingFixture>
     private void SetupMockFirebaseRepository()
     {
         MockFirebaseRepository
-            .Get<int>(DataKeysHandler.GetDataKey(FantasyType, KeyType.LastCheckedDeadline))
+            .Get<int>(FantasyType.GetDataKey(KeyType.LastCheckedDeadline))
             .Returns(0);
     }
 
@@ -200,40 +200,33 @@ public class DeadlineSummaryServiceTests : IClassFixture<MappingFixture>
         => [
                 new TeamBuilder(1)
                     .WithName("T1")
-                    .WithShortName("T1")
                     .WithMatchesPlayed(18)
                     .WithPosition(7),
                 
                 new TeamBuilder(2)
                     .WithName("T2")
-                    .WithShortName("T2")
                     .WithMatchesPlayed(31)
                     .WithPosition(3),
                 
                 new TeamBuilder(3)
                     .WithName("T3")
-                    .WithShortName("T3")
                     .WithMatchesPlayed(37)
                     .WithPosition(6),
 
                 new TeamBuilder(4)
                     .WithName("T4")
-                    .WithShortName("T4")
                     .WithPosition(5),
 
                 new TeamBuilder(5)
                     .WithName("T5")
-                    .WithShortName("T5")
                     .WithPosition(4),
 
                 new TeamBuilder(6)
                     .WithName("T6")
-                    .WithShortName("T6")
                     .WithPosition(2),
 
                 new TeamBuilder(7)
                     .WithName("T7")
-                    .WithShortName("T7")
                     .WithPosition(1),
         ];
 
@@ -248,82 +241,82 @@ public class DeadlineSummaryServiceTests : IClassFixture<MappingFixture>
 
     private IReadOnlyList<Fixture> CreateFantasyFixtures()
         => [
-            #region Gameweek 2
-            new FixtureBuilder(1)
+                #region Gameweek 2
+                new FixtureBuilder(1)
                     .WithGameweek(2)
                     .WithHomeTeam(1)
                     .WithAwayTeam(2)
                     .WithHomeTeamDifficulty(2)
                     .WithAwayTeamDifficulty(5),
 
-            // Double gameweek for Team 2 in GW 2
-            new FixtureBuilder(2)
+                // Double gameweek for Team 2 in GW 2
+                new FixtureBuilder(2)
                     .WithGameweek(2)
                     .WithHomeTeam(2)
                     .WithAwayTeam(3)
                     .WithHomeTeamDifficulty(2)
                     .WithAwayTeamDifficulty(3),
 
-            new FixtureBuilder(3)
+                new FixtureBuilder(3)
                     .WithGameweek(2)
                     .WithHomeTeam(4)
                     .WithAwayTeam(5)
                     .WithHomeTeamDifficulty(3)
                     .WithAwayTeamDifficulty(3),
 
-            new FixtureBuilder(4)
+                new FixtureBuilder(4)
                     .WithGameweek(2)
                     .WithHomeTeam(6)
                     .WithAwayTeam(7)
                     .WithHomeTeamDifficulty(4)
                     .WithAwayTeamDifficulty(2),
-            #endregion
+                #endregion
 
-            #region Gameweek 3
-            new FixtureBuilder(5)
+                #region Gameweek 3
+                new FixtureBuilder(5)
                     .WithGameweek(3)
                     .WithHomeTeam(1)
                     .WithAwayTeam(3)
                     .WithHomeTeamDifficulty(2)
                     .WithAwayTeamDifficulty(3),
 
-            new FixtureBuilder(6)
+                new FixtureBuilder(6)
                     .WithGameweek(3)
                     .WithHomeTeam(2)
                     .WithAwayTeam(4)
                     .WithHomeTeamDifficulty(3)
                     .WithAwayTeamDifficulty(2),
 
-            new FixtureBuilder(7)
+                new FixtureBuilder(7)
                     .WithGameweek(3)
                     .WithHomeTeam(5)
                     .WithAwayTeam(6)
                     .WithHomeTeamDifficulty(4)
                     .WithAwayTeamDifficulty(2),
-            #endregion
+                #endregion
 
-            #region Gameweek 4
-            new FixtureBuilder(8)
+                #region Gameweek 4
+                new FixtureBuilder(8)
                     .WithGameweek(4)
                     .WithHomeTeam(1)
                     .WithAwayTeam(4)
                     .WithHomeTeamDifficulty(2)
                     .WithAwayTeamDifficulty(3),
 
-            new FixtureBuilder(9)
+                new FixtureBuilder(9)
                     .WithGameweek(4)
                     .WithHomeTeam(2)
                     .WithAwayTeam(5)
                     .WithHomeTeamDifficulty(3)
                     .WithAwayTeamDifficulty(3),
 
-            new FixtureBuilder(10)
+                new FixtureBuilder(10)
                     .WithGameweek(4)
                     .WithHomeTeam(7)
                     .WithAwayTeam(3)
                     .WithHomeTeamDifficulty(2)
                     .WithAwayTeamDifficulty(3),
-            #endregion
+                #endregion
         ];
 
 }

@@ -107,7 +107,10 @@ public sealed class GameweekSummaryService(
             FantasyGameweekLivePlayerRequest? player in ((await gameweekLive.GetGameweekDetailsData(fantasyType, gameweek))?
             .Players ?? [])
             .Where(player => player is not null)
-            .OrderByDescending(player => player.GameweekStats?.Points ?? 0)
+            .OrderByDescending(player => player.GameweekStats?.Points)
+            .ThenByDescending(player => player.GameweekStats?.Goals)
+            .ThenByDescending(player => player.GameweekStats?.Assists)
+            .ThenBy(player => player.GameweekStats?.MinutesPlayed)
             .Take(amount))
         {
             yield return player;
