@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace TFA.Domain.Models.Gameweeks;
+﻿namespace TFA.Domain.Models.Gameweeks;
 
 public sealed record Gameweek(
     [property: JsonPropertyName("id")] int Id,

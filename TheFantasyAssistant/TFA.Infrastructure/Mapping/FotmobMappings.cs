@@ -153,7 +153,9 @@ public class FotmobMappings : IRegister
 internal static class CustomFotmobMapper
 {
     internal static IReadOnlyList<FotmobPlayerDetails> ToPlayerDetails(
-        this ILookup<(string, string), KeyValuePair<string, FotmobStat>> playerStatsByName, List<Player> players, IReadOnlyDictionary<string, Team> teamsByName)
+        this ILookup<(string, string), KeyValuePair<string, FotmobStat>> playerStatsByName, 
+        List<Player> players, 
+        IReadOnlyDictionary<string, Team> teamsByName)
     {
         List<FotmobPlayerDetails> playerDetails = [];
         foreach (IGrouping<(string PlayerName, string TeamName), KeyValuePair<string, FotmobStat>> stats in playerStatsByName)

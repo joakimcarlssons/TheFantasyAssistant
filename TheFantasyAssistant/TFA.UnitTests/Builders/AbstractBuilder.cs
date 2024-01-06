@@ -19,4 +19,5 @@ internal abstract class AbstractFakerBuilder<TModel>
     }
 
     public TModel Build() => _model.Generate();
+    public static implicit operator TModel(AbstractFakerBuilder<TModel> builder) => builder.Build();
 }

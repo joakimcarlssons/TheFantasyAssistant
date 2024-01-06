@@ -62,9 +62,10 @@ public class RequestService : IRequestService
         }
         catch (TaskCanceledException)
         {
-            /* These exceptions are pretty common as long as the app is running as a free Azure App Service.
-               These services tend to have pretty long warm up time was they go down.
-               If there are any jobs heavily affected by being cancelled like this we should probably send an error or perform a retry here..
+            /* 
+             * These exceptions are pretty common as long as the app is running as a free Azure App Service.
+             * These services tend to have pretty long warm up time once they go down.
+             * If there are any jobs heavily affected by being cancelled like this we should probably send an error or perform a retry here..
             */
         }
         catch (Exception ex)

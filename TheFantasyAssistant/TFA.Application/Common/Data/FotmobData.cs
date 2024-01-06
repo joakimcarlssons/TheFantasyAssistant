@@ -4,9 +4,6 @@ public sealed record FotmobData(
     IReadOnlyList<FotmobPlayerDetails> PlayerData,
     IReadOnlyList<FixtureDetails> CurrentGameweekFixtureDetails);
 
-/// <summary>
-/// Needed as a class in order to set the properties by reflection.
-/// </summary>
 public sealed record FotmobPlayerDetails(int PlayerId, string PlayerName, string? TeamName)
 {
     public double ExpectedGoals { get; set; }

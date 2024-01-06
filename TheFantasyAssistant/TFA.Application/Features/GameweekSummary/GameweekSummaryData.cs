@@ -42,9 +42,10 @@ public sealed record GameweekSummaryTeam(
     int TeamId,
     string Name,
     string ShortName,
+    int Position,
     int TotalDifficulty,
     IReadOnlyList<GameweekSummaryTeamOpponent> Opponents
-    ) : SummaryTeamToTarget(Opponents.Count, TotalDifficulty);
+    ) : SummaryTeamToTarget(Opponents.Count, TotalDifficulty, Position);
 
 public sealed record GameweekSummaryTeamOpponent(
     int FixtureId,

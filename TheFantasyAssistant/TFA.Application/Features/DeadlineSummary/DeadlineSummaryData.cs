@@ -46,9 +46,10 @@ public sealed record DeadlineSummaryTeamToTarget(
     int TeamId,
     string TeamName,
     string TeamShortName,
+    int Position,
     int TotalDifficulty,
     IReadOnlyList<DeadlineSummaryTeamOpponent> Opponents
-    ) : SummaryTeamToTarget(Opponents.Count, TotalDifficulty);
+    ) : SummaryTeamToTarget(Opponents.Count, TotalDifficulty, Position);
 
 public sealed record DeadlineSummaryTeamOpponent(
     int FixtureId,

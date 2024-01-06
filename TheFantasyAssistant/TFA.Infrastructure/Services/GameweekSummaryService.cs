@@ -132,6 +132,7 @@ public sealed class GameweekSummaryService(
             team.Id,
             team.Name,
             team.ShortName,
+            team.Position ?? 99,
             opponents.Sum(opp => opp.FixtureDifficulty) + Math.Max((blankGameweeks * 6), 0),
             opponents.OrderBy(opp => opp.Gameweek).ToList());
 }

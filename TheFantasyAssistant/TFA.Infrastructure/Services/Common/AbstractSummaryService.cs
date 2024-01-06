@@ -58,6 +58,7 @@ public abstract class AbstractSummaryService<TData> : IDataService<ErrorOr<TData
         })
             .OrderByDescending(team => team.NumberOfOpponents)
             .ThenBy(team => team.TotalDifficulty)
+            .ThenBy(team => team.Position)
             .Take(numberOfTeams)
             .ToList();
     }

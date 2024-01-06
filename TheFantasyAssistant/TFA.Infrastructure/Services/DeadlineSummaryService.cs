@@ -117,7 +117,7 @@ public sealed class DeadlineSummaryService(
                 FantasyType.Allsvenskan => (p.AttackingBonus + p.DefendingBonus),
                 _ => throw new FantasyTypeNotSupportedException()
             })
-            .ThenByDescending(p => p.SelectedByPercent.ToDecimal()))
+            .ThenBy(p => p.SelectedByPercent.ToDecimal()))
         {
             yield return player;
         }
@@ -155,6 +155,7 @@ public sealed class DeadlineSummaryService(
             team.Id,
             team.Name,
             team.ShortName,
+            team.Position ?? 99,
             opponents.Sum(opp => opp.FixtureDifficulty) + Math.Max((blankGameweeks * 6), 0),
             opponents.OrderBy(opp => opp.Gameweek).ToList());
 
