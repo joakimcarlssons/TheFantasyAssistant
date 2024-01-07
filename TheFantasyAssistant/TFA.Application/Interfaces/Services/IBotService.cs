@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using TFA.Application.Features.GameweekFinished;
 
 namespace TFA.Application.Interfaces.Services;
 
@@ -12,4 +13,4 @@ public interface IBotService
 
 public interface IBotCommandResponse;
 
-public sealed record BestFixturesCommandResponse(string Content) : IBotCommandResponse;
+public sealed record BestFixturesCommandResponse(IReadOnlyList<GameweekSummaryTeam> Teams) : IBotCommandResponse;

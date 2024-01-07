@@ -6,8 +6,7 @@ using TFA.Application.Features.Transforms;
 
 namespace TFA.Infrastructure.Services;
 
-public sealed class DiscordBotService(
-    IBaseDataService baseData) : IBotService
+public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
 {
     public async ValueTask<ErrorOr<IBotCommandResponse>> HandleCommand(
         [ConstantExpected] string command, 
@@ -22,12 +21,8 @@ public sealed class DiscordBotService(
     private async Task<BestFixturesCommandResponse> GetBestFixtures(FantasyType fantasyType, IReadOnlyDictionary<string, string> options)
     {
         ErrorOr<KeyedBaseData> fantasyData = await baseData.GetKeyedData(fantasyType);
-        if (fantasyData.IsError)
-        {
-            return new("Failed to get enough data.");
-        }
-
-        if (options.TryGetValue("fromGw", out string? fromGw)
+        if (!fantasyData.IsError
+            && options.TryGetValue("fromGw", out string? fromGw)
             && options.TryGetValue("toGw", out string? toGw)
             && int.TryParse(fromGw, out int from)
             && int.TryParse(toGw, out int to))
@@ -58,10 +53,9 @@ public sealed class DiscordBotService(
                         opponents.OrderBy(opp => opp.Gameweek).ToList());
                 });
 
-            // Todo: Should get a way to use the contentbuilder here
-            return new(result[0].ShortName);
+            return new(result);
         }
 
-        return new("Invalid data provided.");
+        return new([]);
     }
 }
