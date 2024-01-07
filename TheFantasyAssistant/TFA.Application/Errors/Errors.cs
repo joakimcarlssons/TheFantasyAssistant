@@ -17,4 +17,11 @@ public static partial class Errors
             ErrorCodes.Fetching(nameof(Service)),
             "Service was unable to fetch data.");
     }
+
+    public static class Bot
+    {
+        public static Error CommandNotImplemented = Error.NotFound(
+            code: ErrorCodes.BotCommandNotImplemented,
+            description: "There is no implementation done for this command.");
+    }
 }

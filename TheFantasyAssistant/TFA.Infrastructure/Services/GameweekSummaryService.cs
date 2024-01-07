@@ -2,6 +2,7 @@
 using TFA.Application.Common.Keys;
 using TFA.Application.Errors;
 using TFA.Application.Features.GameweekFinished;
+using TFA.Application.Features.Transforms;
 using TFA.Application.Interfaces.Repositories;
 using TFA.Domain.Models.Fixtures;
 using TFA.Domain.Models.Gameweeks;
@@ -67,7 +68,7 @@ public sealed class GameweekSummaryService(
                 playerFantasyFixtureDetails).Adapt<GameweekSummaryPlayer>());
         }
 
-        IReadOnlyList<GameweekSummaryTeam> teamsWithBestUpcomingFixtures = GetTeamsOrderedByFixtureDifficulty(
+        IReadOnlyList<GameweekSummaryTeam> teamsWithBestUpcomingFixtures = TeamTransforms.GetTeamsOrderedByFixtureDifficulty(
             fantasyData.Value,
             latestCheckedDeadlineGameweek.Id + 1,
             latestCheckedDeadlineGameweek.Id + 3,
@@ -87,12 +88,7 @@ public sealed class GameweekSummaryService(
 
     private async ValueTask<Gameweek?> GetLatestCheckedDeadlineGameweek(KeyedBaseData fantasyData, FantasyType fantasyType)
     {
-        // Keep GW1 in development for easier debugging...
-        // Todo: Remove when not WIP
-        int lastCheckedDeadline = Env.IsDevelopment()
-            ? 1
-            : await db.Get<int>(fantasyType.GetDataKey(KeyType.LastCheckedDeadline));
-
+        int lastCheckedDeadline = await db.Get<int>(fantasyType.GetDataKey(KeyType.LastCheckedDeadline));
         return fantasyData.GameweeksById.TryGetValue(lastCheckedDeadline, out Gameweek? gameweek)
             ? gameweek
             : null;

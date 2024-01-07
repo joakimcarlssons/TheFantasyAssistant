@@ -56,5 +56,4 @@ public sealed class DiscordChannels
     public const string AllsvenskanPriceChanges = "fas-price-changes";
     public const string AllsvenskanUpdates = "fas-updates";
     public const string AllsvenskanSummaries = "fas-summaries";
-
 }

@@ -17,6 +17,8 @@ public static class DI
         services.AddScoped<IFirebaseRepository, FirebaseRepository>();
         services.AddSingleton<IEmailService, EmailService>();
 
+        services.AddSingleton<IBotService, DiscordBotService>();
+
         services.AddMappings();
         services.AddConfigurations();
 

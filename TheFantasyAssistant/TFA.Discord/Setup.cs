@@ -2,7 +2,6 @@
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
 using System.Reflection;
 using TFA.Discord.Config;
 
@@ -34,7 +33,11 @@ public static class Setup
         });
 
         // Register all slash commands from executing assembly
-        SlashCommandsExtension slash = client.UseSlashCommands();
+        SlashCommandsExtension slash = client.UseSlashCommands(new SlashCommandsConfiguration
+        {
+            Services = serviceProvider
+        });
+
         assembly.GetExportedTypes()
             .Where(x => !x.IsAbstract && x.IsClass && x.IsSubclassOf(typeof(ApplicationCommandModule)))
             .ToList()

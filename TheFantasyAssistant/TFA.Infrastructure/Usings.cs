@@ -16,6 +16,7 @@ global using TFA.Infrastructure.Repositories;
 global using TFA.Infrastructure.Services;
 
 global using TFA.Application.Interfaces.Services;
+global using TFA.Application.Services.BaseData;
 global using TFA.Domain.Data;
 
 global using TFA.Utils;

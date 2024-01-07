@@ -2,7 +2,9 @@
 using TFA.Application.Common.Keys;
 using TFA.Application.Errors;
 using TFA.Application.Features.Deadline;
+using TFA.Application.Features.Transforms;
 using TFA.Application.Interfaces.Repositories;
+using TFA.Application.Services.BaseData;
 using TFA.Domain.Exceptions;
 using TFA.Domain.Models.Fixtures;
 using TFA.Domain.Models.Gameweeks;
@@ -61,14 +63,14 @@ public sealed class DeadlineSummaryService(
                 .Adapt<DeadlineSummaryPlayerToTarget>())
             .ToList(),
             GetPlayersRiskingSuspension(fantasyData.Value, fantasyType),
-            GetTeamsOrderedByFixtureDifficulty(
+            TeamTransforms.GetTeamsOrderedByFixtureDifficulty(
                 fantasyData.Value, 
                 nextGameweek.Id, 
                 nextGameweek.Id,
                 numberOfTeams: 4,
                 MapOpponent,
                 MapTeamToTarget),
-            GetTeamsOrderedByFixtureDifficulty(
+            TeamTransforms.GetTeamsOrderedByFixtureDifficulty(
                 fantasyData.Value, 
                 nextGameweek.Id + 1, 
                 nextGameweek.Id + 3,
