@@ -12,10 +12,9 @@ public class TwitterPresenter(
 
     public override async Task Present(IPresentable data, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        //foreach (string tweet in BuildContent<string>(data, Presenter.Twitter, data => !string.IsNullOrWhiteSpace(data)))
-        //{
-        //    await twitterService.TweetAsync(tweet);
-        //}
+        foreach (string tweet in BuildContent<string>(data, Presenter.Twitter, data => !string.IsNullOrWhiteSpace(data)))
+        {
+            await twitterService.TweetAsync(tweet);
+        }
     }
 }
