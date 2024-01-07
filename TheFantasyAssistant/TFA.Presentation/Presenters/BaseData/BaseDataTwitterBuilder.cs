@@ -43,7 +43,7 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
         => new ContentBuilder()
             .AppendStandardHeader(FantasyType, header)
             .AppendTextLines(player =>
-                $"{emoji} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $" - [{player.News}]" : string.Empty)}", players);
+                $"{emoji} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $"- [{player.News}]" : string.Empty)}", players);
 
     private string BuildNewPlayersContent(IReadOnlyList<NewPlayer> players, string header, [ConstantExpected] string emoji)
         => new ContentBuilder()

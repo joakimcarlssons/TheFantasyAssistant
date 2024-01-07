@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using TFA.Application.Features.GameweekFinished;
+using TFA.Application.Features.Bots.Discord;
 
 namespace TFA.Application.Interfaces.Services;
 
@@ -13,4 +13,4 @@ public interface IBotService
 
 public interface IBotCommandResponse;
 
-public sealed record BestFixturesCommandResponse(IReadOnlyList<GameweekSummaryTeam> Teams) : IBotCommandResponse;
+public sealed record BestFixturesCommandResponse(IReadOnlyList<DiscordCommandBestFixturesTeam> Teams) : IBotCommandResponse, IPresentable;

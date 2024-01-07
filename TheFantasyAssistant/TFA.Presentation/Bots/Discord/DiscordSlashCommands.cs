@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using TFA.Application.Common.Commands;
 using TFA.Application.Interfaces.Services;
 using TFA.Domain.Data;
-using TFA.Presentation.Presenters.GameweekSummary;
 
 namespace TFA.Presentation.Bots.Discord;
 
@@ -28,11 +27,12 @@ public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
             },
             x =>
             {
-                var cb = new GameweekSummaryDiscordBuilder();
-                var content = cb.Build(new(ctx.GetFantasyType(), new(1, false, false, false, DateTime.MinValue, [], false), [], x.Teams));
-
-                return ctx.EditResponseAsync(new DiscordWebhookBuilder()
-                    .WithContent(content[0].Content));
+                IReadOnlyList<string> content = x.InvokeContentBuilderBuildMethodFromExpectedBuilder<BestFixturesCommandResponse, string>();
+                return content.Count > 0
+                    ? ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                        .WithContent(content[0]))
+                    : ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                        .WithContent("Failed to load data."));
             });
     }
 

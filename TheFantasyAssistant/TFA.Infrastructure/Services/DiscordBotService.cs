@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using TFA.Application.Common.Commands;
 using TFA.Application.Errors;
+using TFA.Application.Features.Bots.Discord;
 using TFA.Application.Features.GameweekFinished;
 using TFA.Application.Features.Transforms;
 
@@ -27,7 +28,7 @@ public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
             && int.TryParse(fromGw, out int from)
             && int.TryParse(toGw, out int to))
         {
-            IReadOnlyList<GameweekSummaryTeam> result = TeamTransforms.GetTeamsOrderedByFixtureDifficulty(
+            IReadOnlyList<DiscordCommandBestFixturesTeam> result = TeamTransforms.GetTeamsOrderedByFixtureDifficulty(
                 fantasyData.Value,
                 from,
                 to,
@@ -35,7 +36,7 @@ public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
                 (data, team, fixture, isDouble) =>
                 {
                     bool isHome = fixture.HomeTeamId == team.Id;
-                    return new GameweekSummaryTeamOpponent(
+                    return new DiscordCommandBestFixturesTeamOpponent(
                         fixture.Id,
                         fixture.GameweekId ?? 1,
                         FixtureTransforms.GetOpponentShortName(data, isHome, fixture.HomeTeamId, fixture.AwayTeamId),
@@ -44,10 +45,9 @@ public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
                 },
                 (team, opponents, blankGameweeks) =>
                 {
-                    return new GameweekSummaryTeam(
+                    return new DiscordCommandBestFixturesTeam(
                         team.Id,
                         team.Name,
-                        team.ShortName,
                         team.Position ?? 99,
                         opponents.Sum(opp => opp.FixtureDifficulty) + Math.Max((blankGameweeks * 6), 0),
                         opponents.OrderBy(opp => opp.Gameweek).ToList());
