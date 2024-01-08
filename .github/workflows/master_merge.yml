@@ -134,7 +134,7 @@ jobs:
           app-name: 'tfa--scheduler'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E15C3292524F4B7F8325A2123DB56910 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_38C250F1732845FD9208F2DEFD7DA60C }}
   ##
   # deploy_scraper:
   #   name: 'Deploy TFA Scraper'
