@@ -19,7 +19,7 @@ public sealed class PredictedPriceChangeTwitterBuilder : AbstractContentBuilder<
 
     private IReadOnlyList<string> BuildTwitterContent(PredictedPriceChangeData data)
         => [
-            BuildStringContent(BuildPossiblePriceRisesContent, data.RisingPlayers, "Possible Price Rises", Emoji.ArrowLowerLeft),
+            BuildStringContent(BuildPossiblePriceRisesContent, data.RisingPlayers, "Possible Price Rises", Emoji.ArrowUpperLeft),
             BuildStringContent(BuildPossiblePriceFallersContent, data.FallingPlayers, "Possible Price Fallers", Emoji.ArrowLowerLeft)
         ];
 
