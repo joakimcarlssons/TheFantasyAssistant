@@ -19,7 +19,7 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
     private IReadOnlyList<string> BuildTwitterContent(BaseDataPresentModel data)
         => [
             BuildStringContent(BuildPlayerPriceChangeContent, data.Data.PlayerPriceChanges.RisingPlayers, "Price Rises", Emoji.ArrowUp),
-            BuildStringContent(BuildPlayerPriceChangeContent, data.Data.PlayerPriceChanges.RisingPlayers, "Price Fallers", Emoji.ArrowDown),
+            BuildStringContent(BuildPlayerPriceChangeContent, data.Data.PlayerPriceChanges.FallingPlayers, "Price Fallers", Emoji.ArrowDown),
             BuildStringContent(BuildPlayerStatusAvailableChangeContent, data.Data.PlayerStatusChanges.AvailablePlayers, "Players Available", Emoji.WhiteCheckMark),
             BuildStringContent(BuildPlayerStatusNotAvailableChangeContent, data.Data.PlayerStatusChanges.DoubtfulPlayers, "Players Doubtful", Emoji.Warning),
             BuildStringContent(BuildPlayerStatusNotAvailableChangeContent, data.Data.PlayerStatusChanges.UnavailablePlayers, "Players Unavailable", Emoji.X),
