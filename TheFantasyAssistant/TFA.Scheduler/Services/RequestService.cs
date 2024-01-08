@@ -28,7 +28,7 @@ public class RequestService : IRequestService
         _httpClient = httpClient;
 
         // Adjust the timeout since it can vary some depending on if the app is sleeping or not
-        _httpClient.Timeout = TimeSpan.FromMinutes(3);
+        _httpClient.Timeout = TimeSpan.FromMinutes(5);
 
         _services = services.Value;
         _apiOptions = apiOptions.Value;
@@ -48,29 +48,62 @@ public class RequestService : IRequestService
         {
             foreach (ServiceOption service in _services.Where(s => s.RunTime == runTime && s.Enabled))
             {
-                latestTriggeredRequestUrlSuffix = service.UrlSuffix;
-                if (await TriggerRequest(service, cancellationToken) is { IsSuccessStatusCode: false } failedRequest)
-                {
-                    // Handle failed request
-                    Uri requestUri = failedRequest.RequestMessage.RequestUri;
-                    HttpStatusCode statusCode = failedRequest.StatusCode;
+                int maxRetries = 2;
+                int retryCount = 0;
 
-                    string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
-                    await _email.SendAsync(message, message);
+                while (retryCount < maxRetries)
+                {
+                    try
+                    {
+                        latestTriggeredRequestUrlSuffix = service.UrlSuffix;
+                        await HandleRequest(service, cancellationToken);
+                        break;
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        retryCount++;
+                        if (retryCount >= maxRetries)
+                        {
+                            throw;
+                        }
+
+                        // Wait a second before trying again
+                        await Task.Delay(1000, cancellationToken);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
                 }
             }
         }
-        catch (TaskCanceledException)
-        {
+        //catch (TaskCanceledException)
+        //{
             /* 
              * These exceptions are pretty common as long as the app is running as a free Azure App Service.
              * These services tend to have pretty long warm up time once they go down.
              * If there are any jobs heavily affected by being cancelled like this we should probably send an error or perform a retry here..
             */
-        }
+        //}
         catch (Exception ex)
         {
             await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when calling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
+        }
+    }
+
+    /// <summary>
+    /// Handles the actual request and sends an email in case of a non success status code.
+    /// </summary>
+    private async Task HandleRequest(ServiceOption service, CancellationToken cancellationToken)
+    {
+        if (await TriggerRequest(service, cancellationToken) is { IsSuccessStatusCode: false } failedRequest)
+        {
+            // Handle failed request
+            Uri requestUri = failedRequest.RequestMessage.RequestUri;
+            HttpStatusCode statusCode = failedRequest.StatusCode;
+
+            string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
+            await _email.SendAsync(message, message);
         }
     }
 
