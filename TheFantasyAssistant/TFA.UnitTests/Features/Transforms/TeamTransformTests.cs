@@ -2,4 +2,9 @@
 
 public class TeamTransformTests : IClassFixture<MappingFixture>
 {
+    [Fact]
+    public void GetTeamsOrderedByFixtureDifficulty()
+    {
+
+    }
 }
