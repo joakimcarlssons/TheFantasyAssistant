@@ -77,14 +77,6 @@ public class RequestService : IRequestService
                 }
             }
         }
-        //catch (TaskCanceledException)
-        //{
-            /* 
-             * These exceptions are pretty common as long as the app is running as a free Azure App Service.
-             * These services tend to have pretty long warm up time once they go down.
-             * If there are any jobs heavily affected by being cancelled like this we should probably send an error or perform a retry here.
-            */
-        //}
         catch (Exception ex)
         {
             await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when calling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
@@ -113,25 +105,13 @@ public class RequestService : IRequestService
     /// <param name="service">The service to be triggered</param>
     private Task<HttpResponseMessage> TriggerRequest(ServiceOption service, CancellationToken cancellationToken)
     {
-        try
+        HttpRequestMessage request = new()
         {
-            HttpRequestMessage request = new()
-            {
-                RequestUri = new Uri($"{_apiOptions.Url}{service.UrlSuffix}"),
-                Method = HttpMethod.Post,
-            };
+            RequestUri = new Uri($"{_apiOptions.Url}{service.UrlSuffix}"),
+            Method = HttpMethod.Post,
+        };
 
-            request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
-
-            return _httpClient.SendAsync(request, cancellationToken);
-        }
-        catch (TaskCanceledException)
-        {
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.RequestTimeout));
-        }
-        catch
-        {
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-        }
+        request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
+        return _httpClient.SendAsync(request, cancellationToken);
     }
 }
