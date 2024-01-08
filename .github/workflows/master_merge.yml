@@ -33,7 +33,7 @@ jobs:
   build_scheduler:
     name: 'Build TFA Scheduler'
     needs: check_changed_services
-    if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
+    #if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
     runs-on: ubuntu-latest
     env:
       DOTNET_VERSION: '6.0.x'

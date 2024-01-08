@@ -27,7 +27,7 @@ public class RequestService : IRequestService
     {
         _httpClient = httpClient;
 
-        // Adjust the timeout since it can vary some depending on if the app is sleeping or not
+        // Adjust the timeout since it can vary some depending on if the app is sleeping or not.
         _httpClient.Timeout = TimeSpan.FromMinutes(5);
 
         _services = services.Value;
