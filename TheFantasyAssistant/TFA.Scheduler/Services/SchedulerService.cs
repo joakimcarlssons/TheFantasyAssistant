@@ -62,9 +62,9 @@ public class SchedulerService
         await _requestService.HandleScheduledRequests(RunTime.Every12Hours, cancellationToken);
     }
 
-    [FunctionName(nameof(Every5Minutes))]
-    public async Task Every5Minutes([TimerTrigger(RunTimes.Every5Minutes)] TimerInfo timer, CancellationToken cancellationToken)
+    [FunctionName(nameof(Every8Minutes))]
+    public async Task Every8Minutes([TimerTrigger(RunTimes.Every8Minutes)] TimerInfo timer, CancellationToken cancellationToken)
     {
-        await _requestService.HandleScheduledRequests(RunTime.Every5Minutes, cancellationToken);
+        await _requestService.HandleScheduledRequests(RunTime.Every8Minutes, cancellationToken);
     }
 }
