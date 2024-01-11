@@ -9,15 +9,27 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
     public override Presenter Presenter => Presenter.Twitter;
 
     public override IReadOnlyList<IReadOnlyList<string>> Build(DeadlineSummaryData data)
-        => [[
-            BuildDeadlineStartContent(data),
-            BuildPlayersToTargetInfoContent(data),
-            .. BuildPlayersToTargetContent(data),
-            BuildPlayersRiskingSuspensionContent(data),
-            BuildTeamToTargetContent(data),
-            BuildTeamsWithBestUpcomingFixturesContent(data),
-            BuildDeadlineEndContent(data)
-        ]];
+    {
+        List<string> content =
+            [
+                BuildDeadlineStartContent(data),
+                BuildPlayersToTargetInfoContent(data),
+                .. BuildPlayersToTargetContent(data)
+            ];
+
+        if (data.PlayersRiskingSuspension.Count > 0)
+        {
+            content.Add(BuildPlayersRiskingSuspensionContent(data));
+        }
+
+        content.AddRange([
+                BuildTeamToTargetContent(data),
+                BuildTeamsWithBestUpcomingFixturesContent(data),
+                BuildDeadlineEndContent(data)
+            ]);
+
+        return [content];
+    }
 
     private static string BuildDeadlineStartContent(DeadlineSummaryData data)
         => new ContentBuilder()
