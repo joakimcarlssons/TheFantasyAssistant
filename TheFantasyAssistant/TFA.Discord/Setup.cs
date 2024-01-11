@@ -43,7 +43,7 @@ public static class Setup
             .ToList()
             .ForEach(module =>
             {
-                slash.RegisterCommands(module);
+                slash.RegisterCommands(module, 831945050736295937);
             });
 
         return services.AddSingleton(client);

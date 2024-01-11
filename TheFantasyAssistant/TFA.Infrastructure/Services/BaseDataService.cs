@@ -1,6 +1,5 @@
 ﻿using TFA.Application.Config;
 using TFA.Application.Http;
-using TFA.Application.Services.BaseData;
 using TFA.Domain.Exceptions;
 using TFA.Domain.Models.Fixtures;
 using TFA.Domain.Models.Gameweeks;
@@ -10,11 +9,6 @@ using TFA.Infrastructure.Dtos.Fixture;
 using TFA.Infrastructure.Models;
 
 namespace TFA.Infrastructure.Services;
-
-public interface IBaseDataService : IDataService<ErrorOr<FantasyBaseData>>
-{
-    Task<ErrorOr<KeyedBaseData>> GetKeyedData(FantasyType fantasyType, CancellationToken cancellationToken = default);
-}
 
 public class BaseDataService(
     HttpClient httpClient, 

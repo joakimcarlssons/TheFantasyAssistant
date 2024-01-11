@@ -9,8 +9,20 @@ using TFA.Domain.Data;
 
 namespace TFA.Presentation.Bots.Discord;
 
-public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
+public class DiscordSlashCommands(IBotService bot, IBaseDataService fantasyData) : ApplicationCommandModule
 {
+
+    [SlashCommand(BotCommands.TeamFixtures.Name, BotCommands.TeamFixtures.Description)]
+    public async Task TeamFixturesCommand(InteractionContext ctx,
+        [ChoiceProvider(typeof(TeamChoiceProvider))]
+        [Option("team", "The team you want to check.")] long teamId,
+        [Option("from", "From what gameweek to check")] long fromGw,
+        [Option("to", "To what gameweek to check")] long toGw)
+    {
+        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
+            .WithContent("Coming soon..."));
+    }
+
     [SlashCommand(BotCommands.BestFixtures.Name, BotCommands.BestFixtures.Description)]
     public async Task BestFixturesCommand(InteractionContext ctx,
         [Option("from", "From what gameweek to check")] long fromGw,

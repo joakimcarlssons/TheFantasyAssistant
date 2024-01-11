@@ -16,5 +16,10 @@ public class TwitterPresenter(
         {
             await twitterService.TweetAsync(tweet);
         }
+
+        foreach (IReadOnlyList<string> tweets in BuildContent<IReadOnlyList<string>>(data, Presenter.Twitter))
+        {
+            await twitterService.TweetThreadAsync(tweets);
+        }
     }
 }

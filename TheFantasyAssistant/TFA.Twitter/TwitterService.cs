@@ -26,6 +26,14 @@ public interface ITwitterService
     /// <returns>The sent out tweet.</returns>
     Task<ITweet?> TweetAsync(string content, ITweet replyTweet);
 
+    /// <summary>
+    /// Tweets a thread of a given collection of tweets.
+    /// </summary>
+    /// <param name="tweets">The tweets to send. Will be sent in the order they are placed in the list.</param>
+    /// <param name="replyTweet">Not null if the thread should start from an already existing tweet.</param>
+    /// <returns>The last sent tweet in the thread.</returns>
+    Task<ITweet?> TweetThreadAsync(IReadOnlyList<string> tweets, ITweet? replyTweet = null);
+
 }
 
 public abstract class AbstractTwitterService(
@@ -43,7 +51,7 @@ public abstract class AbstractTwitterService(
         }
 
         // In case the tweet is too long it will be sent as a thread.
-        return TweetThread(SplitTooLongTweets([content]));
+        return TweetThreadAsync(SplitTooLongTweets([content]));
     }
 
     /// <inheritdoc />
@@ -54,16 +62,11 @@ public abstract class AbstractTwitterService(
             return SendTweetAsync(new(content, new ReplyTweet(replyTweet.IdStr)));
         }
 
-        return TweetThread(SplitTooLongTweets([content]), replyTweet);
+        return TweetThreadAsync(SplitTooLongTweets([content]), replyTweet);
     }
 
-    /// <summary>
-    /// Tweets a thread of a given collection of tweets.
-    /// </summary>
-    /// <param name="tweets">The tweets to send. Will be sent in the order they are placed in the list.</param>
-    /// <param name="replyTweet">Not null if the thread should start from an already existing tweet.</param>
-    /// <returns>The last sent tweet in the thread.</returns>
-    protected async Task<ITweet?> TweetThread(IReadOnlyList<string> tweets, ITweet? replyTweet = null)
+    /// <inheritdoc />
+    public async Task<ITweet?> TweetThreadAsync(IReadOnlyList<string> tweets, ITweet? replyTweet = null)
     {
         if (tweets.Count == 0)
         {

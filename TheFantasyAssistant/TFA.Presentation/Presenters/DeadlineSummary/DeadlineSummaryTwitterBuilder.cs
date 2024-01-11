@@ -4,12 +4,12 @@ using TFA.Domain.Data;
 
 namespace TFA.Presentation.Presenters.DeadlineSummary;
 
-public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSummaryData, string>
+public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSummaryData, IReadOnlyList<string>>
 {
     public override Presenter Presenter => Presenter.Twitter;
 
-    public override IReadOnlyList<string> Build(DeadlineSummaryData data)
-        => [
+    public override IReadOnlyList<IReadOnlyList<string>> Build(DeadlineSummaryData data)
+        => [[
             BuildDeadlineStartContent(data),
             BuildPlayersToTargetInfoContent(data),
             .. BuildPlayersToTargetContent(data),
@@ -17,7 +17,7 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
             BuildTeamToTargetContent(data),
             BuildTeamsWithBestUpcomingFixturesContent(data),
             BuildDeadlineEndContent(data)
-        ];
+        ]];
 
     private static string BuildDeadlineStartContent(DeadlineSummaryData data)
         => new ContentBuilder()
@@ -44,7 +44,7 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
         => new ContentBuilder()
             .AppendStandardHeader(data.FantasyType, $"Players To Target GW{data.Gameweek.Id}")
             .AppendText(
-                "Below are the players with the highest expected points in the upcoming gameweek." +
+                "Below are the players with the highest expected points in the upcoming gameweek. " +
                 "To help you even further, additional statistics are added for each player.");
 
     private static IEnumerable<string> BuildPlayersToTargetContent(DeadlineSummaryData data)
@@ -88,7 +88,7 @@ public class DeadlineSummaryTwitterBuilder : AbstractContentBuilder<DeadlineSumm
 
         foreach (DeadlineSummaryTeamToTarget team in teams)
         {
-            sb.AppendLine($"{Emoji.Star}{team.TeamName}");
+            sb.AppendLine($"{Emoji.Star} {team.TeamName}");
             foreach (DeadlineSummaryTeamOpponent opponent in team.Opponents)
             {
                 sb.AppendLine($"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} " +
