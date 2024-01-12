@@ -71,7 +71,7 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
                             .AppendTextLines(opponent =>
                                 $"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} {opponent.TeamShortName} ({GetOpponentHomeAwayText(opponent.IsHome)})",
                                 gw.Opponents)
-                            .AppendLineBreaks(1),
+                            .AppendLineBreaks(2),
                         x.ToList())
                     .Build())
                 .ToList()
