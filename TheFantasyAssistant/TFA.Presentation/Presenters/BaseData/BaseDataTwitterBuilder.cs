@@ -2,6 +2,7 @@
 using TFA.Application.Features.BaseData.Events;
 using TFA.Application.Features.BaseData.Transforms;
 using TFA.Domain.Data;
+using TFA.Utils;
 
 namespace TFA.Presentation.Presenters.BaseData;
 
@@ -24,7 +25,9 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
             BuildStringContent(BuildPlayerStatusNotAvailableChangeContent, data.Data.PlayerStatusChanges.DoubtfulPlayers, "Players Doubtful", Emoji.Warning),
             BuildStringContent(BuildPlayerStatusNotAvailableChangeContent, data.Data.PlayerStatusChanges.UnavailablePlayers, "Players Unavailable", Emoji.X),
             BuildStringContent(BuildNewPlayersContent, data.Data.NewPlayers, "New Players", Emoji.BustInSilhouette),
-            BuildStringContent(BuildTransferredPlayersContent, data.Data.PlayerTransfers, "Transferred Players", Emoji.ArrowsCounterClockwise)
+            BuildStringContent(BuildTransferredPlayersContent, data.Data.PlayerTransfers, "Transferred Players", Emoji.ArrowsCounterClockwise),
+            .. BuildDoubleGameweekContent(data.Data.DoubleGameweeks),
+            BuildBlankGameweekContent(data.Data.BlankGameweeks)
         ];
 
     private string BuildPlayerPriceChangeContent(IReadOnlyList<PlayerPriceChange> players, string header, [ConstantExpected] string emoji)
@@ -56,4 +59,28 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
             .AppendStandardHeader(FantasyType, header)
             .AppendTextLines(player =>
                 $"{emoji} {player.DisplayName} [#{player.PrevTeamShortName} {Emoji.ArrowRight} #{player.NewTeamShortName}]", players);
+
+    private IReadOnlyList<string> BuildDoubleGameweekContent(IReadOnlyList<DoubleGameweek> data)
+        => data.Count > 0
+            ? data.SplitEnumerable(4)
+                .Select(x => new ContentBuilder()
+                    .AppendStandardHeader(FantasyType, "Double Gameweek Announcements")
+                    .AppendTextLines(gw =>
+                        new ContentBuilder()
+                            .AppendTextWithLineBreak($"{Emoji.GlowingStar} {gw.Gameweek} - {gw.TeamName}")
+                            .AppendTextLines(opponent =>
+                                $"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} {opponent.TeamShortName} ({GetOpponentHomeAwayText(opponent.IsHome)})",
+                                gw.Opponents)
+                            .AppendLineBreaks(1),
+                        x.ToList())
+                    .Build())
+                .ToList()
+            : [string.Empty];
+
+    private string BuildBlankGameweekContent(IReadOnlyList<BlankGameweek> data)
+        => data.Count > 0
+            ? new ContentBuilder()
+                .AppendStandardHeader(FantasyType, "Blank Gameweek Announcements")
+                .AppendTextLines(gw => $"{Emoji.WhiteCircle} {gw.Gameweek} - {gw.TeamName}", data)
+            : string.Empty;
 }

@@ -22,4 +22,7 @@ public abstract class AbstractContentBuilder<TIn, TOut> : IContentBuilder<TIn, T
             3 => Emoji.WhiteCircle,
             _ => Emoji.RedCircle
         };
+
+    protected static string GetOpponentHomeAwayText(bool isHome)
+        => isHome ? "(A)" : "(H)";
 }

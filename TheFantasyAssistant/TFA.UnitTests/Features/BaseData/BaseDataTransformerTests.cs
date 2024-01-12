@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using TFA.Application.Features.BaseData.Transforms;
 using TFA.Application.Services.BaseData;
+using TFA.Domain.Models.Fixtures;
 using TFA.UnitTests.Fixtures;
 
 namespace TFA.UnitTests.Features.BaseData;
@@ -402,6 +403,52 @@ public class BaseDataTransformerTests : IClassFixture<MappingFixture>
         result.DoubleGameweeks[0].Opponents[0].FixtureDifficulty.Should().Be(3);
         result.DoubleGameweeks[0].Opponents[1].TeamId.Should().Be(3);
         result.DoubleGameweeks[0].Opponents[1].FixtureDifficulty.Should().Be(2);
+    }
+
+    [Fact]
+    public void Transform_WhenBlankGameweeksAreAnnounces_FixturesAreTransformedCorrectly()
+    {
+        Team team = new TeamBuilder(1)
+            .WithName("Team 1")
+            .WithShortName("T1");
+
+        Team team2 = new TeamBuilder(2)
+            .WithName("Team 2")
+            .WithShortName("T2");
+
+        Team opponent = new TeamBuilder(3)
+            .WithName("Opponent 1")
+            .WithShortName("OP1");
+
+        Fixture fixture1 = new FixtureBuilder(1)
+            .WithGameweek(1)
+            .WithHomeTeam(1)
+            .WithHomeTeamDifficulty(3)
+            .WithAwayTeam(3)
+            .WithAwayTeamDifficulty(2);
+
+        Fixture fixture2 = new FixtureBuilder(1)
+            .WithGameweek(1)
+            .WithHomeTeam(2)
+            .WithHomeTeamDifficulty(4)
+            .WithAwayTeam(3)
+            .WithAwayTeamDifficulty(4);
+
+
+        FantasyBaseData prevData = new FantasyBaseDataBuilder()
+            .WithTeams(team, team2, opponent)
+            .WithFixtures(fixture1);
+
+        FantasyBaseData newData = new FantasyBaseDataBuilder()
+            .WithTeams(team, team2, opponent)
+            .WithFixtures(fixture2);
+
+        BaseDataTransformer transformer = new();
+        TransformedBaseData? result = transformer.Transform(newData, prevData);
+
+        result.Should().NotBeNull();
+        result.BlankGameweeks.Should().NotBeEmpty().And.HaveCount(1);
+        result.BlankGameweeks[0].TeamId.Should().Be(1);
     }
 }
 

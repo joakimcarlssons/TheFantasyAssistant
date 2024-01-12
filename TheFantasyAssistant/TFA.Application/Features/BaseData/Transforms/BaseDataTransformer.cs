@@ -5,7 +5,7 @@ using TFA.Utils;
 
 namespace TFA.Application.Features.BaseData.Transforms;
 
-internal record struct GameweekChanges(
+internal record struct GameweekFixtureChanges(
     IReadOnlyList<DoubleGameweek> DoubleGameweeks,
     IReadOnlyList<BlankGameweek> BlankGameweeks);
 
@@ -24,87 +24,67 @@ public class BaseDataTransformer : ITransformer<FantasyBaseData, TransformedBase
         PlayerStatusChanges statusChanges = GetPlayerStatusChanges(newData, prevData);
         IReadOnlyList<NewPlayer> newPlayers = GetNewPlayers(newData, prevData);
         IReadOnlyList<PlayerTransfer> transferredPlayers = GetTransferredPlayers(newData, prevData);
-
-        GameweekChanges gameweekChanges = GetGameweekFixtureChanges(newData, prevData);
+        GameweekFixtureChanges gameweekChanges = GetGameweekFixtureChanges(newData, prevData);
 
         return new(priceChanges, statusChanges, newPlayers, transferredPlayers, gameweekChanges.DoubleGameweeks, gameweekChanges.BlankGameweeks);
     }
 
-    private GameweekChanges GetGameweekFixtureChanges(FantasyBaseData newData, FantasyBaseData prevData)
+    private GameweekFixtureChanges GetGameweekFixtureChanges(FantasyBaseData newData, FantasyBaseData prevData)
     {
-        Dictionary<int, Team> teamsById = newData.Teams.ToDictionary(team => team.Id);
-
-        List<DoubleGameweek> doubleGameweeks = [];
-        foreach (Team team in newData.Teams)
-        {
-            Dictionary<int, int> prevFixtureCountByGameweek = prevData.Fixtures
-                .Where(fixture => 
-                    fixture.GameweekId is not null 
-                    && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
+        IReadOnlyList<DoubleGameweek> doubleGameweeks = newData.Teams
+            .SelectMany(team => newData.Fixtures
+                // Filter fixtures related to the current team with a valid Gameweek
+                .Where(fixture => fixture.GameweekId is not null && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
                 .GroupBy(fixture => fixture.GameweekId!.Value)
-                .ToDictionary(x => x.Key, x => x.ToList().Count); ;
-
-             Dictionary<int, List<Fixture>> newFixturesByGameweek = newData.Fixtures
-                .Where(fixture =>
-                    fixture.GameweekId is not null
-                    && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
-                .GroupBy(fixture => fixture.GameweekId!.Value)
-                .ToDictionary(x => x.Key, x => x.ToList());
-
-            foreach ((int gameweek, List<Fixture> fixtures) in newFixturesByGameweek)
-            {
-                if (prevFixtureCountByGameweek.TryGetValue(gameweek, out int count) && fixtures.Count > count)
+                // Create a group of fixtures for each gameweek
+                .Select(x => new
                 {
-                    IReadOnlyList<FixtureOpponent> opponents = fixtures.Select(x =>
-                    {
-                        bool isHome = x.HomeTeamId == team.Id;
+                    Gameweek = x.Key,
+                    Fixtures = x.ToList(),
+                    PreviousFixtureCount = prevData.Fixtures
+                        .Count(f => f.GameweekId == x.Key && (f.HomeTeamId == team.Id || f.AwayTeamId == team.Id))
+                })
+                // Filter out the gameweeks where the fixture count is not greater than before
+                .Where(x => x.Fixtures.Count > 1 && x.Fixtures.Count > x.PreviousFixtureCount)
+                // For each gameweek, create a DoubleGameweek object
+                .Select(x =>
+                {
+                    IReadOnlyList<FixtureOpponent> opponents = x.Fixtures
+                        .Select(fixture =>
+                        {
+                            bool isHome = fixture.HomeTeamId == team.Id;
 
-                        int fixtureDifficulty = isHome
-                            ? x.HomeTeamDifficulty 
-                            : x.AwayTeamDifficulty;
+                            int fixtureDifficulty = isHome 
+                                ? fixture.HomeTeamDifficulty 
+                                : fixture.AwayTeamDifficulty;
 
-                        Team opponentTeam = isHome
-                            ? teamsById[x.AwayTeamId]
-                            : teamsById[x.HomeTeamId];
+                            Team opponentTeam = isHome 
+                                ? TeamsById[fixture.AwayTeamId] 
+                                : TeamsById[fixture.HomeTeamId];
 
-                        return new FixtureOpponent(opponentTeam.Id, opponentTeam.ShortName, fixtureDifficulty, isHome);
-                    }).ToList();
+                            return new FixtureOpponent(opponentTeam.Id, opponentTeam.ShortName, fixtureDifficulty, isHome);
+                        }).ToList();
 
-                    doubleGameweeks.Add(new DoubleGameweek(gameweek, team.Id, team.Name, team.ShortName, opponents));
-                }
-            }
-        }
+                    return new DoubleGameweek(x.Gameweek, team.Id, team.Name, team.ShortName, opponents);
+                }))
+            .ToList();
 
-        return new GameweekChanges(doubleGameweeks, []);
+        IReadOnlyList<BlankGameweek> blankGameweeks = newData.Teams
+            .SelectMany(team => prevData.Fixtures
+                .Where(fixture => fixture.GameweekId is not null && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
+                .GroupBy(fixture => fixture.GameweekId!.Value)
+                .Select(x => new 
+                {
+                    Gameweek = x.Key,
+                    FixtureCount = x.ToArray().Length,
+                    NewDataFixtureCount = newData.Fixtures
+                        .Count(f => f.GameweekId == x.Key && (f.HomeTeamId == team.Id || f.AwayTeamId == team.Id))
+                })
+                .Where(x => x.FixtureCount > 0 && x.NewDataFixtureCount == 0)
+                .Select(x => new BlankGameweek(x.Gameweek, team.Id, team.Name, team.ShortName)))
+            .ToList();
 
-        //Dictionary<int, ILookup<int, Fixture>> prevDataFixturesByTeamIdAndGameweek = prevData.Fixtures
-        //    .GroupBy(x => x.HomeTeamId)
-        //    .Concat(prevData.Fixtures.GroupBy(x => x.AwayTeamId))
-        //    .ToDictionary(
-        //        x =>  x.Key, 
-        //        x => x
-        //        .Where(f => f.GameweekId is not null)
-        //        .ToLookup(f => f.GameweekId!.Value));
-
-        //Dictionary<int, ILookup<int, Fixture>> newDataFixturesByTeamIdAndGameweek = prevData.Fixtures
-        //    .GroupBy(x => x.HomeTeamId)
-        //    .Concat(prevData.Fixtures.GroupBy(x => x.AwayTeamId))
-        //    .ToDictionary(
-        //        x => x.Key,
-        //        x => x
-        //        .Where(f => f.GameweekId is not null)
-        //        .ToLookup(f => f.GameweekId!.Value));
-
-        //Dictionary<int, Team> teamsById = newData.Teams.ToDictionary(team => team.Id);
-
-        //IReadOnlyList<DoubleGameweek> doubleGameweeks = newDataFixturesByTeamIdAndGameweek
-        //    .Select(x =>
-        //    {
-        //        ILookup<int, Fixture> prevFixturesByGameweek = prevDataFixturesByTeamIdAndGameweek[x.Key];
-        //        var doubleGameweeks = x.Value.Where(f => f.ToArray().Length > prevFixturesByGameweek[f.Key].ToArray().Length)
-        //            .SelectMany(d => );
-        //    })
-        //    .ToList();
+        return new GameweekFixtureChanges(doubleGameweeks, blankGameweeks);
     }
 
     /// <summary>
@@ -192,17 +172,5 @@ public class BaseDataTransformer : ITransformer<FantasyBaseData, TransformedBase
             .Where(player => playerTeamLookup.TryGetValue(player.Id, out int prevTeamId) && player.TeamId != prevTeamId)
             .Select(player => (player, TeamsById[player.TeamId], TeamsById[playerTeamLookup[player.Id]]).Adapt<PlayerTransfer>())
             .ToList();
-    }
-
-    private IReadOnlyList<DoubleGameweek> GetDoubleGameweeks(FantasyBaseData newData, FantasyBaseData prevData)
-    {
-
-
-        return [];
-    }
-
-    private IReadOnlyList<BlankGameweek> GetBlankGameweeks(FantasyBaseData newData, FantasyBaseData prevData)
-    {
-        return [];
     }
 }

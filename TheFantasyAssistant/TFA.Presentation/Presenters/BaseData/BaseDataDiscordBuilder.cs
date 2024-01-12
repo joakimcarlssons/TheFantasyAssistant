@@ -1,4 +1,5 @@
 ﻿using DSharpPlus.Entities;
+using System.ComponentModel;
 using TFA.Application.Features.BaseData.Events;
 using TFA.Discord.Config;
 using TFA.Domain.Data;
@@ -18,7 +19,9 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             BuildPlayerStatusDoubtfulChangeContent(data),
             BuildPlayerStatusUnavailableChangeContent(data),
             BuildNewPlayersContent(data),
-            BuildTransferredPlayersContent(data)
+            BuildTransferredPlayersContent(data),
+            BuildDoubleGameweekContent(data),
+            BuildBlankGameweekContent(data)
         ];
 
     private static DiscordEmbedPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
@@ -126,6 +129,43 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
                 .AppendTextLines(player =>
                     $"{Emoji.ArrowsCounterClockwise} {player.DisplayName} [#{player.PrevTeamShortName} {Emoji.ArrowRight} #{player.NewTeamShortName}]",
                     data.Data.PlayerTransfers)),
+            data.FantasyType switch
+            {
+                FantasyType.FPL => DiscordChannels.FPLUpdates,
+                FantasyType.Allsvenskan => DiscordChannels.AllsvenskanUpdates,
+                _ => throw new FantasyTypeNotSupportedException()
+            });
+
+    private static DiscordEmbedPresentModel BuildDoubleGameweekContent(BaseDataPresentModel data)
+        => new(new DiscordEmbedBuilder()
+            .WithTitle(new ContentBuilder()
+                .AppendStandardHeader(data.FantasyType, "Double Gameweek Announcements"))
+            .WithFooter(NowDate)
+            .WithDescription(new ContentBuilder()
+                .AppendTextLines(gw =>
+                    new ContentBuilder()
+                        .AppendTextWithLineBreak($"{Emoji.GlowingStar} {gw.Gameweek} - {gw.TeamName}")
+                .AppendTextLines(opp =>
+                    $"{GetFixtureDifficultyEmoji(opp.FixtureDifficulty)} {opp.TeamShortName} ({GetOpponentHomeAwayText(opp.IsHome)})",
+                    gw.Opponents)
+                .AppendLineBreaks(2),
+            data.Data.DoubleGameweeks)),
+            data.FantasyType switch
+            {
+                FantasyType.FPL => DiscordChannels.FPLUpdates,
+                FantasyType.Allsvenskan => DiscordChannels.AllsvenskanUpdates,
+                _ => throw new FantasyTypeNotSupportedException()
+            });
+
+    private static DiscordEmbedPresentModel BuildBlankGameweekContent(BaseDataPresentModel data)
+        => new(new DiscordEmbedBuilder()
+            .WithTitle(new ContentBuilder()
+                .AppendStandardHeader(data.FantasyType, "Blank Gameweek Announcements"))
+            .WithFooter(NowDate)
+            .WithDescription(new ContentBuilder()
+                .AppendTextLines(gw =>
+                    $"{Emoji.WhiteCircle} {gw.Gameweek} - {gw.TeamName}",
+                    data.Data.BlankGameweeks)),
             data.FantasyType switch
             {
                 FantasyType.FPL => DiscordChannels.FPLUpdates,

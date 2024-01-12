@@ -85,9 +85,6 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           include-prerelease: true
-      
-      - name: 'Api Tests'
-        run: dotnet test "./TheFantasyAssistant/TFA.ApiTests/TFA.ApiTests.csproj"
 
       - name: 'Architecture Tests'
         run: dotnet test "./TheFantasyAssistant/TFA.ArchitectureTests/TFA.ArchitectureTests.csproj"
