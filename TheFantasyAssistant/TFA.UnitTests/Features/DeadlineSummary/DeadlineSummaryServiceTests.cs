@@ -4,6 +4,7 @@ using TFA.Application.Common.Data;
 using TFA.Application.Common.Keys;
 using TFA.Application.Features.Deadline;
 using TFA.Application.Interfaces.Repositories;
+using TFA.Application.Interfaces.Services;
 using TFA.Infrastructure.Services;
 
 namespace TFA.UnitTests.Features.DeadlineSummary;

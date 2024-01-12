@@ -34,4 +34,5 @@ internal class FantasyBaseDataBuilder
     }
 
     public FantasyBaseData Build() => new(_players, _teams, _gameweeks, _fixtures);
+    public static implicit operator FantasyBaseData(FantasyBaseDataBuilder builder) => builder.Build();
 }

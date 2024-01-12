@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using TFA.Application.Common.Keys;
 using TFA.Application.Features.GameweekFinished;
 using TFA.Application.Interfaces.Repositories;
+using TFA.Application.Interfaces.Services;
 using TFA.Infrastructure.Services;
 
 namespace TFA.UnitTests.Features.GameweekSummary;

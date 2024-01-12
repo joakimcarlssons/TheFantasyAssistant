@@ -353,5 +353,55 @@ public class BaseDataTransformerTests : IClassFixture<MappingFixture>
         result.PlayerTransfers[0].PrevTeamId.Should().Be(1);
         result.PlayerTransfers[0].NewTeamId.Should().Be(2);
     }
+
+    [Fact]
+    public void Transform_WhenDoubleGameweeksAreAnnounced_FixturesAreTransformedCorrectly()
+    {
+        Team team = new TeamBuilder(1)
+            .WithName("Team 1")
+            .WithShortName("T1");
+
+        Team opponent1 = new TeamBuilder(2)
+            .WithName("Opponent 1")
+            .WithShortName("OP1");
+
+        Team opponent2 = new TeamBuilder(3)
+            .WithName("Opponent 2")
+            .WithShortName("OP2");
+
+        Fixture fixture1 = new FixtureBuilder(1)
+            .WithGameweek(1)
+            .WithHomeTeam(1)
+            .WithHomeTeamDifficulty(3)
+            .WithAwayTeam(2)
+            .WithAwayTeamDifficulty(2);
+
+        Fixture fixture2 = new FixtureBuilder(2)
+            .WithGameweek(1)
+            .WithHomeTeam(3)
+            .WithHomeTeamDifficulty(3)
+            .WithAwayTeam(1)
+            .WithAwayTeamDifficulty(2);
+
+        FantasyBaseData prevData = new FantasyBaseDataBuilder()
+            .WithTeams(team, opponent1, opponent2)
+            .WithFixtures(fixture1);
+
+        FantasyBaseData newData = new FantasyBaseDataBuilder()
+            .WithTeams(team, opponent1, opponent2)
+            .WithFixtures(fixture1, fixture2);
+
+        BaseDataTransformer transformer = new();
+        TransformedBaseData? result = transformer.Transform(newData, prevData);
+
+        result.Should().NotBeNull();
+        result.DoubleGameweeks.Should().NotBeEmpty().And.HaveCount(1);
+        result.DoubleGameweeks[0].TeamId.Should().Be(1);
+        result.DoubleGameweeks[0].Opponents.Count.Should().Be(2);
+        result.DoubleGameweeks[0].Opponents[0].TeamId.Should().Be(2);
+        result.DoubleGameweeks[0].Opponents[0].FixtureDifficulty.Should().Be(3);
+        result.DoubleGameweeks[0].Opponents[1].TeamId.Should().Be(3);
+        result.DoubleGameweeks[0].Opponents[1].FixtureDifficulty.Should().Be(2);
+    }
 }
 

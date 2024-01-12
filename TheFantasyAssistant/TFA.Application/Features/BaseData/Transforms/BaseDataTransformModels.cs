@@ -4,7 +4,9 @@ public record TransformedBaseData(
     PlayerPriceChanges PlayerPriceChanges,
     PlayerStatusChanges PlayerStatusChanges,
     IReadOnlyList<NewPlayer> NewPlayers,
-    IReadOnlyList<PlayerTransfer> PlayerTransfers);
+    IReadOnlyList<PlayerTransfer> PlayerTransfers,
+    IReadOnlyList<DoubleGameweek> DoubleGameweeks,
+    IReadOnlyList<BlankGameweek> BlankGameweeks);
 
 public sealed record PlayerPriceChanges(
     IReadOnlyList<PlayerPriceChange> RisingPlayers,
@@ -31,7 +33,7 @@ public sealed record PlayerPriceChange(
     int TeamId,
     string TeamShortName);
 
-public record NewPlayer(
+public sealed record NewPlayer(
     int PlayerId,
     string DisplayName,
     string Position,
@@ -39,10 +41,29 @@ public record NewPlayer(
     int TeamId,
     string TeamShortName);
 
-public record PlayerTransfer(
+public sealed record PlayerTransfer(
     int PlayerId,
     string DisplayName,
     int PrevTeamId,
     string PrevTeamShortName,
     int NewTeamId,
     string NewTeamShortName);
+
+public sealed record BlankGameweek(
+    int Gameweek,
+    int TeamId,
+    string TeamName,
+    string TeamShortName);
+
+public sealed record DoubleGameweek(
+    int Gameweek,
+    int TeamId,
+    string TeamName,
+    string TeamShortName,
+    IReadOnlyList<FixtureOpponent> Opponents);
+
+public sealed record FixtureOpponent(
+    int TeamId,
+    string TeamShortName,
+    int FixtureDifficulty,
+    bool IsHome);
