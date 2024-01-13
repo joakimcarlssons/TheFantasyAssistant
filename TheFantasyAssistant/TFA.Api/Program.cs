@@ -1,5 +1,6 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using TFA.Api;
 using TFA.Api.Exceptions;
@@ -50,6 +51,9 @@ WebApplication app = builder.Build();
 
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
+
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
 }
 
 app.UseMiddleware<ApiKeyAuthMiddleware>();

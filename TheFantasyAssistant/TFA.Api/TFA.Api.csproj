@@ -32,4 +32,17 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="TFA.ApiTests" />
 	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Content Update="wwwroot\apple-touch-icon.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\favicon.ico">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\tfa_logo.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 </Project>
