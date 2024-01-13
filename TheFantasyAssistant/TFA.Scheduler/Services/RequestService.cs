@@ -97,9 +97,16 @@ public class RequestService : IRequestService
             ErrorAction action = statusCode switch
             {
                 // Timeouts will happen quite regular as long as the Api is running on free Azure App Service.
-                // No need to send emails for each timeout, the retry mechanism will take care of it in case the Api don't go up as expected
+                // No need to send emails for each timeout, the retry mechanism will take care of it in case the Api don't go up as expected.
                 HttpStatusCode.GatewayTimeout
                 or HttpStatusCode.RequestTimeout => ErrorAction.Log,
+
+                // This might occur when two jobs are colliding.
+                // Most often this is triggered by the Stay Alive call while the api is busy with other requests.
+                // However, if there is another job triggering this it's probably of interest.
+                HttpStatusCode.ServiceUnavailable => requestUri.AbsolutePath.Contains("stay-alive")
+                    ? ErrorAction.Log 
+                    : ErrorAction.Email,
 
                 // Default is to send a warning email
                 _ => ErrorAction.Email
