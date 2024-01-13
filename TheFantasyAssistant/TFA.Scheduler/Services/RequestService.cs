@@ -94,8 +94,22 @@ public class RequestService : IRequestService
             Uri requestUri = failedRequest.RequestMessage.RequestUri;
             HttpStatusCode statusCode = failedRequest.StatusCode;
 
-            string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
-            await _email.SendAsync(message, message);
+            ErrorAction action = statusCode switch
+            {
+                // Timeouts will happen quite regular as long as the Api is running on free Azure App Service.
+                // No need to send emails for each timeout, the retry mechanism will take care of it in case the Api don't go up as expected
+                HttpStatusCode.GatewayTimeout
+                or HttpStatusCode.RequestTimeout => ErrorAction.Log,
+
+                // Default is to send a warning email
+                _ => ErrorAction.Email
+            };
+
+            if (action == ErrorAction.Email)
+            {
+                string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
+                await _email.SendAsync(message, message);
+            }
         }
     }
 
@@ -114,4 +128,11 @@ public class RequestService : IRequestService
         request.Headers.Add(ApiOptions.ApiKeyHeaderValue, _apiOptions.ApiKey);
         return _httpClient.SendAsync(request, cancellationToken);
     }
+}
+
+public enum ErrorAction
+{
+    None,
+    Log,
+    Email
 }
