@@ -9,7 +9,7 @@ using TFA.Domain.Data;
 
 namespace TFA.Presentation.Bots.Discord;
 
-public class DiscordSlashCommands(IBotService bot, IBaseDataService fantasyData) : ApplicationCommandModule
+public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
 {
 
     [SlashCommand(BotCommands.TeamFixtures.Name, BotCommands.TeamFixtures.Description)]
@@ -19,8 +19,25 @@ public class DiscordSlashCommands(IBotService bot, IBaseDataService fantasyData)
         [Option("from", "From what gameweek to check")] long fromGw,
         [Option("to", "To what gameweek to check")] long toGw)
     {
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
-            .WithContent("Coming soon..."));
+        await WrapResponseAsync<TeamFixturesCommandResponse>(
+            ctx,
+            ctx.GetFantasyType(),
+            BotCommands.TeamFixtures.Name,
+            new Dictionary<string, string>
+            {
+                { "teamId", teamId.ToString() },
+                { "fromGw", fromGw.ToString() },
+                { "toGw", toGw.ToString() }
+            },
+            x =>
+            {
+                IReadOnlyList<string> content = x.InvokeContentBuilderBuildMethodFromExpectedBuilder<TeamFixturesCommandResponse, string>();
+                return content.Count > 0
+                    ? ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                        .WithContent(content[0]))
+                    : ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                        .WithContent("Failed to load data."));
+            });
     }
 
     [SlashCommand(BotCommands.BestFixtures.Name, BotCommands.BestFixtures.Description)]

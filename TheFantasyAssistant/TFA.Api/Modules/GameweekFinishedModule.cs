@@ -4,7 +4,7 @@ using TFA.Application.Features.GameweekFinished.Commands;
 
 namespace TFA.Api.Modules;
 
-public class GameweekFinishedModule : IModule
+public sealed class GameweekFinishedModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {

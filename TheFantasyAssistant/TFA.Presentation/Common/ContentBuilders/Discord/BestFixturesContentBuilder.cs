@@ -4,7 +4,7 @@ using TFA.Application.Interfaces.Services;
 
 namespace TFA.Presentation.Common.ContentBuilders.Discord;
 
-public class DiscordBotCommandContentBuilder : AbstractContentBuilder<BestFixturesCommandResponse, string>
+public class BestFixturesContentBuilder : AbstractContentBuilder<BestFixturesCommandResponse, string>
 {
     public override Presenter Presenter => Presenter.Discord;
 

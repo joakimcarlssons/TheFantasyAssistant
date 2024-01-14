@@ -4,7 +4,7 @@ using TFA.Application.Features.LeagueData.Commands;
 
 namespace TFA.Api.Modules;
 
-public class LeagueModule : IModule
+public sealed class LeagueModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {

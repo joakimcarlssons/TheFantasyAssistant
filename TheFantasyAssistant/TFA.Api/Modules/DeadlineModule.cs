@@ -4,7 +4,7 @@ using TFA.Application.Features.Deadline.Commands;
 
 namespace TFA.Api.Modules;
 
-public class DeadlineModule : IModule
+public sealed class DeadlineModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {

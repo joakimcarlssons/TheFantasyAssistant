@@ -16,10 +16,10 @@ public sealed class Endpoints
     public const string FPLGameweeks = $"{Prefix}{BaseData}{FPL}/gameweeks";
     public const string FPLFixtures = $"{Prefix}{BaseData}{FPL}/fixtures";
     public const string FPLLeagueTableRefresh = $"{Prefix}{FPL}/league/table/{Refresh}";
-
     public const string FPLPredictedPriceChanges = $"{Prefix}{FPL}/{PredictedPriceChange}";
     public const string FPLDeadline = $"{Prefix}{FPL}/deadline";
     public const string FPLGameweekFinished = $"{Prefix}{FPL}/gw-finished";
+    public const string FPLFixturesLiveUpdate = $"{Prefix}{FPL}/fixtures-live";
 
     // Allsvenskan endpoints
     public const string FASBaseDataRefresh = $"{Prefix}{BaseData}{Allsvenskan}/{Refresh}";
@@ -30,6 +30,7 @@ public sealed class Endpoints
     public const string FASDeadline = $"{Prefix}{Allsvenskan}/deadline";
     public const string FASGameweekFinished = $"{Prefix}{Allsvenskan}/gw-finished";
     public const string FASLeagueTableRefresh = $"{Prefix}{Allsvenskan}/league/table/{Refresh}";
+    public const string FASFixturesLiveUpdate = $"{Prefix}{Allsvenskan}/fixtures-live";
 
     // System endpoints
     public const string StayAlive = $"{Prefix}stay-alive";
@@ -46,4 +47,5 @@ public sealed class EndpointTags
     public const string PredictedPriceChanges = "Predicted Price Changes";
     public const string Summaries = "Summaries";
     public const string System = "System";
+    public const string Fixtures = "Fixtures";
 }

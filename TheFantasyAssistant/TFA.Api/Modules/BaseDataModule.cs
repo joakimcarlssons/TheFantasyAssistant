@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TFA.Api.Modules;
 
-public class BaseDataModule : IModule
+public sealed class BaseDataModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {

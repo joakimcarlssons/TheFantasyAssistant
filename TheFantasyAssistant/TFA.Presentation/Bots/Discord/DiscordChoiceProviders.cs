@@ -7,28 +7,14 @@ namespace TFA.Presentation.Bots.Discord;
 
 public sealed class TeamChoiceProvider : ChoiceProvider
 {
-    //public Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider()
-    //{
-
-    //    //if(Presentation.ServiceProvider?.BuildServiceProvider() is { } services
-    //    //   && services.GetService<IBaseDataService>() is { } fantasyData)
-    //    //{
-    //    //if (await fantasyData.GetData(FantasyType.FPL) is { IsError: false } data)
-    //    //{
-    //    //    return data.Value.Teams
-    //    //        .Select(team => new DiscordApplicationCommandOptionChoice(team.Name, team.Id));
-    //    //}
-    //    //}
-
-    //    return Task.FromResult<IEnumerable<DiscordApplicationCommandOptionChoice>>([]);
-    //}
-
     public override async Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider()
     {
         if (Services.GetService(typeof(IBaseDataService)) is IBaseDataService fantasyData
-            && (await fantasyData.GetData(FantasyType.FPL) is { IsError: false } data))
+            && (await fantasyData.GetData(FantasyType.FPL) is { IsError: false } fplData)
+            && (await fantasyData.GetData(FantasyType.Allsvenskan) is { IsError: false } fasData))
         {
-            return data.Value.Teams
+            return fplData.Value.Teams
+                //.Concat(fasData.Value.Teams)
                 .Select(team => new DiscordApplicationCommandOptionChoice(team.Name, team.Id));
         }
 

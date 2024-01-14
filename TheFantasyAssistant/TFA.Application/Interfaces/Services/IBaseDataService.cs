@@ -6,5 +6,3 @@ public interface IBaseDataService : IDataService<ErrorOr<FantasyBaseData>>
 {
     Task<ErrorOr<KeyedBaseData>> GetKeyedData(FantasyType fantasyType, CancellationToken cancellationToken = default);
 }
-
-

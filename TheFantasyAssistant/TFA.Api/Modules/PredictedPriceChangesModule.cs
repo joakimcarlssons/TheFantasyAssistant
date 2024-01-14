@@ -4,7 +4,7 @@ using TFA.Application.Features.PredictedPriceChanges.Commands;
 
 namespace TFA.Api.Modules;
 
-public class PredictedPriceChangesModule : IModule
+public sealed class PredictedPriceChangesModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {

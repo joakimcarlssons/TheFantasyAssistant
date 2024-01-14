@@ -11,5 +11,6 @@ public interface IBotService
         IReadOnlyDictionary<string, string> options);
 }
 
-public interface IBotCommandResponse;
-public sealed record BestFixturesCommandResponse(IReadOnlyList<DiscordCommandBestFixturesTeam> Teams) : IBotCommandResponse, IPresentable;
+public interface IBotCommandResponse : IPresentable;
+public sealed record BestFixturesCommandResponse(IReadOnlyList<DiscordCommandBestFixturesTeam> Teams) : IBotCommandResponse;
+public sealed record TeamFixturesCommandResponse(DiscordCommandBestFixturesTeam Team) : IBotCommandResponse;

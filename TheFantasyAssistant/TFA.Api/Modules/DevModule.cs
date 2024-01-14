@@ -6,7 +6,7 @@ namespace TFA.Api.Modules;
 /// <summary>
 /// Only to be used in development.
 /// </summary>
-public class DevModule : IModule
+public sealed class DevModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {

@@ -4,7 +4,7 @@ namespace TFA.Api.Modules;
 /// <summary>
 /// Used for system endpoints such as keeping the server alive.
 /// </summary>
-public class SystemModule : IModule
+public sealed class SystemModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
