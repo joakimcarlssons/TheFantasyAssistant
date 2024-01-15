@@ -10,8 +10,8 @@ namespace TFA.Infrastructure.Services;
 public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
 {
     public async ValueTask<ErrorOr<IBotCommandResponse>> HandleCommand(
-        [ConstantExpected] string command, 
-        FantasyType fantasyType, 
+        [ConstantExpected] string command,
+        FantasyType fantasyType,
         IReadOnlyDictionary<string, string> options)
             => command switch
             {
@@ -59,7 +59,7 @@ public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
                         opponents.OrderBy(opp => opp.Gameweek).ToList());
                 });
 
-            return new(result.First(team => team.TeamId == team.TeamId));
+            return new(result.First(t => t.TeamId == team.Id));
         }
 
         // todo: fix, return ErrorOr maybe?
