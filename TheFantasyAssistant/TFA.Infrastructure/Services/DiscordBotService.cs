@@ -16,7 +16,8 @@ public sealed class DiscordBotService(IBaseDataService baseData) : IBotService
             => command switch
             {
                 BotCommands.BestFixtures.Name => await GetBestFixtures(fantasyType, options),
-                BotCommands.TeamFixtures.Name => await GetTeamFixtures(fantasyType, options),
+                BotCommands.FPLTeamFixtures.Name
+                or BotCommands.AllsvenskanTeamFixtures.Name => await GetTeamFixtures(fantasyType, options),
                 _ => Errors.Bot.CommandNotImplemented
             };
 

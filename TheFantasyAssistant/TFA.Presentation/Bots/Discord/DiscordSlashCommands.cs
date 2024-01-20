@@ -6,23 +6,32 @@ using System.Diagnostics.CodeAnalysis;
 using TFA.Application.Common.Commands;
 using TFA.Application.Interfaces.Services;
 using TFA.Domain.Data;
+using TFA.Presentation.Bots.Discord.ChoiceProviders;
 
 namespace TFA.Presentation.Bots.Discord;
 
 public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
 {
 
-    [SlashCommand(BotCommands.TeamFixtures.Name, BotCommands.TeamFixtures.Description)]
-    public async Task TeamFixturesCommand(InteractionContext ctx,
-        [ChoiceProvider(typeof(TeamChoiceProvider))]
+    [SlashCommand(BotCommands.FPLTeamFixtures.Name, BotCommands.FPLTeamFixtures.Description)]
+    public async Task FPLTeamFixturesCommand(InteractionContext ctx,
+        [ChoiceProvider(typeof(FPLTeamChoiceProvider))]
         [Option("team", "The team you want to check.")] long teamId,
         [Option("from", "From what gameweek to check")] long fromGw,
         [Option("to", "To what gameweek to check")] long toGw)
     {
-        await WrapResponseAsync<TeamFixturesCommandResponse>(
+        if (ctx.GetFantasyType() != FantasyType.FPL)
+        {
+            await ctx.CreateResponseAsync(
+                InteractionResponseType.ChannelMessageWithSource,
+                DiscordBotResponses.CommandDoesNotMatchContext());
+        }
+        else
+        {
+            await WrapResponseAsync<TeamFixturesCommandResponse>(
             ctx,
             ctx.GetFantasyType(),
-            BotCommands.TeamFixtures.Name,
+            BotCommands.FPLTeamFixtures.Name,
             new Dictionary<string, string>
             {
                 { "teamId", teamId.ToString() },
@@ -38,6 +47,44 @@ public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
                     : ctx.EditResponseAsync(new DiscordWebhookBuilder()
                         .WithContent("Failed to load data."));
             });
+        }
+    }
+
+    [SlashCommand(BotCommands.AllsvenskanTeamFixtures.Name, BotCommands.AllsvenskanTeamFixtures.Description)]
+    public async Task AllsvenskanTeamFixturesCommand(InteractionContext ctx,
+        [ChoiceProvider(typeof(AllsvenskanTeamChoiceProvider))]
+        [Option("team", "The team you want to check.")] long teamId,
+        [Option("from", "From what gameweek to check")] long fromGw,
+        [Option("to", "To what gameweek to check")] long toGw)
+    {
+        if (ctx.GetFantasyType() != FantasyType.Allsvenskan)
+        {
+            await ctx.CreateResponseAsync(
+                InteractionResponseType.ChannelMessageWithSource,
+                DiscordBotResponses.CommandDoesNotMatchContext());
+        }
+        else
+        {
+            await WrapResponseAsync<TeamFixturesCommandResponse>(
+            ctx,
+            ctx.GetFantasyType(),
+            BotCommands.AllsvenskanTeamFixtures.Name,
+            new Dictionary<string, string>
+            {
+                { "teamId", teamId.ToString() },
+                { "fromGw", fromGw.ToString() },
+                { "toGw", toGw.ToString() }
+            },
+            x =>
+            {
+                IReadOnlyList<string> content = x.InvokeContentBuilderBuildMethodFromExpectedBuilder<TeamFixturesCommandResponse, string>();
+                return content.Count > 0
+                    ? ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                        .WithContent(content[0]))
+                    : ctx.EditResponseAsync(new DiscordWebhookBuilder()
+                        .WithContent("Failed to load data."));
+            });
+        }
     }
 
     [SlashCommand(BotCommands.BestFixtures.Name, BotCommands.BestFixtures.Description)]
