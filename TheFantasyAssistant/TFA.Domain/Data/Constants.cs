@@ -97,6 +97,19 @@ public sealed class ChipNames
     public const string LoanTeam = "uteam";
 }
 
+public sealed class FixtureStatIdentifiers
+{
+    public const string MinutesPlayed = "minutes";
+    public const string CleanSheets = "clean_sheets";
+    public const string Bonus = "bonus";
+    public const string Goals = "goals_scored";
+    public const string Assists = "assists";
+    public const string YellowCards = "yellow_cards";
+    public const string RedCards = "red_cards";
+    public const string AttackingBonus = "attacking_bonus";
+    public const string DefendingBonus = "defending_bonus";
+}
+
 public sealed class FantasyLastGameweek
 {
     public const int FPL = 38;

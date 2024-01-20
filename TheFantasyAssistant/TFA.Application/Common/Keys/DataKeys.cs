@@ -12,6 +12,7 @@ public sealed class DataKeys
     public const string FPL_LATEST_CHECKED_DEADLINE = "fpl_checked_deadline";
     public const string FPL_LATEST_CHECKED_FINISHED_GAMEWEEK = "fpl_checked_gameweek";
     public const string FPL_PLAYERS_NET_TRANSFERS = "fpl_players_net_transfers";
+    public const string FPL_FINISHED_GAMEWEEK_FIXTURES = "fpl_finished_gw_fixtures";
 
     public const string FAS_BASE_DATA = "fas_base_data";
     public const string FAS_BASE_DATA_TRANSFORMED = "transformed_fas_base_data";
@@ -22,6 +23,7 @@ public sealed class DataKeys
     public const string FAS_LATEST_CHECKED_FINISHED_GAMEWEEK = "fas_checked_gameweek";
     public const string FAS_PLAYER_PROJECTED_POINTS = "fas_player_projected_points";
     public const string FAS_PLAYERS_NET_TRANSFERS = "fas_players_net_transfers";
+    public const string FAS_FINISHED_GAMEWEEK_FIXTURES = "fas_finished_gw_fixtures";
 }
 
 public enum KeyType
@@ -31,7 +33,8 @@ public enum KeyType
     LeagueData,
     PredictedPriceChanges,
     LastCheckedDeadline,
-    LastCheckedFinishedGameweek
+    LastCheckedFinishedGameweek,
+    FinishedFixtures,
 }
 
 public static class DataKeysHandler
@@ -79,6 +82,13 @@ public static class DataKeysHandler
                 {
                     FantasyType.FPL => DataKeys.FPL_LATEST_CHECKED_FINISHED_GAMEWEEK,
                     FantasyType.Allsvenskan => DataKeys.FAS_LATEST_CHECKED_FINISHED_GAMEWEEK,
+                    _ => throw new FantasyTypeNotSupportedException()
+                },
+            KeyType.FinishedFixtures =>
+                fantasyType switch
+                {
+                    FantasyType.FPL => DataKeys.FPL_FINISHED_GAMEWEEK_FIXTURES,
+                    FantasyType.Allsvenskan => DataKeys.FAS_FINISHED_GAMEWEEK_FIXTURES,
                     _ => throw new FantasyTypeNotSupportedException()
                 },
 

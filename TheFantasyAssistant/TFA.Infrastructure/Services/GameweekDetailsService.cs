@@ -1,7 +1,16 @@
-﻿using TFA.Application.Config;
+﻿using Mapster;
+using System.Collections.Frozen;
+using System.Data;
+using System.Threading;
+using TFA.Application.Common.Keys;
+using TFA.Application.Config;
 using TFA.Application.Errors;
 using TFA.Application.Features.FixtureLiveUpdate;
+using TFA.Application.Interfaces.Repositories;
 using TFA.Domain.Exceptions;
+using TFA.Domain.Models.Fixtures;
+using TFA.Domain.Models.Players;
+using TFA.Domain.Models.Teams;
 using TFA.Infrastructure.Dtos.Gameweek;
 using TFA.Infrastructure.Dtos.Player;
 
@@ -17,7 +26,8 @@ public sealed class GameweekDetailsService(
     HttpClient httpClient,
     IBaseDataService fantasyData,
     ILogger<GameweekDetailsService> logger,
-    IOptions<SourceOptions> sourceOptions) : IGameweekDetailsService
+    IOptions<SourceOptions> sourceOptions,
+    IFirebaseRepository db) : IGameweekDetailsService
 {
     private readonly SourceOptions sources = sourceOptions.Value;
 
@@ -31,9 +41,46 @@ public sealed class GameweekDetailsService(
 
         if (baseData.Value.Gameweeks.FirstOrDefault(gw => gw.IsCurrent) is { Id: > 0 } currentGameweek)
         {
-            if (await GetGameweekDetailsData(fantasyType, currentGameweek.Id, cancellationToken) is { } gameweekLiveData)
+            if (await GetGameweekDetailsData(fantasyType, currentGameweek.Id, cancellationToken) is { Players.Count: > 0 } gameweekLiveData)
             {
-                // Map GameweekLiveData to GameweekLiveUpdateData and return
+                // Get all fixtures
+                FrozenSet<int> gameweekFixtures = gameweekLiveData.Players
+                    .Where(x => x.GameweekDetails is not null)
+                    .SelectMany(x => x.GameweekDetails!.Select(x => x.FixtureId))
+                    .ToFrozenSet();
+
+                string dataKey = fantasyType.GetDataKey(KeyType.FinishedFixtures);
+
+                IReadOnlyList<int> previouslyFinishedFixtures = await db.Get<IReadOnlyList<int>>(dataKey, cancellationToken);
+                IReadOnlyList<Fixture> newFinishedFixtures = baseData.Value.Fixtures
+                    .Where(fixture => fixture.IsFinished
+                        && !previouslyFinishedFixtures.Contains(fixture.Id)
+                        && gameweekFixtures.Contains(fixture.Id))
+                    .ToList();
+
+                // Map data
+                ILookup<int, Player> playersByTeamId = baseData.Value.Players.ToLookup(x => x.TeamId);
+                IReadOnlyDictionary<int, Team> teamsById = baseData.Value.Teams.ToDictionary(team => team.Id);
+                ILookup<int, FantasyGameweekLivePlayerRequest> gameweekLivePlayersByFixtureId = gameweekLiveData.Players
+                    .SelectMany(player => player.GameweekDetails!
+                        .Select(details => new
+                        {
+                            Player = player,
+                            details.FixtureId,
+                        }))
+                    .ToLookup(x => x.FixtureId, x => x.Player);
+
+                GameweekLiveUpdateData mappedData = (
+                    currentGameweek.Id, 
+                    newFinishedFixtures, 
+                    teamsById,
+                    gameweekLivePlayersByFixtureId, 
+                    playersByTeamId).Adapt<GameweekLiveUpdateData>();
+
+                // Update the database with all finished fixtures
+                // Todo: Maybe this should be moved to the handler?
+                await db.Update(dataKey, previouslyFinishedFixtures.Union(newFinishedFixtures.Select(f => f.Id)), cancellationToken);
+                return mappedData;
             }
 
             logger.LogDataFetchingError(typeof(FantasyGameweekLiveRequest), typeof(GameweekDetailsService), $"Could not find gameweek data for current gameweek {currentGameweek.Id}");

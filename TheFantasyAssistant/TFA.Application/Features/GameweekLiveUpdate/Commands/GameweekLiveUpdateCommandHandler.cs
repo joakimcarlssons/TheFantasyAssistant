@@ -1,18 +1,19 @@
 ﻿
-using Microsoft.Extensions.Logging;
-using TFA.Application.Interfaces.Repositories;
-using TFA.Application.Interfaces.Services;
+using Mapster;
+using TFA.Application.Features.GameweekLiveUpdate.Events;
 
 namespace TFA.Application.Features.FixtureLiveUpdate.Commands;
 
-public sealed class GameweekLiveUpdateCommandHandler(
-    ILogger<GameweekLiveUpdateCommandHandler> logger,
-    IPublisher publisher,
-    IBaseDataService fantasyData,
-    IFirebaseRepository db) : IRequestHandler<GameweekLiveUpdateCommand, ErrorOr<GameweekLiveUpdateData>>
+public sealed class GameweekLiveUpdateCommandHandler(IPublisher publisher) : IRequestHandler<GameweekLiveUpdateCommand, ErrorOr<GameweekLiveUpdateData>>
 {
-    public Task<ErrorOr<GameweekLiveUpdateData>> Handle(GameweekLiveUpdateCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<GameweekLiveUpdateData>> Handle(GameweekLiveUpdateCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (request.Data.IsError)
+            return request.Data;
+
+        await publisher.Publish(
+            request.Data.Value.Adapt<GameweekLiveUpdatePresentModel>(), 
+            cancellationToken);
+        return request.Data;
     }
 }
