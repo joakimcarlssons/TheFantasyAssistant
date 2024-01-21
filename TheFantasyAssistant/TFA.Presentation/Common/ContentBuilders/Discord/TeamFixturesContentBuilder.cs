@@ -19,7 +19,7 @@ public class TeamFixturesContentBuilder : AbstractContentBuilder<TeamFixturesCom
                 foreach (DiscordCommandBestFixturesTeamOpponent opponent in data.Team.Opponents)
                 {
                     sb.AppendLine($"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} " +
-                        $"{opponent.OpponentShortName} ({(opponent.IsHome ? "H" : "A")})");
+                        $"GW{opponent.Gameweek} - {opponent.OpponentShortName} ({(opponent.IsHome ? "H" : "A")})");
                 }
 
                 return sb.ToString();
