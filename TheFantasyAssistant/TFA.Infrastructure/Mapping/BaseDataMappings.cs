@@ -23,7 +23,8 @@ public class BaseDataMappings : IRegister
             .Map(dest => dest.CleanSheetsPerMatch, src => src.CleanSheetsPerMatch == null ? 0 : src.CleanSheetsPerMatch);
 
         config.ForType<FantasyTeamRequest, Team>()
-            .MapToConstructor(true);
+            .MapToConstructor(true)
+            .Map(dest => dest.IsAvailable, src => !src.Unavailable);
 
         config.ForType<FantasyGameweekRequest, Gameweek>()
             .MapToConstructor(true);

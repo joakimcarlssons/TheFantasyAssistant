@@ -29,7 +29,7 @@ public static class Setup
         {
             Token = serviceProvider.GetRequiredService<IOptions<DiscordOptions>>().Value.Token,
             TokenType = TokenType.Bot,
-            Intents = DiscordIntents.AllUnprivileged
+            Intents = DiscordIntents.AllUnprivileged,
         });
 
         // Register all slash commands from executing assembly

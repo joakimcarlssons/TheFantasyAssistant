@@ -20,7 +20,6 @@ public abstract class TeamChoiceProvider(FantasyType fantasyType) : ChoiceProvid
     }
 }
 
-
 public class FPLTeamChoiceProvider() : TeamChoiceProvider(FantasyType.FPL)
 {
     public override Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider() => ProvideTeams();

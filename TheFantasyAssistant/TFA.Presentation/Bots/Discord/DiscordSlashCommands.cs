@@ -12,6 +12,13 @@ namespace TFA.Presentation.Bots.Discord;
 
 public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
 {
+    [SlashCommand("ping", "Ping to get pong.")]
+    public async Task Ping(InteractionContext ctx)
+    {
+        await ctx.CreateResponseAsync(
+            InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder().WithContent("Pong!"));
+    }
 
     [SlashCommand(BotCommands.FPLTeamFixtures.Name, BotCommands.FPLTeamFixtures.Description)]
     public async Task FPLTeamFixturesCommand(InteractionContext ctx,
@@ -88,11 +95,12 @@ public class DiscordSlashCommands(IBotService bot) : ApplicationCommandModule
     }
 
     [SlashCommand(BotCommands.BestFixtures.Name, BotCommands.BestFixtures.Description)]
-    public async Task BestFixturesCommand(InteractionContext ctx,
+    public Task BestFixturesCommand(
+        InteractionContext ctx,
         [Option("from", "From what gameweek to check")] long fromGw,
         [Option("to", "To what gameweek to check")] long toGw)
     {
-        await WrapResponseAsync<BestFixturesCommandResponse>(
+        return WrapResponseAsync<BestFixturesCommandResponse>(
             ctx, 
             ctx.GetFantasyType(),
             BotCommands.BestFixtures.Name,

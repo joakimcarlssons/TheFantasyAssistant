@@ -37,7 +37,11 @@ public class BaseDataService(
         IReadOnlyList<Gameweek> gameweeks = mapper.Map<IReadOnlyList<Gameweek>>(baseData.Value.Gameweeks);
         IReadOnlyList<Fixture> fixtures = mapper.Map<IReadOnlyList<Fixture>>(fixtureData.Value);
 
-        return new FantasyBaseData(players, teams, gameweeks, fixtures);
+        return new FantasyBaseData(
+            players, 
+            teams.Where(team => team.IsAvailable).ToList(), 
+            gameweeks,
+            fixtures);
     }
 
     public async Task<ErrorOr<KeyedBaseData>> GetKeyedData(FantasyType fantasyType, CancellationToken cancellationToken = default)

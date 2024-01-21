@@ -5,6 +5,7 @@ public sealed record Team(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("short_name")] string ShortName,
     [property: JsonPropertyName("team_code")] int TeamCode,
+    [property: JsonPropertyName("available")] bool IsAvailable,
     [property: JsonPropertyName("matches_played")] int? MatchesPlayed,
     [property: JsonPropertyName("table_position")] int? Position,
     [property: JsonPropertyName("wins")] int? Wins,
