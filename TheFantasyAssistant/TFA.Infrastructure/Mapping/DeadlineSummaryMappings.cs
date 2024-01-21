@@ -16,6 +16,7 @@ public class DeadlineSummaryMappings : IRegister
             .Map(dest => dest.TeamId, src => src.Team.Id)
             .Map(dest => dest.TeamShortName, src => src.Team.ShortName)
             .Map(dest => dest.ExpectedPoints, src => src.Player.ExpectedPointsNextGameweek)
+            .Map(dest => dest.ChancesCreatedPer90, src => Math.Round((src.PlayerDetails.ChancesCreated / src.Player.MinutesPlayed) * 90, 2))
             .Map(dest => dest, src => src.PlayerDetails)
             .Map(dest => dest, src => src.Player);
 

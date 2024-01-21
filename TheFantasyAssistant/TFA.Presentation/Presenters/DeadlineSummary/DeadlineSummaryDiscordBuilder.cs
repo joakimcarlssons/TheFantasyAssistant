@@ -68,8 +68,8 @@ public class DeadlineSummaryDiscordBuilder : AbstractContentBuilder<DeadlineSumm
                 $"{Emoji.BlackSmallSquare} Form: {player.Form}\n" +
                 $"{Emoji.BlackSmallSquare} xGoals/90 min: {player.ExpectedGoalsPer90}\n" +
                 $"{Emoji.BlackSmallSquare} xAssists/90 min: {player.ExpectedAssistsPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Shots/90 min: {player.ExpectedShotsPer90}\n" +
-                $"{Emoji.BlackSmallSquare} Shots on target/90 min: {player.ExpectedShotsOnTargetPer90}\n" +
+                $"{Emoji.BlackSmallSquare} Shots/90 min: {player.ShotsPer90}\n" +
+                $"{Emoji.BlackSmallSquare} Shots on target/90 min: {player.ShotsOnTargetPer90}\n" +
                 $"{Emoji.BlackSmallSquare} Chances created/90 min: {player.ChancesCreatedPer90}\n" +
                 $"{Emoji.BlackSmallSquare} Blocks/90 min: {player.BlocksPer90}\n" +
                 $"{Emoji.BlackSmallSquare} Interceptions/90 min: {player.InterceptionsPer90}\n" +
