@@ -5,9 +5,8 @@ using TFA.Application.Interfaces.Services;
 namespace TFA.Presentation.Presenters.GameweekLiveUpdate;
 
 public class GameweekLiveUpdatePresenter(
-    //[FromKeyedServices(PresenterKeys.Discord)] IPresenter discord
-    ) : IPresenter<GameweekLiveUpdatePresentModel>
+    [FromKeyedServices(PresenterKeys.Discord)] IPresenter discord) : IPresenter<GameweekLiveUpdatePresentModel>
 {
     public Task Present(GameweekLiveUpdatePresentModel data, CancellationToken cancellationToken = default)
-        => Task.WhenAll([]);
+        => Task.WhenAll([discord.Present(data, cancellationToken)]);
 }

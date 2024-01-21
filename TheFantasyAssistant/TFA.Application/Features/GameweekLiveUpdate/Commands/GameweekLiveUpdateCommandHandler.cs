@@ -1,19 +1,35 @@
 ﻿
 using Mapster;
+using TFA.Application.Common.Keys;
 using TFA.Application.Features.GameweekLiveUpdate.Events;
+using TFA.Application.Interfaces.Repositories;
 
 namespace TFA.Application.Features.FixtureLiveUpdate.Commands;
 
-public sealed class GameweekLiveUpdateCommandHandler(IPublisher publisher) : IRequestHandler<GameweekLiveUpdateCommand, ErrorOr<GameweekLiveUpdateData>>
+public sealed class GameweekLiveUpdateCommandHandler(
+    IPublisher publisher,
+    IFirebaseRepository db) : IRequestHandler<GameweekLiveUpdateCommand, ErrorOr<GameweekLiveUpdateData>>
 {
-    public async Task<ErrorOr<GameweekLiveUpdateData>> Handle(GameweekLiveUpdateCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<GameweekLiveUpdateData>> Handle(GameweekLiveUpdateCommand data, CancellationToken cancellationToken)
     {
-        if (request.Data.IsError)
-            return request.Data;
+        if (data.Data.IsError)
+            return data.Data;
 
         await publisher.Publish(
-            request.Data.Value.Adapt<GameweekLiveUpdatePresentModel>(), 
+            data.Data.Value.Adapt<GameweekLiveUpdatePresentModel>() with
+            {
+                FantasyType = data.FantasyType
+            }, 
             cancellationToken);
-        return request.Data;
+
+        // Update all checked finished fixtures
+        string dataKey = data.FantasyType.GetDataKey(KeyType.FinishedFixtures);
+        IReadOnlyList<int> previouslyFinishedFixtures = await db.Get<IReadOnlyList<int>>(dataKey, cancellationToken);
+        await db.Update(
+            dataKey,
+            previouslyFinishedFixtures.Union(data.Data.Value.FinishedFixtures.Select(f => f.FixtureId)),
+            cancellationToken);
+
+        return data.Data;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using TFA.Application.Features.FixtureLiveUpdate;
 using TFA.Application.Features.GameweekLiveUpdate.Events;
 using TFA.Domain.Models.Fixtures;
@@ -52,22 +51,66 @@ public class GameweekDetailsMappings : IRegister
             .Map(d => d.AwayTeamShortName, s => s.AwayTeam.TeamShortName)
             .Map(d => d.HomeTeamScore, s => s.HomeTeam.GoalsScored)
             .Map(d => d.AwayTeamScore, s => s.AwayTeam.GoalsScored)
-            .Map(d => d.HomeTeamGoalScorers, s => s.HomeTeam.Players
+            
+            // Goal scorers
+            .Map(d => d.GoalScorers, s => s.HomeTeam.Players
                 .Where(p => p.GoalsScored > 0)
-                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, p.GoalsScored).Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
-            .Map(d => d.HomeTeamAssisters, s => s.HomeTeam.Players
+                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.HomeTeam.TeamShortName, p.GoalsScored)
+                .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>())
+                .Concat(s.AwayTeam.Players
+                    .Where(p => p.GoalsScored > 0)
+                    .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.AwayTeam.TeamShortName, p.GoalsScored)
+                    .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
+                .OrderByDescending(p => p.Value))
+
+            // Assisters
+            .Map(d => d.Assisters, s => s.HomeTeam.Players
                 .Where(p => p.Assists > 0)
-                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, p.Assists).Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
-            .Map(d => d.AwayTeamGoalScorers, s => s.AwayTeam.Players
-                .Where(p => p.GoalsScored > 0)
-                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, p.GoalsScored).Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
-            .Map(d => d.AwayTeamAssisters, s => s.AwayTeam.Players
-                .Where(p => p.Assists > 0)
-                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, p.Assists).Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()));
+                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.HomeTeam.TeamShortName, p.Assists)
+                .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>())
+                .Concat(s.AwayTeam.Players
+                    .Where(p => p.Assists > 0)
+                    .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.AwayTeam.TeamShortName, p.Assists)
+                    .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
+                .OrderByDescending(p => p.Value))
+
+            // Bonus
+            .Map(d => d.BonusPlayers, s => s.HomeTeam.Players
+                .Where(p => p.Bonus > 0)
+                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.HomeTeam.TeamShortName, p.Bonus)
+                .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>())
+                .Concat(s.AwayTeam.Players
+                    .Where(p => p.Bonus > 0)
+                    .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.AwayTeam.TeamShortName, p.Bonus)
+                    .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
+                .OrderByDescending(p => p.Value))
+
+            // Att. Bonus
+            .Map(d => d.AttackingBonusPlayers, s => s.HomeTeam.Players
+                .Where(p => p.AttackingBonus > 0)
+                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.HomeTeam.TeamShortName, p.AttackingBonus)
+                .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>())
+                .Concat(s.AwayTeam.Players
+                    .Where(p => p.AttackingBonus > 0)
+                    .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.AwayTeam.TeamShortName, p.AttackingBonus)
+                    .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
+                .OrderByDescending(p => p.Value))
+
+            // Def. Bonus
+            .Map(d => d.DefendingBonusPlayers, s => s.HomeTeam.Players
+                .Where(p => p.DefendingBonus > 0)
+                .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.HomeTeam.TeamShortName, p.DefendingBonus)
+                .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>())
+                .Concat(s.AwayTeam.Players
+                    .Where(p => p.DefendingBonus > 0)
+                    .Select(p => new FinishedFixturePlayerPresentModelMapper(p, s.AwayTeam.TeamShortName, p.DefendingBonus)
+                    .Adapt<GameweekLiveFixtureFinishedPlayerPresentModel>()))
+                .OrderByDescending(p => p.Value));
 
         config.ForType<FinishedFixturePlayerPresentModelMapper, GameweekLiveFixtureFinishedPlayerPresentModel>()
             .MapToConstructor(true)
             .Map(d => d.PlayerId, s => s.Player.PlayerId)
+            .Map(d => d.TeamShortName, s => s.TeamShortName)
             .Map(d => d.DisplayName, s => s.Player.DisplayName)
             .Map(d => d.Value, s => s.Value);
     }
@@ -129,4 +172,4 @@ public class GameweekDetailsMappings : IRegister
 
 }
 
-internal readonly record struct FinishedFixturePlayerPresentModelMapper(GameweekLiveFinishedFixturePlayerDetails Player, int Value);
+internal readonly record struct FinishedFixturePlayerPresentModelMapper(GameweekLiveFinishedFixturePlayerDetails Player, string TeamShortName, int Value);

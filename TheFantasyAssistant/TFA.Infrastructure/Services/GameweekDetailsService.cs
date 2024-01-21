@@ -49,9 +49,10 @@ public sealed class GameweekDetailsService(
                     .SelectMany(x => x.GameweekDetails!.Select(x => x.FixtureId))
                     .ToFrozenSet();
 
-                string dataKey = fantasyType.GetDataKey(KeyType.FinishedFixtures);
+                IReadOnlyList<int> previouslyFinishedFixtures = await db.Get<IReadOnlyList<int>>(
+                    fantasyType.GetDataKey(KeyType.FinishedFixtures), 
+                    cancellationToken);
 
-                IReadOnlyList<int> previouslyFinishedFixtures = await db.Get<IReadOnlyList<int>>(dataKey, cancellationToken);
                 IReadOnlyList<Fixture> newFinishedFixtures = baseData.Value.Fixtures
                     .Where(fixture => fixture.IsFinished
                         && !previouslyFinishedFixtures.Contains(fixture.Id)
@@ -77,9 +78,6 @@ public sealed class GameweekDetailsService(
                     gameweekLivePlayersByFixtureId, 
                     playersByTeamId).Adapt<GameweekLiveUpdateData>();
 
-                // Update the database with all finished fixtures
-                // Todo: Maybe this should be moved to the handler?
-                await db.Update(dataKey, previouslyFinishedFixtures.Union(newFinishedFixtures.Select(f => f.Id)), cancellationToken);
                 return mappedData;
             }
 
