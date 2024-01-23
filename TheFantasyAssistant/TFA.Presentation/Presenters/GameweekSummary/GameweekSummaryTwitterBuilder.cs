@@ -3,19 +3,19 @@ using TFA.Domain.Data;
 
 namespace TFA.Presentation.Presenters.GameweekSummary;
 
-public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSummaryData, string>
+public class GameweekSummaryTwitterBuilder : AbstractContentBuilder<GameweekSummaryData, IReadOnlyList<string>>
 {
     public override Presenter Presenter => Presenter.Twitter;
 
-    public override IReadOnlyList<string> Build(GameweekSummaryData data)
-        => [
+    public override IReadOnlyList<IReadOnlyList<string>> Build(GameweekSummaryData data)
+        => [[
             BuildGameweekSummaryStartContent(data),
             BuildGameweekSummaryTopPerformingPlayersInfoContent(data),
             .. BuildGameweekSummaryTopPerformingPlayersContent(data),
             BuildGameweekSummaryTeamsWithBestUpcomingFixturesInfoContent(data),
             .. BuildGameweekSummaryTeamsWithBestUpcomingFixturesContent(data),
             BuildGameweekSummaryEndContent()
-       ];
+       ]];
 
     private static string BuildGameweekSummaryStartContent(GameweekSummaryData data)
         => new ContentBuilder()
