@@ -67,7 +67,7 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
                     .AppendStandardHeader(FantasyType, "Double Gameweek Announcements")
                     .AppendTextLines(gw =>
                         new ContentBuilder()
-                            .AppendTextWithLineBreak($"{Emoji.GlowingStar} {gw.Gameweek} - {gw.TeamName}")
+                            .AppendTextWithLineBreak($"{Emoji.GlowingStar} GW{gw.Gameweek} - {gw.TeamName}")
                             .AppendTextLines(opponent =>
                                 $"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} {opponent.TeamShortName} ({GetOpponentHomeAwayText(opponent.IsHome)})",
                                 gw.Opponents)
@@ -81,6 +81,6 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
         => data.Count > 0
             ? new ContentBuilder()
                 .AppendStandardHeader(FantasyType, "Blank Gameweek Announcements")
-                .AppendTextLines(gw => $"{Emoji.WhiteCircle} {gw.Gameweek} - {gw.TeamName}", data)
+                .AppendTextLines(gw => $"{Emoji.WhiteCircle} GW{gw.Gameweek} - {gw.TeamName}", data)
             : string.Empty;
 }

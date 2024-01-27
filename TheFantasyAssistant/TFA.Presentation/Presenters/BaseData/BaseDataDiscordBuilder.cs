@@ -144,7 +144,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(gw =>
                     new ContentBuilder()
-                        .AppendTextWithLineBreak($"{Emoji.GlowingStar} {gw.Gameweek} - {gw.TeamName}")
+                        .AppendTextWithLineBreak($"{Emoji.GlowingStar} GW{gw.Gameweek} - {gw.TeamName}")
                 .AppendTextLines(opp =>
                     $"{GetFixtureDifficultyEmoji(opp.FixtureDifficulty)} {opp.TeamShortName} ({GetOpponentHomeAwayText(opp.IsHome)})",
                     gw.Opponents)
@@ -164,7 +164,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(gw =>
-                    $"{Emoji.WhiteCircle} {gw.Gameweek} - {gw.TeamName}",
+                    $"{Emoji.WhiteCircle} GW{gw.Gameweek} - {gw.TeamName}",
                     data.Data.BlankGameweeks)),
             data.FantasyType switch
             {
