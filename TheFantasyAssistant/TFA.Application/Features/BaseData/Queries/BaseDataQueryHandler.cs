@@ -1,11 +1,6 @@
 ﻿using TFA.Application.Common.Keys;
 using TFA.Application.Interfaces.Repositories;
-using TFA.Application.Services.BaseData;
 using TFA.Domain.Models;
-using TFA.Domain.Models.Fixtures;
-using TFA.Domain.Models.Gameweeks;
-using TFA.Domain.Models.Players;
-using TFA.Domain.Models.Teams;
 
 namespace TFA.Application.Features.BaseData.Queries;
 

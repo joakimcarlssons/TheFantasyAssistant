@@ -1,4 +1,9 @@
-﻿namespace TFA.Application.Services.BaseData;
+﻿using TFA.Domain.Models.Fixtures;
+using TFA.Domain.Models.Gameweeks;
+using TFA.Domain.Models.Players;
+using TFA.Domain.Models.Teams;
+
+namespace TFA.Domain.Models;
 
 public sealed record FantasyBaseData(
     [property: JsonPropertyName("players")] IReadOnlyList<Player> Players,

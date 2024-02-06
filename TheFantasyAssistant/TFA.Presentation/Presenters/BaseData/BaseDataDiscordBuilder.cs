@@ -144,9 +144,9 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(gw =>
                     new ContentBuilder()
-                        .AppendTextWithLineBreak($"{Emoji.GlowingStar} GW{gw.Gameweek} - {gw.TeamName}")
+                        .AppendText($"{Emoji.GlowingStar} GW{gw.Gameweek} - {gw.TeamName}")
                 .AppendTextLines(opp =>
-                    $"{GetFixtureDifficultyEmoji(opp.FixtureDifficulty)} {opp.TeamShortName} ({GetOpponentHomeAwayText(opp.IsHome)})",
+                    $"{GetFixtureDifficultyEmoji(opp.FixtureDifficulty)} {opp.TeamShortName} {GetOpponentHomeAwayText(opp.IsHome)}",
                     gw.Opponents)
                 .AppendLineBreaks(2),
             data.Data.DoubleGameweeks)),

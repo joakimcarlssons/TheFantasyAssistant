@@ -67,9 +67,9 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
                     .AppendStandardHeader(FantasyType, "Double Gameweek Announcements")
                     .AppendTextLines(gw =>
                         new ContentBuilder()
-                            .AppendTextWithLineBreak($"{Emoji.GlowingStar} GW{gw.Gameweek} - {gw.TeamName}")
+                            .AppendText($"{Emoji.GlowingStar} GW{gw.Gameweek} - {gw.TeamName}")
                             .AppendTextLines(opponent =>
-                                $"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} {opponent.TeamShortName} ({GetOpponentHomeAwayText(opponent.IsHome)})",
+                                $"{GetFixtureDifficultyEmoji(opponent.FixtureDifficulty)} {opponent.TeamShortName} {GetOpponentHomeAwayText(opponent.IsHome)}",
                                 gw.Opponents)
                             .AppendLineBreaks(2),
                         x.ToList())

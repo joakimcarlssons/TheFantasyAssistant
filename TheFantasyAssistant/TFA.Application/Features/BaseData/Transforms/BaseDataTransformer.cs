@@ -1,6 +1,6 @@
 ﻿using Mapster;
 using TFA.Application.Features.Transforms;
-using TFA.Application.Services.BaseData;
+using TFA.Domain.Models;
 using TFA.Utils;
 
 namespace TFA.Application.Features.BaseData.Transforms;

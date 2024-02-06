@@ -9,13 +9,13 @@ public class ApplicationTests
     [Fact]
     public void Application_Should_Not_HaveDependencyOnOuterProjects()
     {
-        string[] otherProjects = new[]
-        {
-                Namespaces.InfrastructureNamespace,
-                Namespaces.PresentationNamespace,
-                Namespaces.ApiNamespace,
-                Namespaces.ClientNamespace
-            };
+        string[] otherProjects =
+        [
+            Namespaces.InfrastructureNamespace,
+            Namespaces.PresentationNamespace,
+            Namespaces.ApiNamespace,
+            Namespaces.ClientNamespace
+        ];
 
         TestResult shouldNotReference = Types
             .InAssembly(Assembly)

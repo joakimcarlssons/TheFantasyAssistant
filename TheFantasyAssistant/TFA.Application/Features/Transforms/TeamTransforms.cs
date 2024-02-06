@@ -1,5 +1,5 @@
 ﻿using TFA.Application.Common.Data;
-using TFA.Application.Services.BaseData;
+using TFA.Domain.Models;
 
 namespace TFA.Application.Features.Transforms;
 

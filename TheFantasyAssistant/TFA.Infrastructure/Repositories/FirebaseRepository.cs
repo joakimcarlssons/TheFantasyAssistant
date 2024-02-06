@@ -80,8 +80,7 @@ public class FirebaseRepository : IFirebaseRepository
     {
         _logger.LogInformation("Getting data of type {Data} from key {DataKey}", typeof(TData), key);
 
-        if (_cache.TryGetValue(key, out TData? cachedData)
-            && cachedData is { })
+        if (_cache.TryGetValue(key, out TData? cachedData) && cachedData is not null)
         {
             return cachedData;
         }
@@ -171,6 +170,3 @@ public class FirebaseRepository : IFirebaseRepository
         return default;
     }
 }
-
-public readonly record struct FirebaseResponse(
-    [property: JsonExtensionData] Dictionary<string, object>? Data);

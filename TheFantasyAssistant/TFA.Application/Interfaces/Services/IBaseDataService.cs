@@ -1,4 +1,4 @@
-﻿using TFA.Application.Services.BaseData;
+﻿using TFA.Domain.Models;
 
 namespace TFA.Application.Interfaces.Services;
 

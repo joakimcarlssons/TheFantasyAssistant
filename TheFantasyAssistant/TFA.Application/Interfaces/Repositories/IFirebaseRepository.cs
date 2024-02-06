@@ -1,6 +1,6 @@
 ﻿namespace TFA.Application.Interfaces.Repositories;
 
-public interface IFirebaseRepository
+public interface IReadOnlyFirebaseRepository
 {
     /// <summary>
     /// Get data stored in Firebase by its data key.
@@ -8,7 +8,10 @@ public interface IFirebaseRepository
     /// <typeparam name="TData">The expected type of the stored data.</typeparam>
     /// <param name="key">The identifier of the data in the database.</param>
     ValueTask<TData> Get<TData>(string key, CancellationToken cancellationToken = default);
+}
 
+public interface IFirebaseRepository : IReadOnlyFirebaseRepository
+{
     /// <summary>
     /// Adds new data to Firebase with a provided data key.
     /// </summary>
@@ -31,3 +34,6 @@ public interface IFirebaseRepository
     /// <param name="data">The new data.</param>
     Task Update<TData>(string key, TData data, CancellationToken cancellationToken = default);
 }
+
+public readonly record struct FirebaseResponse(
+    [property: JsonExtensionData] Dictionary<string, object>? Data);

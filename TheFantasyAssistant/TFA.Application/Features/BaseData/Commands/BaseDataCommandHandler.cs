@@ -6,7 +6,7 @@ using TFA.Application.Features.BaseData.Transforms;
 using TFA.Application.Features.LeagueData;
 using TFA.Application.Features.Transforms;
 using TFA.Application.Interfaces.Repositories;
-using TFA.Application.Services.BaseData;
+using TFA.Domain.Models;
 
 namespace TFA.Application.Features.BaseData.Commands;
 

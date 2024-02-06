@@ -1,5 +1,5 @@
 ﻿using TFA.Application.Common.Commands;
-using TFA.Application.Services.BaseData;
+using TFA.Domain.Models;
 
 namespace TFA.Application.Features.BaseData.Commands;
 

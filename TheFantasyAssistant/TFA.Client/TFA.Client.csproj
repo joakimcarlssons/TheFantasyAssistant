@@ -1,15 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>283817fa-9367-4f38-b8e0-04e177087c0d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TFA.Infrastructure\TFA.Infrastructure.csproj" />
+	  <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
+    <PackageReference Include="Mapster" Version="7.4.1-pre01" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.2-pre01" />
+    <PackageReference Include="MudBlazor" Version="6.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TFA.Application\TFA.Application.csproj" />
-    <ProjectReference Include="..\TFA.Presentation\TFA.Presentation.csproj" />
+    <ProjectReference Include="..\TFA.Domain\TFA.Domain.csproj" />
   </ItemGroup>
 
 </Project>
