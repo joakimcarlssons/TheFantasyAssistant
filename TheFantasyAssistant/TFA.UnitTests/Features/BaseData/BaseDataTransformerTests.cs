@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using TFA.Application.Features.BaseData.Transforms;
-using TFA.Application.Services.BaseData;
-using TFA.Domain.Models.Fixtures;
-using TFA.UnitTests.Fixtures;
+﻿using TFA.Application.Features.BaseData.Transforms;
 
 namespace TFA.UnitTests.Features.BaseData;
 

@@ -8,6 +8,7 @@ using TFA.Application.Errors;
 using TFA.Application.Features.FixtureLiveUpdate;
 using TFA.Application.Interfaces.Repositories;
 using TFA.Domain.Exceptions;
+using TFA.Domain.Models;
 using TFA.Domain.Models.Fixtures;
 using TFA.Domain.Models.Players;
 using TFA.Domain.Models.Teams;

@@ -12,4 +12,4 @@ global using TFA.Domain.Models.Teams;
 global using TFA.Domain.Models.Gameweeks;
 global using TFA.Domain.Models.Fixtures;
 
-global using TFA.Application.Services.BaseData;
+global using TFA.Domain.Models;

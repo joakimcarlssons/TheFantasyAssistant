@@ -3,6 +3,7 @@ using TFA.Application.Common.Commands;
 using TFA.Application.Errors;
 using TFA.Application.Features.Bots.Discord;
 using TFA.Application.Features.Transforms;
+using TFA.Domain.Models;
 using TFA.Domain.Models.Teams;
 
 namespace TFA.Infrastructure.Services;

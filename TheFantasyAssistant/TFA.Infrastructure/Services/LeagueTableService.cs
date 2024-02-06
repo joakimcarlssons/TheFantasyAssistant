@@ -1,6 +1,7 @@
 ﻿using TFA.Application.Common.Extensions;
 using TFA.Application.Errors;
 using TFA.Application.Features.LeagueData;
+using TFA.Domain.Models;
 using TFA.Domain.Models.Teams;
 using TFA.Infrastructure.Dtos.Fotmob;
 using TFA.Infrastructure.Mapping;

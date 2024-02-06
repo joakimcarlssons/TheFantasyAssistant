@@ -1,6 +1,7 @@
 ﻿using TFA.Application.Common.Data;
 using TFA.Application.Config;
 using TFA.Domain.Exceptions;
+using TFA.Domain.Models;
 using TFA.Domain.Models.Fixtures;
 using TFA.Domain.Models.Gameweeks;
 using TFA.Domain.Models.Teams;

@@ -1,6 +1,4 @@
-﻿using TFA.Application.Services.BaseData;
-
-namespace TFA.UnitTests.Builders;
+﻿namespace TFA.UnitTests.Builders;
 
 internal class FantasyBaseDataBuilder
 {
