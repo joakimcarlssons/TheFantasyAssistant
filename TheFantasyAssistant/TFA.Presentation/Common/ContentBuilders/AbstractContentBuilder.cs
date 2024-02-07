@@ -24,5 +24,5 @@ public abstract class AbstractContentBuilder<TIn, TOut> : IContentBuilder<TIn, T
         };
 
     protected static string GetOpponentHomeAwayText(bool isHome)
-        => isHome ? "(A)" : "(H)";
+        => isHome ? "(H)" : "(A)";
 }
