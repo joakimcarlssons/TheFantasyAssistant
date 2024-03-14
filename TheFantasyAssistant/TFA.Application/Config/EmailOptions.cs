@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TFA.Application.Config;
+﻿namespace TFA.Application.Config;
 
 public class EmailOptions : IConfigurationOptions
 {

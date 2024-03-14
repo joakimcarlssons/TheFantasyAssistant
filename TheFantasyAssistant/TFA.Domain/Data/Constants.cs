@@ -29,10 +29,10 @@ public sealed class TeamNames
     public const string DJURGARDEN = "Djurgården";
     public const string HAMMARBY = "Hammarby";
     public const string SIRIUS = "IK Sirius";
-    public const string VARBERG = "Varbergs BoIS";
+    public const string VASTERAS = "Västerås SK";
     public const string MJALLBY = "Mjällby AIF";
     public const string HALMSTAD = "Halmstads BK";
-    public const string DEGERFORS = "Degerfors IF";
+    public const string GAIS = "GAIS";
     public const string VARNAMO = "IFK Värnamo";
     public const string BROMMAPOJKARNA = "IF Brommapojkarna";
     public const string MALMO = "Malmö FF";

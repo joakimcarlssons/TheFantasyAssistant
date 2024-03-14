@@ -161,16 +161,6 @@ public sealed class DeadlineSummaryService(
             opponents.Sum(opp => opp.FixtureDifficulty) + Math.Max((blankGameweeks * 6), 0),
             opponents.OrderBy(opp => opp.Gameweek).ToList());
 
-    private static int CalculateDoubleGameweekFixtureDifficulty(int baseFixtureDifficulty)
-        => baseFixtureDifficulty switch
-        {
-            5 => 3,
-            4 => 2,
-            3 => 1,
-            2 => 0,
-            _ => 1
-        };
-
     private static IReadOnlyList<DeadlineSummaryPlayerRiskingSuspension> GetFPLPlayersRiskingSuspension(IEnumerable<Player> players, IReadOnlyDictionary<int, Team> teamsById)
         => players.Where(player =>
         {

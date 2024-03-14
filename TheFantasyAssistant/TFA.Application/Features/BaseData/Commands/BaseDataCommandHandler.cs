@@ -46,6 +46,26 @@ public sealed class BaseDataCommandHandler(
                 };
             }
 
+            // Apply fixture difficulties if necessary
+            if (data.FantasyType == FantasyType.Allsvenskan)
+            {
+                IReadOnlyDictionary<int, Team> teamsById = baseData.Teams.ToDictionary(team => team.Id);
+                baseData = baseData with
+                {
+                    Fixtures = baseData.Fixtures
+                        .Select(fixture =>
+                        {
+                            (int HomeTeamDifficulty, int AwayTeamDifficulty) = FixtureTransforms.CalculateFixtureDifficulty(teamsById[fixture.HomeTeamId], teamsById[fixture.AwayTeamId], fixture);
+                            return fixture with
+                            {
+                                HomeTeamDifficulty = HomeTeamDifficulty,
+                                AwayTeamDifficulty = AwayTeamDifficulty
+                            };
+                        })
+                        .ToList()
+                };
+            }
+
             await publisher.Publish(
                 new BaseDataPresentModel(
                     data.FantasyType, 
