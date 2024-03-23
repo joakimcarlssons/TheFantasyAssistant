@@ -5,10 +5,10 @@ using System.Reflection;
 using TFA.Application.Config;
 using TFA.Application.Interfaces.Repositories;
 using TFA.Application.Interfaces.Services;
-using TFA.Client.Config;
-using TFA.Client.Data.Repositories;
-using TFA.Client.Data.Services;
-using TFA.Client.State;
+using TFA.Client.Shared.Config;
+using TFA.Client.Shared.Data.Repositories;
+using TFA.Client.Shared.Data.Services;
+using TFA.Client.Shared.State;
 
 namespace TFA.Client;
 

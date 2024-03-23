@@ -1,6 +1,7 @@
-﻿using TFA.Domain.Data;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TFA.Domain.Data;
 
-namespace TFA.Client.State;
+namespace TFA.Client.Shared.State;
 
 public static class StateFactory
 {
@@ -16,15 +17,17 @@ public static class StateFactory
     {
         if (!Initialized)
         {
-            stateManager.TrySet(StateKeys.SelectedFantasyType, FantasyType.FPL, false);
+            stateManager.TrySet(StateKey.FantasyType, FantasyType.FPL, false);
         }
 
         Initialized = true;
     }
 }
 
-public sealed class StateKeys
+
+public enum StateKey
 {
-    public const string IsLoading = nameof(IsLoading);
-    public const string SelectedFantasyType = nameof(SelectedFantasyType);
+    IsLoading,
+    FantasyType,
+    BaseData,
 }

@@ -1,11 +1,13 @@
-﻿using Firebase.Auth.Providers;
-using Firebase.Auth;
+﻿using Firebase.Auth;
+using Firebase.Auth.Providers;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using TFA.Application.Interfaces.Repositories;
-using TFA.Client.Config;
-namespace TFA.Client.Data.Repositories;
+using TFA.Client.Shared.Config;
+
+namespace TFA.Client.Shared.Data.Repositories;
 
 public sealed class ReadOnlyFirebaseRepository : IReadOnlyFirebaseRepository
 {
@@ -84,10 +86,10 @@ public sealed class ReadOnlyFirebaseRepository : IReadOnlyFirebaseRepository
         {
             ApiKey = _firebaseOptions.ApiKey,
             AuthDomain = _firebaseOptions.AuthDomain,
-            Providers = new FirebaseAuthProvider[]
-            {
+            Providers =
+            [
                 new EmailProvider()
-            }
+            ]
         });
 
         UserCredential authResult = await authClient

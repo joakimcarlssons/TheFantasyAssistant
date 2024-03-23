@@ -1,5 +1,4 @@
-﻿@inherits LayoutComponentBase
-@inject IStateManager StateManager;
+﻿@inherits TFAComponentBase
 
 <MudThemeProvider IsDarkMode="true" />
 <MudDialogProvider/>
@@ -37,33 +36,22 @@
 
 
 @code {
-    private bool IsLoading = false;
-    protected override void OnInitialized()
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        StateFactory.InitializeState(StateManager);
-        StateManager.StateChanged += (key) =>
-        {
-            if (key == StateKeys.IsLoading)
-            {
-                bool loadState = StateManager.TryGet<bool>(StateKeys.IsLoading);
-                if (IsLoading != loadState)
-                {
-                    IsLoading = loadState;
-                    StateHasChanged();
-                }
-            }
-        };
+        RegisterStateSubscriptions(StateKey.IsLoading, StateKey.FantasyType);
+        return base.OnAfterRenderAsync(firstRender);
     }
 
     bool NavigationOpen = false;
     void ToggleNavigation()
     {
-        NavigationOpen = false;
+        NavigationOpen = !NavigationOpen;
     }
 
     FantasyType SelectedFantasyType
     {
-        get => StateManager.TryGet<FantasyType>(StateKeys.SelectedFantasyType, FantasyType.FPL);
-        set => StateManager.TrySet(StateKeys.SelectedFantasyType, value);
+        get => StateManager.TryGet<FantasyType>(StateKey.FantasyType, FantasyType.FPL);
+        set => StateManager.TrySet(StateKey.FantasyType, value);
     }
 }

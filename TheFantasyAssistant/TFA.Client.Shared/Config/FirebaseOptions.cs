@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TFA.Application.Config;
 
-namespace TFA.Client.Config;
+namespace TFA.Client.Shared.Config;
 
 public class FirebaseOptions : IConfigurationOptions
 {
@@ -22,3 +22,4 @@ public class FirebaseOptions : IConfigurationOptions
     [Required]
     public string Password { get; set; } = string.Empty;
 }
+

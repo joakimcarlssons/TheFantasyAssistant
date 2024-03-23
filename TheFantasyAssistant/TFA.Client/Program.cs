@@ -1,6 +1,4 @@
-using MudBlazor.Services;
 using TFA.Client.Components;
-using TFA.Client.State;
 using TFA.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,11 +20,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStatusCodePagesWithRedirects("/404");
 
 app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-   .AddInteractiveServerRenderMode();
+   .AddInteractiveServerRenderMode()
+   .AddAdditionalAssemblies([typeof(TFA.Client.Shared.AssemblyReference).Assembly]);
 
 app.Run();

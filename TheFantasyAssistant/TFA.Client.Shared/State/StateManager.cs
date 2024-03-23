@@ -1,24 +1,24 @@
 ﻿using System.Collections.Concurrent;
 
-namespace TFA.Client.State;
+namespace TFA.Client.Shared.State;
 
 public interface IStateManager
 {
-    event Action<string> StateChanged;
-    T? TryGet<T>(string key, T? backupValue = default) where T : notnull;
-    bool TrySet<T>(string key, T value, bool notifyChange = true) where T : notnull;
-    bool TryRemove(string key);
+    event Action<StateKey> StateChanged;
+    T? TryGet<T>(StateKey key, T? backupValue = default) where T : notnull;
+    bool TrySet<T>(StateKey key, T value, bool notifyChange = true) where T : notnull;
+    bool TryRemove(StateKey key);
     void Clear();
 }
 
 public class StateManager : IStateManager
 {
-    private readonly ConcurrentDictionary<string, object> State = new();
+    private readonly ConcurrentDictionary<StateKey, object> State = new();
 
-    public event Action<string>? StateChanged;
-    private void NotifyStateChanged(string key) => StateChanged?.Invoke(key);
+    public event Action<StateKey>? StateChanged;
+    private void NotifyStateChanged(StateKey key) => StateChanged?.Invoke(key);
 
-    public T? TryGet<T>(string key, T? backupValue = default) where T : notnull
+    public T? TryGet<T>(StateKey key, T? backupValue = default) where T : notnull
     {
         if (State.TryGetValue(key, out object? storedValue))
         {
@@ -36,7 +36,7 @@ public class StateManager : IStateManager
         return backupValue;
     }
 
-    public bool TrySet<T>(string key, T value, bool notifyChange) where T : notnull
+    public bool TrySet<T>(StateKey key, T value, bool notifyChange) where T : notnull
     {
         lock (State)
         {
@@ -54,7 +54,7 @@ public class StateManager : IStateManager
                     {
                         NotifyStateChanged(key);
                     }
-                                
+
                     return true;
                 }
 
@@ -67,7 +67,7 @@ public class StateManager : IStateManager
                 {
                     NotifyStateChanged(key);
                 }
-                
+
                 return true;
             }
 
@@ -76,7 +76,7 @@ public class StateManager : IStateManager
         }
     }
 
-    public bool TryRemove(string key)
+    public bool TryRemove(StateKey key)
     {
         lock (State)
         {

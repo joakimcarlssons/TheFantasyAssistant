@@ -1,7 +1,6 @@
 ﻿@using TFA.Application.Interfaces.Services
 @using TFA.Domain.Models
-@inject IStateManager StateManager;
-@inject IBaseDataService baseDataService;
+@inherits TFAComponentBase
 
 <MudContainer Class="mt-16">
 
@@ -29,37 +28,9 @@
 </MudContainer>
 
 @code {
-    private bool IsLoading = true;
-    private FantasyBaseData? BaseData;
-
-    protected override void OnInitialized()
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        StateManager.StateChanged += async (key) =>
-        {
-            if (key == StateKeys.SelectedFantasyType)
-            {
-                StateManager.TrySet(StateKeys.IsLoading, true);
-                BaseData = (await baseDataService.GetData(StateManager.TryGet<FantasyType>(StateKeys.SelectedFantasyType))).Value;
-                StateManager.TrySet(StateKeys.IsLoading, false);
-            }
-            else if (key == StateKeys.IsLoading)
-            {
-                IsLoading = StateManager.TryGet<bool>(StateKeys.IsLoading);
-                StateHasChanged();
-            }
-        };
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            FantasyType fantasyType = StateManager.TryGet<FantasyType>(StateKeys.SelectedFantasyType);
-            BaseData ??= (await baseDataService.GetData(fantasyType)).Value;
-
-            await Task.Delay(1000);
-
-            StateManager.TrySet(StateKeys.IsLoading, false);
-        }
+        RegisterStateSubscriptions(StateKey.IsLoading, StateKey.BaseData);
+        return base.OnAfterRenderAsync(firstRender);
     }
 }

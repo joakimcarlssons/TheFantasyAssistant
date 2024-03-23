@@ -5,7 +5,7 @@ using TFA.Application.Interfaces.Services;
 using TFA.Domain.Data;
 using TFA.Domain.Models;
 
-namespace TFA.Client.Data.Services;
+namespace TFA.Client.Shared.Data.Services;
 
 public class ClientBaseDataService(IReadOnlyFirebaseRepository db) : IBaseDataService
 {
