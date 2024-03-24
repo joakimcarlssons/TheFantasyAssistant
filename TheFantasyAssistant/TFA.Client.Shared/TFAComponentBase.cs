@@ -7,7 +7,7 @@ using TFA.Domain.Models;
 
 namespace TFA.Client.Shared;
 
-public abstract class TFAComponentBase : LayoutComponentBase
+public abstract class TFAComponentBase(StateKey[] states) : LayoutComponentBase
 {
     [Inject]
     public IStateManager StateManager { get; set; } = null!;
@@ -15,9 +15,13 @@ public abstract class TFAComponentBase : LayoutComponentBase
     [Inject]
     public IBaseDataService BaseDataService { get; set; } = null!;
 
-    private readonly HashSet<StateKey> StateSubscriptions = [];
+    protected readonly IReadOnlySet<StateKey> StateSubscriptions = states
+        // Always add a few states applicable to all components
+        .Concat([StateKey.IsLoading])
+        .ToHashSet();
 
-    public FantasyBaseData? BaseData => StateManager?.TryGet<FantasyBaseData>(StateKey.BaseData);
+    protected KeyedBaseData? BaseData => StateManager?.TryGet<KeyedBaseData>(StateKey.BaseData);
+    protected FantasyType SelectedFantasyType => StateManager?.TryGet<FantasyType>(StateKey.FantasyType) ?? FantasyType.Unknown;
 
     public bool IsLoading { get; set; } = true;
 
@@ -50,14 +54,6 @@ public abstract class TFAComponentBase : LayoutComponentBase
         }
     }
 
-    public void RegisterStateSubscriptions(params StateKey[] states)
-    {
-        foreach (StateKey state in states)
-        {
-            StateSubscriptions.Add(state);
-        }
-    }
-
     private async Task HandleStateChanged(StateKey key)
     {
         if (key == StateKey.IsLoading)
@@ -87,19 +83,16 @@ public abstract class TFAComponentBase : LayoutComponentBase
         const int MinDelayTime = 500;
         bool result = false;
 
-        // Get the state fantasy type since that will probably be the most correct one
-        FantasyType stateFantasyType = StateManager.TryGet<FantasyType>(StateKey.FantasyType);
-
         // If the fantasy type is not changed and we have data stored in state, use it.
-        if (stateFantasyType == fantasyType
-            && StateManager.TryGet<FantasyBaseData>(StateKey.BaseData) is { } baseData)
+        if (SelectedFantasyType == fantasyType
+            && StateManager.TryGet<KeyedBaseData>(StateKey.BaseData) is { } baseData)
         {
             StateManager.TrySet(StateKey.BaseData, baseData);
             result = true;
         }
 
         // If the provided state does not match the one in state it probably means we need to refresh the data.
-        if (await BaseDataService.GetData(stateFantasyType) is { IsError: false } data)
+        if (await BaseDataService.GetKeyedData(SelectedFantasyType) is { IsError: false } data)
         {
             StateManager.TrySet(StateKey.BaseData, data.Value);
             result = true;

@@ -1,0 +1,94 @@
+﻿@page "/fixtures"
+@using TFA.Domain.Models.Fixtures
+@using TFA.Domain.Models.Teams
+@inherits TFAComponentBase
+
+@if (BaseData is null)
+{
+    <GridSkeleton />
+}
+else
+{
+    <MudTable Items="BaseData.TeamsById.Values" Filter="_filter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Remaining Fixtures</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mt-0" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Team</MudTh>
+            @foreach (int gameweek in RemainingGameweeks)
+            {
+                <MudTh>@($"GW{gameweek}")</MudTh>
+            }
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Team">@context.Name</MudTd>
+            @foreach (int gameweek in RemainingGameweeks)
+            {
+                <MudTd DataLabel="@($"GW{gameweek}")">
+                    @string.Join(", ", GetFixtures(gameweek, context.Id))
+                </MudTd>
+            }
+        </RowTemplate>
+    </MudTable>
+}
+
+
+@code {
+    public Fixtures() : base([StateKey.BaseData]) {}
+
+    private int CurrentGameweek = 0;
+    private HashSet<int> RemainingGameweeks = [];
+
+    private static string _searchString = "";
+    private Func<Team, bool> _filter = team =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+        {
+            return true;
+        }
+
+        if (team.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        int currentGameweek = BaseData?.GameweeksById.Values.FirstOrDefault(gw => gw.IsCurrent)?.Id ?? 1;
+        RemainingGameweeks = BaseData?.GameweeksById.Values
+            .Where(gw => gw.Id >= currentGameweek && gw.Id <= FantasyLastGameweek.Get(SelectedFantasyType))
+            .Select(gw => gw.Id)
+            .ToHashSet() ?? [];
+
+        if (currentGameweek != CurrentGameweek)
+        {
+            CurrentGameweek = currentGameweek;
+            StateHasChanged();
+        }
+    }
+
+    private IReadOnlyList<string> GetFixtures(int gameweek, int teamId)
+    {
+        if (BaseData is null)
+        {
+            return [];
+        }
+
+        return BaseData.FixturesByGameweekId[gameweek]
+            .Where(fixture => fixture.AwayTeamId == teamId || fixture.HomeTeamId == teamId)
+            .Select(fixture =>
+            {
+                return fixture.HomeTeamId == teamId
+                ? $"{BaseData.TeamsById[fixture.AwayTeamId].ShortName} (H)"
+                : $"{BaseData.TeamsById[fixture.HomeTeamId].ShortName} (A)";
+            })
+            .ToList();
+    }
+}

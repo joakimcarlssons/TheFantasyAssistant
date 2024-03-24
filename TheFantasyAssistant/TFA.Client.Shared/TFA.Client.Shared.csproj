@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TFA.Application\TFA.Application.csproj" />
+    <ProjectReference Include="..\TFA.Utils\TFA.Utils.csproj" />
   </ItemGroup>
 
 </Project>

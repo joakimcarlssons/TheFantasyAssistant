@@ -1,4 +1,6 @@
-﻿namespace TFA.Domain.Data;
+﻿using TFA.Domain.Exceptions;
+
+namespace TFA.Domain.Data;
 
 public sealed class TeamNames
 {
@@ -114,6 +116,14 @@ public sealed class FantasyLastGameweek
 {
     public const int FPL = 38;
     public const int Allsvenskan = 30;
+
+    public static int Get(FantasyType fantasyType)
+        => fantasyType switch
+        {
+            FantasyType.FPL => FPL,
+            FantasyType.Allsvenskan => Allsvenskan,
+            _ => throw new FantasyTypeNotSupportedException()
+        };
 }
 
 public sealed class ExpectedLeagueTeamCount

@@ -1,0 +1,78 @@
+﻿@page "/players";
+@inherits TFAComponentBase;
+
+@if (BaseData is null)
+{
+    <GridSkeleton />
+}
+else
+{
+    <MudDataGrid @ref="grid" T="Player" Items="@BaseData.PlayersById.Values" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Players</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.DisplayName" Title="Name" Sortable="true" Filterable="true" />
+            <PropertyColumn Property="x => x.TeamId" Title="Team" Sortable="true" Filterable="true">
+                <CellTemplate>
+                    @BaseData.TeamsById[context.Item.TeamId].Name
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Position" Sortable="true" Filterable="true" />
+            <PropertyColumn Property="x => x.TotalPoints" Title="Points" Sortable="true" Filterable="true" />
+            <PropertyColumn Property="x => x.Price" Title="Price" Sortable="true" Filterable="true">
+                <CellTemplate>
+                    @($"£{context.Item.Price}m")
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.SelectedByPercent" Title="Selected By" Sortable="true" Filterable="true">
+                <CellTemplate>
+                    @($"{context.Item.SelectedByPercent} %")
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Player" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+
+
+@code {
+    private static string _searchString = "";
+    private Func<Player, bool> _quickFilter = player =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+        {
+            return true;
+        }
+
+        if (player is not { FirstName: not null, LastName: not null, DisplayName: not null })
+        {
+            return false;
+        }
+
+        if (player.FirstName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)
+            || player.LastName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)
+            || player.DisplayName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    public MudDataGrid<Player>? grid = null;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        grid?.SetSortAsync("Points", SortDirection.Descending, player => player.TotalPoints);
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    public Players() : base([]) {}
+}

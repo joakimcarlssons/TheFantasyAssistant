@@ -15,8 +15,25 @@ public class ClientBaseDataService(IReadOnlyFirebaseRepository db) : IBaseDataSe
         return await db.Get<FantasyBaseData>(dataKey, cancellationToken);
     }
 
-    public Task<ErrorOr<KeyedBaseData>> GetKeyedData(FantasyType fantasyType, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<KeyedBaseData>> GetKeyedData(FantasyType fantasyType, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        ErrorOr<FantasyBaseData> dataWrapper = await GetData(fantasyType, cancellationToken);
+
+        if (!dataWrapper.IsError)
+        {
+            FantasyBaseData data = dataWrapper.Value;
+            return new KeyedBaseData(
+                data.Players.ToDictionary(p => p.Id),
+                data.Players.ToLookup(p => p.TeamId),
+                data.Teams.ToDictionary(t => t.Id),
+                data.Teams.ToDictionary(t => t.Name),
+                data.Gameweeks.ToDictionary(gw => gw.Id),
+                data.Fixtures.ToDictionary(f => f.Id),
+                data.Fixtures.ToLookup(f => f.GameweekId ?? -1),
+                data.Fixtures.ToLookup(f => f.HomeTeamId),
+                data.Fixtures.ToLookup(f => f.AwayTeamId));
+        }
+
+        return dataWrapper.Errors;
     }
 }
