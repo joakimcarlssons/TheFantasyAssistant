@@ -21,7 +21,11 @@ public abstract class TFAComponentBase(StateKey[] states) : LayoutComponentBase
         .ToHashSet();
 
     protected KeyedBaseData? BaseData => StateManager?.TryGet<KeyedBaseData>(StateKey.BaseData);
-    protected FantasyType SelectedFantasyType => StateManager?.TryGet<FantasyType>(StateKey.FantasyType) ?? FantasyType.Unknown;
+    protected FantasyType SelectedFantasyType
+    {
+        get => StateManager.TryGet(StateKey.FantasyType, FantasyType.FPL);
+        set => StateManager.TrySet(StateKey.FantasyType, value);
+    }
 
     public bool IsLoading { get; set; } = true;
 

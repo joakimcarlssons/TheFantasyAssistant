@@ -47,10 +47,4 @@
     {
         NavigationOpen = !NavigationOpen;
     }
-
-    FantasyType SelectedFantasyType
-    {
-        get => StateManager.TryGet<FantasyType>(StateKey.FantasyType, FantasyType.FPL);
-        set => StateManager.TrySet(StateKey.FantasyType, value);
-    }
 }

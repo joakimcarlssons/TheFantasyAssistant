@@ -26,8 +26,8 @@ else
             <MudTd DataLabel="Team">@context.Name</MudTd>
             @foreach (int gameweek in RemainingGameweeks)
             {
-                <MudTd DataLabel="@($"GW{gameweek}")">
-                    @string.Join(", ", GetFixtures(gameweek, context.Id))
+                <MudTd DataLabel="@($"GW{gameweek}")" >
+                    <Fixture Fixtures="GetFixtures(gameweek, context.Id)" />
                 </MudTd>
             }
         </RowTemplate>
@@ -74,7 +74,7 @@ else
         }
     }
 
-    private IReadOnlyList<string> GetFixtures(int gameweek, int teamId)
+    private IEnumerable<FixtureViewModel> GetFixtures(int gameweek, int teamId)
     {
         if (BaseData is null)
         {
@@ -83,12 +83,8 @@ else
 
         return BaseData.FixturesByGameweekId[gameweek]
             .Where(fixture => fixture.AwayTeamId == teamId || fixture.HomeTeamId == teamId)
-            .Select(fixture =>
-            {
-                return fixture.HomeTeamId == teamId
-                ? $"{BaseData.TeamsById[fixture.AwayTeamId].ShortName} (H)"
-                : $"{BaseData.TeamsById[fixture.HomeTeamId].ShortName} (A)";
-            })
-            .ToList();
+            .Select(fixture => fixture.HomeTeamId == teamId
+                ? new FixtureViewModel(BaseData.TeamsById[fixture.AwayTeamId].ShortName, true, fixture.HomeTeamDifficulty)
+                : new FixtureViewModel(BaseData.TeamsById[fixture.HomeTeamId].ShortName, false, fixture.AwayTeamDifficulty));
     }
 }

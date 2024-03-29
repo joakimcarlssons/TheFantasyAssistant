@@ -1,0 +1,54 @@
+﻿<div class="fixture__container">
+    @foreach (FixtureViewModel fixture in Fixtures)
+    {
+        <div class="fixture">
+            <MudText class="@ConvertFixtureDifficutyToClassName(fixture.FixtureDifficulty)" Typo="Typo.button">
+                @($"{fixture.Opponent} ({ (fixture.IsHome ? 'H' : 'A') })")
+            </MudText>
+        </div>
+    }
+    
+</div>
+
+<style>
+    .fixture__container {
+        display: flex;
+        gap: 3px;
+    }
+
+    .fixture {
+        border-radius: 3px;
+    }
+
+    .fixture > * {
+        padding: 5px;
+        border-radius: 3px;
+        white-space: nowrap;
+        color: #373740;
+    }
+
+    .fixture > .hard {
+        background-color: red;
+    }
+
+    .fixture > .medium {
+        background-color: lightgrey;
+    }
+
+    .fixture > .easy {
+        background-color: forestgreen;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public IEnumerable<FixtureViewModel> Fixtures { get; set; } = [];
+
+    private string ConvertFixtureDifficutyToClassName(int fixtureDifficulty)
+        => fixtureDifficulty switch
+        {
+            > 3 => "hard",
+            < 3 => "easy",
+            _ => "medium"
+        };
+}
