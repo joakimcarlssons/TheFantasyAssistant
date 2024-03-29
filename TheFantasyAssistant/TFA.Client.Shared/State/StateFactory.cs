@@ -28,6 +28,7 @@ public static class StateFactory
 public enum StateKey
 {
     IsLoading,
+    HasError,
     FantasyType,
     BaseData,
 }

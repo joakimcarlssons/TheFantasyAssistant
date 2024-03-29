@@ -9,22 +9,43 @@
 }
 else
 {
-    <MudTable Items="BaseData.TeamsById.Values" Filter="_filter">
+    <MudText Typo="Typo.h4" class="mb-5">Remaining Fixtures</MudText>
+
+    <MudTable Items="BaseData.TeamsById.Values" Filter="TeamFilter">
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Remaining Fixtures</MudText>
+            <div class="fixture__header__container">
+                <MudSelect T="int" Label="From Gameweek" @bind-Value="MinGameweek">
+                    @foreach (int gw in RemainingGameweeks.Where(gw => gw <= MaxGameweek))
+                    {
+                        <MudSelectItem Value="@gw" />
+                    }
+                </MudSelect>
+                <MudSelect T="int" Label="To Gameweek" @bind-Value="MaxGameweek">
+                    @foreach (int gw in RemainingGameweeks.Where(gw => gw >= MinGameweek))
+                    {
+                        <MudSelectItem Value="@gw" />
+                    }
+                </MudSelect>
+                <MudButton Variant="Variant.Filled" Size="Size.Medium" OnClick="FindRotations" Disabled="SearchString.Length < 3">
+                    Find Rotation
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Medium" OnClick="Reset">
+                    Reset
+                </MudButton>
+            </div>
             <MudSpacer />
-            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mt-0" />
+            <MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mt-0" />
         </ToolBarContent>
         <HeaderContent>
             <MudTh>Team</MudTh>
-            @foreach (int gameweek in RemainingGameweeks)
+            @foreach (int gameweek in FilteredRemainingGameweeks)
             {
                 <MudTh>@($"GW{gameweek}")</MudTh>
             }
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Team">@context.Name</MudTd>
-            @foreach (int gameweek in RemainingGameweeks)
+            @foreach (int gameweek in FilteredRemainingGameweeks)
             {
                 <MudTd DataLabel="@($"GW{gameweek}")" >
                     <Fixture Fixtures="GetFixtures(gameweek, context.Id)" />
@@ -34,28 +55,139 @@ else
     </MudTable>
 }
 
+<style>
+    .fixture__header__container {
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+    }
+
+    .fixture__header__container .mud-input {
+        max-width: 125px;
+    }
+</style>
 
 @code {
     public Fixtures() : base([StateKey.BaseData]) {}
 
     private int CurrentGameweek = 0;
-    private HashSet<int> RemainingGameweeks = [];
 
-    private static string _searchString = "";
-    private Func<Team, bool> _filter = team =>
+    private static HashSet<int> RemainingGameweeks = [];
+    private static HashSet<int> FilteredRemainingGameweeks = [];
+    private static HashSet<Team> RotatingTeams = [];
+
+    private static int _minGameweek;
+    private static int _maxGameweek;
+
+    private static int MinGameweek
     {
-        if (string.IsNullOrWhiteSpace(_searchString))
+        get => _minGameweek;
+        set
         {
-            return true;
+            _minGameweek = value;
+            FilteredRemainingGameweeks = RemainingGameweeks
+                .Where(gw => gw.Between(value, MaxGameweek, true))
+                .ToHashSet();
+        }
+    }
+
+    private static int MaxGameweek
+    {
+        get => _maxGameweek;
+        set
+        {
+            _maxGameweek = value;
+            FilteredRemainingGameweeks = RemainingGameweeks
+                .Where(gw => gw.Between(MinGameweek, value, true))
+                .ToHashSet();
+        }
+    }
+
+    private static string SearchString = "";
+    private static string PreviousSearchString = "";
+
+    private Func<Team, bool> TeamFilter = team =>
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(SearchString))
+            {
+                RotatingTeams.Clear();
+                return true;
+            }
+
+            if (!SearchString.Equals(PreviousSearchString, StringComparison.InvariantCultureIgnoreCase))
+            {
+                RotatingTeams.Clear();
+            }
+
+            if (team.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase) || RotatingTeams.Contains(team))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        finally
+        {
+            PreviousSearchString = SearchString;
         }
 
-        if (team.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase))
-        {
-            return true;
-        }
-
-        return false;
     };
+
+    private void FindRotations()
+    {
+        if (BaseData is null)
+        {
+            return;
+        }
+
+        foreach (Team team in BaseData.TeamsById.Values.Where(TeamFilter))
+        {
+            // Create a lookup for each other team and create a point system
+            Dictionary<Team, int> rotations = BaseData.TeamsById.Values
+                .Where(t => t.Id != team.Id)
+                .ToDictionary(t => t, _ => 0);
+
+            const int difficultyLevel = 2;
+
+            // Pick out the gameweeks where the team has harder fixtures
+            IEnumerable<int> harderFixtures = BaseData.FixturesByHomeTeamId[team.Id]
+                .Where(fixture => fixture.HomeTeamDifficulty > difficultyLevel && fixture.GameweekId.HasValue)
+                .Select(fixture => fixture.GameweekId!.Value)
+                .Concat(BaseData.FixturesByAwayTeamId[team.Id]
+                    .Where(fixture => fixture.AwayTeamDifficulty > difficultyLevel && fixture.GameweekId.HasValue)
+                    .Select(fixture => fixture.GameweekId!.Value))
+                .Where(gw => gw.Between(MinGameweek, MaxGameweek, true));
+
+            foreach (int gameweek in harderFixtures)
+            {
+                IEnumerable<Team> teamsWithEasierFixtures = BaseData.FixturesByGameweekId[gameweek]
+                    .Where(fixture => fixture.HomeTeamDifficulty <= difficultyLevel)
+                    .Select(fixture => BaseData.TeamsById[fixture.HomeTeamId])
+                    .Concat(BaseData.FixturesByGameweekId[gameweek]
+                        .Where(fixture => fixture.AwayTeamDifficulty <= difficultyLevel)
+                        .Select(fixture => BaseData.TeamsById[fixture.AwayTeamId]));
+
+                foreach (Team eTeam in teamsWithEasierFixtures)
+                {
+                    if (rotations.ContainsKey(eTeam))
+                    {
+                        rotations[eTeam]--;
+                    }
+                }
+            }
+
+            RotatingTeams.Add(rotations.OrderBy(r => r.Value).FirstOrDefault().Key);
+        }
+    }
+
+    private void Reset()
+    {
+        PreviousSearchString = SearchString = "";
+        MinGameweek = RemainingGameweeks.Min();
+        MaxGameweek = RemainingGameweeks.Max();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -63,9 +195,27 @@ else
 
         int currentGameweek = BaseData?.GameweeksById.Values.FirstOrDefault(gw => gw.IsCurrent)?.Id ?? 1;
         RemainingGameweeks = BaseData?.GameweeksById.Values
-            .Where(gw => gw.Id >= currentGameweek && gw.Id <= FantasyLastGameweek.Get(SelectedFantasyType))
-            .Select(gw => gw.Id)
-            .ToHashSet() ?? [];
+                .Where(gw => gw.Id >= currentGameweek && gw.Id <= FantasyLastGameweek.Get(SelectedFantasyType))
+                .Select(gw => gw.Id)
+                .ToHashSet() ?? [];
+
+        if (firstRender)
+        {
+            if (RemainingGameweeks.Count > 0)
+            {
+                MinGameweek = RemainingGameweeks.Min();
+                MaxGameweek = RemainingGameweeks.Max();
+            }
+            else
+            {
+                MinGameweek = 1;
+                MaxGameweek = FantasyLastGameweek.Get(SelectedFantasyType);
+            }
+
+            FilteredRemainingGameweeks = RemainingGameweeks
+                .Where(gw => gw.Between(MinGameweek, MaxGameweek, true))
+                .ToHashSet(); ;
+        }
 
         if (currentGameweek != CurrentGameweek)
         {
@@ -74,7 +224,7 @@ else
         }
     }
 
-    private IEnumerable<FixtureViewModel> GetFixtures(int gameweek, int teamId)
+    private IReadOnlyList<FixtureViewModel> GetFixtures(int gameweek, int teamId)
     {
         if (BaseData is null)
         {
@@ -85,6 +235,7 @@ else
             .Where(fixture => fixture.AwayTeamId == teamId || fixture.HomeTeamId == teamId)
             .Select(fixture => fixture.HomeTeamId == teamId
                 ? new FixtureViewModel(BaseData.TeamsById[fixture.AwayTeamId].ShortName, true, fixture.HomeTeamDifficulty)
-                : new FixtureViewModel(BaseData.TeamsById[fixture.HomeTeamId].ShortName, false, fixture.AwayTeamDifficulty));
+                : new FixtureViewModel(BaseData.TeamsById[fixture.HomeTeamId].ShortName, false, fixture.AwayTeamDifficulty)
+            ).ToList();
     }
 }

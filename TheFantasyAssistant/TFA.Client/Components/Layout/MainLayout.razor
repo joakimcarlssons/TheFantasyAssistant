@@ -10,30 +10,38 @@
         <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
     </MudOverlay>
 }
-<MudLayout>
-    <MudAppBar Color="Color.Dark">
-        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="4">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleNavigation())" />
-            <MudSelect T="FantasyType" Dense="true" @bind-Value="SelectedFantasyType" Style="width: 130px; margin-top: -18px;" Disabled="IsLoading" AnchorOrigin="Origin.BottomCenter">
-                <MudSelectItem Value="FantasyType.FPL" />
-                <MudSelectItem Value="FantasyType.Allsvenskan" />
-            </MudSelect>
-        </MudStack>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.Discord" Color="Color.Inherit" />
-        <MudIconButton Icon="@Icons.Custom.Brands.Twitter" Color="Color.Inherit" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@NavigationOpen" Variant="@DrawerVariant.Temporary" Elevation="1" ClipMode="DrawerClipMode.Never">
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 justify-center align-center">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
-
-
+else
+{
+    <MudLayout>
+        <MudAppBar Color="Color.Dark">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="4">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleNavigation())" />
+                <MudSelect T="FantasyType" Dense="true" @bind-Value="SelectedFantasyType" Style="width: 130px; margin-top: -18px;" Disabled="IsLoading" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="FantasyType.FPL" />
+                    <MudSelectItem Value="FantasyType.Allsvenskan" />
+                </MudSelect>
+            </MudStack>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Custom.Brands.Discord" Color="Color.Inherit" />
+            <MudIconButton Icon="@Icons.Custom.Brands.Twitter" Color="Color.Inherit" />
+        </MudAppBar>
+        <MudDrawer @bind-Open="@NavigationOpen" Variant="@DrawerVariant.Temporary" Elevation="1" ClipMode="DrawerClipMode.Never">
+            <NavMenu />
+        </MudDrawer>
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 justify-center align-center">
+                @if (HasError)
+                {
+                    <Error />
+                }
+                else
+                {
+                    @Body
+                }
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+}
 
 @code {
 

@@ -1,48 +1,44 @@
-﻿<div class="fixture__container">
+﻿<div class="fixture__container" style="width: @GetWidth()">
     @foreach (FixtureViewModel fixture in Fixtures)
     {
-        <div class="fixture">
-            <MudText class="@ConvertFixtureDifficutyToClassName(fixture.FixtureDifficulty)" Typo="Typo.button">
-                @($"{fixture.Opponent} ({ (fixture.IsHome ? 'H' : 'A') })")
-            </MudText>
-        </div>
-    }
-    
+        <MudText class="@ConvertFixtureDifficutyToClassName(fixture.FixtureDifficulty)" Typo="Typo.body2" Align="Align.Center">
+            @($"{fixture.Opponent} ({ (fixture.IsHome ? 'H' : 'A') })")
+        </MudText>
+    }  
 </div>
 
 <style>
     .fixture__container {
+        width: 100%;
         display: flex;
         gap: 3px;
     }
 
-    .fixture {
-        border-radius: 3px;
-    }
-
-    .fixture > * {
+    .fixture__container > * {
+        width: 100%;
+        max-width: 70px;
         padding: 5px;
         border-radius: 3px;
         white-space: nowrap;
-        color: #373740;
+        color: black;
     }
 
-    .fixture > .hard {
-        background-color: red;
+    .hard {
+        background-color: rgba(221, 46, 68, 1);
     }
 
-    .fixture > .medium {
-        background-color: lightgrey;
+    .medium {
+        background-color: rgba(230, 231, 232, 1);
     }
 
-    .fixture > .easy {
-        background-color: forestgreen;
+    .easy {
+        background-color: rgba(120, 177, 89, 1);
     }
 </style>
 
 @code {
     [Parameter]
-    public IEnumerable<FixtureViewModel> Fixtures { get; set; } = [];
+    public IReadOnlyList<FixtureViewModel> Fixtures { get; set; } = [];
 
     private string ConvertFixtureDifficutyToClassName(int fixtureDifficulty)
         => fixtureDifficulty switch
@@ -51,4 +47,8 @@
             < 3 => "easy",
             _ => "medium"
         };
+
+    private int GetWidth() => Fixtures.Count > 0
+            ? (int)(100 / Fixtures.Count)
+            : 0;
 }

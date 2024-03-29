@@ -17,7 +17,7 @@ public abstract class TFAComponentBase(StateKey[] states) : LayoutComponentBase
 
     protected readonly IReadOnlySet<StateKey> StateSubscriptions = states
         // Always add a few states applicable to all components
-        .Concat([StateKey.IsLoading])
+        .Concat([StateKey.IsLoading, StateKey.HasError])
         .ToHashSet();
 
     protected KeyedBaseData? BaseData => StateManager?.TryGet<KeyedBaseData>(StateKey.BaseData);
@@ -28,6 +28,11 @@ public abstract class TFAComponentBase(StateKey[] states) : LayoutComponentBase
     }
 
     public bool IsLoading { get; set; } = true;
+    public bool HasError
+    {
+        get => StateManager.TryGet(StateKey.HasError, false);
+        set => StateManager.TrySet(StateKey.HasError, value);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -72,7 +77,7 @@ public abstract class TFAComponentBase(StateKey[] states) : LayoutComponentBase
             // Pass the unknown FantasyType to make sure new data is loaded
             if (!(await SetBaseData(FantasyType.Unknown)))
             {
-                // Set error
+                HasError = true;
             }
 
             StopLoad();
@@ -81,33 +86,41 @@ public abstract class TFAComponentBase(StateKey[] states) : LayoutComponentBase
 
     private async Task<bool> SetBaseData(FantasyType fantasyType)
     {
-        // Check the time for the load, add small delay if loading is too fast
-        Stopwatch sw = Stopwatch.StartNew();
-
-        const int MinDelayTime = 500;
-        bool result = false;
-
-        // If the fantasy type is not changed and we have data stored in state, use it.
-        if (SelectedFantasyType == fantasyType
-            && StateManager.TryGet<KeyedBaseData>(StateKey.BaseData) is { } baseData)
+        try
         {
-            StateManager.TrySet(StateKey.BaseData, baseData);
-            result = true;
-        }
+            // Check the time for the load, add small delay if loading is too fast
+            Stopwatch sw = Stopwatch.StartNew();
 
-        // If the provided state does not match the one in state it probably means we need to refresh the data.
-        if (await BaseDataService.GetKeyedData(SelectedFantasyType) is { IsError: false } data)
+            const int MinDelayTime = 500;
+            bool result = false;
+
+            // If the fantasy type is not changed and we have data stored in state, use it.
+            if (SelectedFantasyType == fantasyType
+                && StateManager.TryGet<KeyedBaseData>(StateKey.BaseData) is { } baseData)
+            {
+                StateManager.TrySet(StateKey.BaseData, baseData);
+                result = true;
+            }
+
+            // If the provided state does not match the one in state it probably means we need to refresh the data.
+            if (await BaseDataService.GetKeyedData(SelectedFantasyType) is { IsError: false } data)
+            {
+                StateManager.TrySet(StateKey.BaseData, data.Value);
+                result = true;
+            }
+
+            if (sw.ElapsedMilliseconds < MinDelayTime)
+            {
+                await Task.Delay(MinDelayTime - (int)sw.ElapsedMilliseconds);
+            }
+
+            return result;
+        }
+        catch
         {
-            StateManager.TrySet(StateKey.BaseData, data.Value);
-            result = true;
+            return false;
         }
-
-        if (sw.ElapsedMilliseconds < MinDelayTime)
-        {
-            await Task.Delay(MinDelayTime - (int)sw.ElapsedMilliseconds);
-        }
-
-        return result;
+        
     }
 
     private void StartLoad() => StateManager.TrySet(StateKey.IsLoading, true);
