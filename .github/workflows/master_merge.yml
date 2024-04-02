@@ -30,34 +30,34 @@ jobs:
           echo "::set-output name=files::$(tr -s '\n ' ',' < files.txt)"
 
 # BUILD
-  build_scheduler:
-    name: 'Build TFA Scheduler'
-    needs: check_changed_services
-    if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
-    runs-on: ubuntu-latest
-    env:
-      DOTNET_VERSION: '6.0.x'
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
+  # build_scheduler:
+  #   name: 'Build TFA Scheduler'
+  #   needs: check_changed_services
+  #   if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DOTNET_VERSION: '6.0.x'
+  #   steps:
+  #     - name: 'Checkout'
+  #       uses: actions/checkout@v2
 
-      - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-          include-prerelease: true
+  #     - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: ${{ env.DOTNET_VERSION }}
+  #         include-prerelease: true
       
-      - name: Build
-        run: dotnet build "./TheFantasyAssistant/TFA.Scheduler/TFA.Scheduler.csproj" -c Release
+  #     - name: Build
+  #       run: dotnet build "./TheFantasyAssistant/TFA.Scheduler/TFA.Scheduler.csproj" -c Release
 
-      - name: Publish
-        run: dotnet publish "./TheFantasyAssistant/TFA.Scheduler/TFA.Scheduler.csproj" -c Release -o ${{env.DOTNET_ROOT}}/tfascheduler
+  #     - name: Publish
+  #       run: dotnet publish "./TheFantasyAssistant/TFA.Scheduler/TFA.Scheduler.csproj" -c Release -o ${{env.DOTNET_ROOT}}/tfascheduler
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: tfa-scheduler
-          path: ${{env.DOTNET_ROOT}}/tfascheduler
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: tfa-scheduler
+  #         path: ${{env.DOTNET_ROOT}}/tfascheduler
   ##
   # build_scraper:
   #   name: 'Build TFA Scraper'
@@ -117,24 +117,68 @@ jobs:
           path: ${{env.DOTNET_ROOT}}/tfaapi
 
 # DEPLOY
-  deploy_scheduler:
-    name: 'Deploy TFA Scheduler'
+  build_and_deploy_scheduler:
+    needs: check_changed_services
+    if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
     runs-on: ubuntu-latest
-    needs: build_scheduler
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: tfa-scheduler
+    permissions:
+      id-token: write #This is required for requesting the JWT
 
-      - name: 'Deploy to Azure (Functions)'
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: 'Resolve Project Dependencies Using Dotnet'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration Release --output ./tfa-scheduler
+          popd
+      
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_70485D631ED04CD88C12A5AFCB967803 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D3EDB0CFF5644A389D8835958FB05100 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_514D315CF1D445C08849F519E569E1F7 }}
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
         id: fa
-        uses: azure/functions-action@v1
         with:
           app-name: 'tfa-scheduler'
           slot-name: 'Production'
-          package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_38C250F1732845FD9208F2DEFD7DA60C }}
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/tfa-scheduler'
+  # deploy_scheduler:
+  #   name: 'Deploy TFA Scheduler'
+  #   runs-on: ubuntu-latest
+  #   needs: build_scheduler
+  #   steps:
+  #     - name: Download artifact from build job
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: tfa-scheduler
+
+  #     - name: Login to Azure
+  #       uses: azure/login@v1
+  #       with:
+  #         client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_70485D631ED04CD88C12A5AFCB967803 }}
+  #         tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D3EDB0CFF5644A389D8835958FB05100 }}
+  #         subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_514D315CF1D445C08849F519E569E1F7 }}
+
+  #     - name: 'Deploy to Azure (Functions)'
+  #       id: fa
+  #       uses: azure/functions-action@v1
+  #       with:
+  #         app-name: 'tfa-scheduler'
+  #         slot-name: 'Production'
+  #         package: .
+  #         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_38C250F1732845FD9208F2DEFD7DA60C }}
   ##
   # deploy_scraper:
   #   name: 'Deploy TFA Scraper'
