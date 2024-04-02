@@ -79,7 +79,7 @@ public class RequestService : IRequestService
         }
         catch (Exception ex)
         {
-            await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when calling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
+            //await _email.SendAsync($"{EmailTypes.Error}: {ex.GetType().Name} when calling {latestTriggeredRequestUrlSuffix}", $"{ex.Message}\n\n{ex.StackTrace}");
         }
     }
 
@@ -115,7 +115,7 @@ public class RequestService : IRequestService
             if (action == ErrorAction.Email)
             {
                 string message = $"{EmailTypes.Warning}: Request to {requestUri} failed with status code {(int)statusCode}";
-                await _email.SendAsync(message, message);
+                //await _email.SendAsync(message, message);
             }
         }
     }
