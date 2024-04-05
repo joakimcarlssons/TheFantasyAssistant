@@ -1,3 +1,55 @@
 ﻿@page "/"
 
 <PageTitle>Home</PageTitle>
+
+<MudContainer Class="mt-16 d-flex flex-column">
+    <MudImage Src="tfa_logo.png" Alt="logo" Height="200" Width="200" Class="align-self-center" />
+    <MudGrid Class="mt-8">
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="25" Class="rounded-lg pb-4 cursor-pointer" onclick="@(() => Navigate("/players"))">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h3" Class="mt-4" Align="Align.Center">Players</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="d-flex justify-center">
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="150px" Height="150px" Animation="Animation.False" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="25" Class="rounded-lg pb-4 cursor-pointer" onclick="@(() => Navigate("/fixtures"))">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h3" Class="mt-4" Align="Align.Center">Fixtures</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="d-flex justify-center">
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="150px" Height="150px" Animation="Animation.False" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="25" Class="rounded-lg pb-4 cursor-pointer">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h3" Class="mt-4" Align="Align.Center">Planner</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent Class="d-flex justify-center">
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="150px" Height="150px" Animation="Animation.False" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Inject]
+    public required NavigationManager NavigationManager { get; set; }
+
+    private void Navigate(string path)
+    {
+        NavigationManager.NavigateTo(path);
+    }
+}

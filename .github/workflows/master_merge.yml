@@ -33,7 +33,7 @@ jobs:
   build_scheduler:
     name: 'Build TFA Scheduler'
     needs: check_changed_services
-    #if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
+    if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
     runs-on: ubuntu-latest
     env:
       DOTNET_VERSION: '6.0.x'
@@ -128,13 +128,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: tfa-scheduler
-
-      # - name: Login to Azure
-      #   uses: azure/login@v1
-      #   with:
-      #     client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_70485D631ED04CD88C12A5AFCB967803 }}
-      #     tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D3EDB0CFF5644A389D8835958FB05100 }}
-      #     subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_514D315CF1D445C08849F519E569E1F7 }}
 
       - name: 'Deploy to Azure (Functions)'
         id: fa

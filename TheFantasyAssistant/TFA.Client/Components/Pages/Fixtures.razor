@@ -11,7 +11,7 @@ else
 {
     <MudText Typo="Typo.h4" class="mb-5">Remaining Fixtures</MudText>
 
-    <MudTable Items="BaseData.TeamsById.Values" Filter="TeamFilter">
+    <MudTable Items="BaseData.TeamsById.Values.OrderBy(OrderByFunc)" Filter="TeamFilter" Or>
         <ToolBarContent>
             <div class="fixture__header__container">
                 <MudSelect T="int" Label="From Gameweek" @bind-Value="MinGameweek">
@@ -25,6 +25,10 @@ else
                     {
                         <MudSelectItem Value="@gw" />
                     }
+                </MudSelect>
+                <MudSelect T="FixtureOrderType" Label="Order By" @bind-Value="OrderBy" Class="order_by">
+                    <MudSelectItem Value="FixtureOrderType.Name">Name</MudSelectItem>
+                    <MudSelectItem Value="FixtureOrderType.FixtureDifficulty">Difficulty</MudSelectItem>
                 </MudSelect>
                 <MudButton Variant="Variant.Filled" Size="Size.Medium" OnClick="FindRotations" Disabled="SearchString.Length < 3">
                     Find Rotation
@@ -62,9 +66,14 @@ else
         gap: 20px;
     }
 
-    .fixture__header__container .mud-input {
+    .fixture__header__container .mud-input:not(.order_by) {
         max-width: 125px;
     }
+
+        .fixture__header__container .order_by {
+            width: 125px;
+        }
+
 </style>
 
 @code {
@@ -75,6 +84,17 @@ else
     private static HashSet<int> RemainingGameweeks = [];
     private static HashSet<int> FilteredRemainingGameweeks = [];
     private static HashSet<Team> RotatingTeams = [];
+
+    private static FixtureOrderType OrderBy { get; set; } = FixtureOrderType.Name;
+
+    private Func<Team, object> OrderByFunc => team =>
+    {
+        return OrderBy switch
+        {
+            FixtureOrderType.FixtureDifficulty => GetFixtureDifficulty(team, FilteredRemainingGameweeks.Min(), FilteredRemainingGameweeks.Max()),
+            _ => team.Name
+        };
+    };
 
     private static int _minGameweek;
     private static int _maxGameweek;
@@ -237,5 +257,45 @@ else
                 ? new FixtureViewModel(BaseData.TeamsById[fixture.AwayTeamId].ShortName, true, fixture.HomeTeamDifficulty)
                 : new FixtureViewModel(BaseData.TeamsById[fixture.HomeTeamId].ShortName, false, fixture.AwayTeamDifficulty)
             ).ToList();
+    }
+
+    private int GetFixtureDifficulty(Team team, int fromGameweek, int toGameweek)
+    {
+        if (BaseData is null)
+        {
+            return 0;
+        }
+
+        IReadOnlyList<TFA.Domain.Models.Fixtures.Fixture> homeFixtures = BaseData.FixturesByHomeTeamId[team.Id]
+            .Where(fixture => fixture.GameweekId.HasValue && fixture.GameweekId.Value.Between(fromGameweek, toGameweek, true))
+            .ToList();
+
+        IReadOnlyList<TFA.Domain.Models.Fixtures.Fixture> awayFixtures = BaseData.FixturesByAwayTeamId[team.Id]
+            .Where(fixture => fixture.GameweekId.HasValue && fixture.GameweekId.Value.Between(fromGameweek, toGameweek, true))
+            .ToList();
+
+        int totalDifficulty = homeFixtures.Sum(fixture => fixture.HomeTeamDifficulty) + awayFixtures.Sum(fixture => fixture.AwayTeamDifficulty);
+        int fixtureCount = homeFixtures.Count + awayFixtures.Count;
+        int amountOfGameweeks = Math.Abs(fromGameweek - toGameweek) + 1;
+
+
+        if (fixtureCount > amountOfGameweeks)
+        {
+            // If double, subtract points equivalent to 2 hard fixtures (4)
+            totalDifficulty -= (Math.Abs(fixtureCount - amountOfGameweeks) * 8);
+        }
+        else if (fixtureCount < amountOfGameweeks)
+        {
+            // If blank, add points equivalent to a very hard fixture
+            totalDifficulty += (Math.Abs(fixtureCount - amountOfGameweeks) * 5);
+        }
+
+        return totalDifficulty;
+    }
+
+    public enum FixtureOrderType
+    {
+        Name,
+        FixtureDifficulty
     }
 }

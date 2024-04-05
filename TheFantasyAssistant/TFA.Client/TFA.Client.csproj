@@ -17,4 +17,10 @@
     <ProjectReference Include="..\TFA.Client.Shared\TFA.Client.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\tfa_logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
