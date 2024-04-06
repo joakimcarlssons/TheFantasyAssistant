@@ -119,6 +119,7 @@ jobs:
   build_client:
     name: 'Build TFA Client'
     needs: check_changed_services
+    #if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Client')
     runs-on: ubuntu-latest
     env:
       DOTNET_VERSION: '8.0.x'
