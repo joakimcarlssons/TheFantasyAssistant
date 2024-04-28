@@ -1,4 +1,5 @@
 ﻿@page "/players";
+@using TFA.Domain.Models.Teams
 @inherits TFAComponentBase;
 
 @if (BaseData is null)
@@ -7,15 +8,19 @@
 }
 else
 {
-    <MudDataGrid @ref="grid" T="Player" Items="@BaseData.PlayersById.Values" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter">
+    <MudText Typo="Typo.h4" class="mb-5">Players</MudText>
+    <MudDataGrid @ref="grid" T="Player" Items="@BaseData.PlayersById.Values" SortMode="SortMode.Multiple" QuickFilter="@_quickFilter">
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Players</MudText>
+            <MudStack Row="true">
+                <MudCheckBox @bind-Value="IncludePlayersInSearch">Players</MudCheckBox>
+                <MudCheckBox @bind-Value="IncludeTeamsInSearch">Teams</MudCheckBox>
+            </MudStack>
             <MudSpacer />
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x.DisplayName" Title="Name" Sortable="true" Filterable="true" />
-            <PropertyColumn Property="x => x.TeamId" Title="Team" Sortable="true" Filterable="true">
+            <PropertyColumn Property="x => x.TeamId" Title="Team" Sortable="true">
                 <CellTemplate>
                     @BaseData.TeamsById[context.Item.TeamId].Name
                 </CellTemplate>
@@ -32,6 +37,7 @@ else
                     @($"{context.Item.SelectedByPercent} %")
                 </CellTemplate>
             </PropertyColumn>
+            <PropertyColumn Property="x => x.Form" Title="Form" Sortable="true" />
         </Columns>
         <PagerContent>
             <MudDataGridPager T="Player" />
@@ -42,24 +48,35 @@ else
 
 
 @code {
+    private static bool IncludePlayersInSearch { get; set; } = true;
+    private static bool IncludeTeamsInSearch { get; set; } = false;
+
     private static string _searchString = "";
-    private Func<Player, bool> _quickFilter = player =>
+    private Func<Player, bool> _quickFilter => player =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
         {
             return true;
         }
 
-        if (player is not { FirstName: not null, LastName: not null, DisplayName: not null })
+        if (IncludeTeamsInSearch && BaseData is not null && BaseData.TeamsById.TryGetValue(player.TeamId, out Team? team))
         {
-            return false;
+            return team.Name.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        if (player.FirstName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)
+        if (IncludePlayersInSearch)
+        {
+            if (player is not { FirstName: not null, LastName: not null, DisplayName: not null })
+            {
+                return false;
+            }
+
+            if (player.FirstName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)
             || player.LastName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase)
             || player.DisplayName.Contains(_searchString, StringComparison.InvariantCultureIgnoreCase))
-        {
-            return true;
+            {
+                return true;
+            }
         }
 
         return false;

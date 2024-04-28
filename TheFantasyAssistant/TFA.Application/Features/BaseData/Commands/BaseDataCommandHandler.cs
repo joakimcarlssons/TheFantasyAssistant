@@ -53,6 +53,7 @@ public sealed class BaseDataCommandHandler(
                 baseData = baseData with
                 {
                     Fixtures = baseData.Fixtures
+                        .Where(fixture => teamsById.ContainsKey(fixture.HomeTeamId) && teamsById.ContainsKey(fixture.AwayTeamId))
                         .Select(fixture =>
                         {
                             (int HomeTeamDifficulty, int AwayTeamDifficulty) = FixtureTransforms.CalculateFixtureDifficulty(teamsById[fixture.HomeTeamId], teamsById[fixture.AwayTeamId], fixture);

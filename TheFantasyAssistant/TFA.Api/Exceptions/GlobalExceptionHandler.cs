@@ -11,7 +11,7 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         // Send an email with the thrown exception
         if (httpContext.RequestServices.GetService<IEmailService>() is { } emailService
-            && httpContext.RequestServices.GetService<IOptions<EmailOptions>>()?.Value is { } emailOptions)
+            && httpContext.RequestServices.GetService<IOptions<EmailOptions>>()?.Value is not null)
         {
             await emailService.SendExceptionEmail(exception);
         }
