@@ -36,7 +36,7 @@ public sealed class TeamNames
     public const string HALMSTAD = "Halmstads BK";
     public const string GAIS = "GAIS";
     public const string VARNAMO = "IFK Värnamo";
-    public const string BROMMAPOJKARNA = "IF Brommapojkarna";
+    public const string BROMMAPOJKARNA = "BP";
     public const string MALMO = "Malmö FF";
     public const string GOTEBORG = "IFK Göteborg";
     public const string ELFSBORG = "IF Elfsborg";
