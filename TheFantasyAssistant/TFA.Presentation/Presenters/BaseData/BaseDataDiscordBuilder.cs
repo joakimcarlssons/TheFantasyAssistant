@@ -20,8 +20,8 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
             BuildPlayerStatusUnavailableChangeContent(data),
             BuildNewPlayersContent(data),
             BuildTransferredPlayersContent(data),
-            BuildDoubleGameweekContent(data),
-            BuildBlankGameweekContent(data)
+            //BuildDoubleGameweekContent(data),
+            //BuildBlankGameweekContent(data)
         ];
 
     private static DiscordEmbedPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
