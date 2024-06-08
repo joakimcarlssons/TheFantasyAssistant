@@ -31,10 +31,14 @@ public class BaseDataTransformer : ITransformer<FantasyBaseData, TransformedBase
 
     private GameweekFixtureChanges GetGameweekFixtureChanges(FantasyBaseData newData, FantasyBaseData prevData)
     {
+        int currentGameweek = newData.Gameweeks.FirstOrDefault(gw => gw.IsCurrent)?.Id ?? 1;
+
         IReadOnlyList<DoubleGameweek> doubleGameweeks = newData.Teams
             .SelectMany(team => newData.Fixtures
                 // Filter fixtures related to the current team with a valid Gameweek
-                .Where(fixture => fixture.GameweekId is not null && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
+                .Where(fixture => fixture.GameweekId is not null 
+                    && fixture.GameweekId > currentGameweek
+                    && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
                 .GroupBy(fixture => fixture.GameweekId!.Value)
                 // Create a group of fixtures for each gameweek
                 .Select(x => new
@@ -71,7 +75,9 @@ public class BaseDataTransformer : ITransformer<FantasyBaseData, TransformedBase
 
         IReadOnlyList<BlankGameweek> blankGameweeks = newData.Teams
             .SelectMany(team => prevData.Fixtures
-                .Where(fixture => fixture.GameweekId is not null && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
+                .Where(fixture => fixture.GameweekId is not null
+                    && fixture.GameweekId > currentGameweek
+                    && (fixture.HomeTeamId == team.Id || fixture.AwayTeamId == team.Id))
                 .GroupBy(fixture => fixture.GameweekId!.Value)
                 .Select(x => new 
                 {

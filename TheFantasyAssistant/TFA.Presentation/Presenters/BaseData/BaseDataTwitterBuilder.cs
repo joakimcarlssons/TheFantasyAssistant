@@ -26,8 +26,8 @@ public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPres
             BuildStringContent(BuildPlayerStatusNotAvailableChangeContent, data.Data.PlayerStatusChanges.UnavailablePlayers, "Players Unavailable", Emoji.X),
             BuildStringContent(BuildNewPlayersContent, data.Data.NewPlayers, "New Players", Emoji.BustInSilhouette),
             BuildStringContent(BuildTransferredPlayersContent, data.Data.PlayerTransfers, "Transferred Players", Emoji.ArrowsCounterClockwise),
-            //.. BuildDoubleGameweekContent(data.Data.DoubleGameweeks),
-            //BuildBlankGameweekContent(data.Data.BlankGameweeks)
+            .. BuildDoubleGameweekContent(data.Data.DoubleGameweeks),
+            BuildBlankGameweekContent(data.Data.BlankGameweeks)
         ];
 
     private string BuildPlayerPriceChangeContent(IReadOnlyList<PlayerPriceChange> players, string header, [ConstantExpected] string emoji)
