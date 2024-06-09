@@ -14,7 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\TFA.Application\TFA.Application.csproj" />
     <ProjectReference Include="..\TFA.Discord\TFA.Discord.csproj" />
-    <ProjectReference Include="..\TFA.Twitter\TFA.Twitter.csproj" />
+	  <ProjectReference Include="..\TFA.Twitter\TFA.Twitter.csproj" />
+	  <ProjectReference Include="..\TFA.Slack\TFA.Slack.csproj" />
   </ItemGroup>
 
 </Project>

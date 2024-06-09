@@ -3,5 +3,6 @@
 public enum Presenter
 {
     Twitter,
-    Discord
+    Discord,
+    Slack
 }

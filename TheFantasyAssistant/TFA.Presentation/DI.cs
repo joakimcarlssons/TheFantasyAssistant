@@ -4,6 +4,7 @@ using TFA.Discord;
 using TFA.Presentation.Common.Services;
 using TFA.Presentation.Presenters;
 using TFA.Twitter;
+using TFA.Slack;
 
 namespace TFA.Presentation;
 
@@ -13,7 +14,8 @@ public static class Presentation
     {
         services
             .AddTwitter<TwitterService>()
-            .AddDiscord(typeof(AssemblyReference).Assembly);
+            .AddDiscord(typeof(AssemblyReference).Assembly)
+            .AddSlack();
 
         services
             .AddPresenters()

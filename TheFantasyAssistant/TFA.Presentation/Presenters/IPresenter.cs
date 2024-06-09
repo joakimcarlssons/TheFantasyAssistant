@@ -12,4 +12,5 @@ internal sealed class PresenterKeys
 {
     internal const string Twitter = "Twitter";
     internal const string Discord = "Discord";
+    internal const string Slack = "Slack";
 }

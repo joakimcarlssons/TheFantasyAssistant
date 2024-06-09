@@ -16,7 +16,7 @@ public sealed class DiscordOptions
     [Required]
     public string ConnectClient { get; init; } = "True";
 
-    public ulong GetChannelId([ConstantExpected]string channelName)
+    public ulong GetChannelId([ConstantExpected] string channelName)
     {
         if (Channels.FirstOrDefault(channel => channel.Name == channelName) is DiscordChannelOption channel)
         {

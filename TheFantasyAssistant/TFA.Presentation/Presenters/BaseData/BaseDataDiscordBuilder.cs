@@ -1,9 +1,7 @@
 ﻿using DSharpPlus.Entities;
-using System.ComponentModel;
 using TFA.Application.Features.BaseData.Events;
 using TFA.Discord.Config;
 using TFA.Domain.Data;
-using TFA.Domain.Exceptions;
 
 namespace TFA.Presentation.Presenters.BaseData;
 
@@ -27,7 +25,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
     private static DiscordEmbedPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, $"Price Rises"))
+                .AppendStandardHeader(data.FantasyType, BaseDataContentHeaders.PriceRises))
             .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>
@@ -43,7 +41,7 @@ public sealed class BaseDataDiscordBuilder : AbstractContentBuilder<BaseDataPres
     private static DiscordEmbedPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
         => new(new DiscordEmbedBuilder()
             .WithTitle(new ContentBuilder()
-                .AppendStandardHeader(data.FantasyType, $"Price Fallers"))
+                .AppendStandardHeader(data.FantasyType, BaseDataContentHeaders.PriceFallers))
             .WithFooter(NowDate)
             .WithDescription(new ContentBuilder()
                 .AppendTextLines(player =>

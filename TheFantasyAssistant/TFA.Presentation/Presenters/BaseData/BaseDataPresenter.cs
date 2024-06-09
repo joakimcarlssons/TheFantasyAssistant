@@ -6,11 +6,13 @@ namespace TFA.Presentation.Presenters.BaseData;
 
 public class BaseDataPresenter(
     [FromKeyedServices(PresenterKeys.Twitter)] IPresenter twitter,
-    [FromKeyedServices(PresenterKeys.Discord)] IPresenter discord) : IPresenter<BaseDataPresentModel>
+    [FromKeyedServices(PresenterKeys.Discord)] IPresenter discord,
+    [FromKeyedServices(PresenterKeys.Slack)] IPresenter slack) : IPresenter<BaseDataPresentModel>
 {
     public Task Present(BaseDataPresentModel data, CancellationToken cancellationToken)
         => Task.WhenAll([
             twitter.Present(data, cancellationToken),
-            discord.Present(data, cancellationToken)
+            discord.Present(data, cancellationToken),
+            slack.Present(data, cancellationToken)
         ]);
 }

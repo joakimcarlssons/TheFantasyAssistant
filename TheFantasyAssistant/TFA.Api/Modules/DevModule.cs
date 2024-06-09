@@ -1,5 +1,4 @@
-﻿
-using TFA.Infrastructure.Services;
+﻿using TFA.Slack;
 
 namespace TFA.Api.Modules;
 
@@ -10,14 +9,14 @@ public sealed class DevModule : IModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        //app.MapPost("dataService",
-        //[Tags(EndpointTags.Development)]
-        //async (
-        //    IFotmobService dataService,
-        //    CancellationToken cancellationToken) =>
-        //{
-        //    await dataService.GetFotmobLeagueTable(FantasyType.Unknown, cancellationToken);
-        //    return Results.Ok();
-        //});
+        app.MapPost("slack",
+        [Tags(EndpointTags.Development)]
+        async (
+            ISlackService slackService,
+            CancellationToken cancellationToken) =>
+        {
+            await slackService.SendMessageAsync("Test", "#dev");
+            return Results.Ok();
+        });
     }
 }
