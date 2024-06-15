@@ -6,7 +6,7 @@ using TFA.Utils;
 
 namespace TFA.Presentation.Presenters.BaseData;
 
-public sealed class BaseDataTwitterBuilder : AbstractBaseDataContentBuilder<string>
+public sealed class BaseDataTwitterBuilder : AbstractContentBuilder<BaseDataPresentModel, string>
 {
     private FantasyType FantasyType = FantasyType.Unknown;
     public override Presenter Presenter => Presenter.Twitter;
@@ -31,19 +31,34 @@ public sealed class BaseDataTwitterBuilder : AbstractBaseDataContentBuilder<stri
         ];
 
     private string BuildPlayerPriceChangeContent(IReadOnlyList<PlayerPriceChange> players, [ConstantExpected] string header, [ConstantExpected] string emoji)
-        => BuildPlayerPriceChangeContent(players, FantasyType, header, emoji);
+        => new ContentBuilder()
+                .AppendStandardHeader(FantasyType, header)
+                .AppendTextLines(player =>
+                    $"{emoji} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m", players);
 
     private string BuildPlayerStatusAvailableChangeContent(IReadOnlyList<PlayerStatusChange> players, [ConstantExpected] string header, [ConstantExpected] string emoji)
-        => BuildPlayerStatusAvailableChangeContent(players, FantasyType, header, emoji);
+        => new ContentBuilder()
+                .AppendStandardHeader(FantasyType, header)
+                .AppendTextLines(player =>
+                    $"{emoji} {player.DisplayName} #{player.TeamShortName}", players);
 
     private string BuildPlayerStatusNotAvailableChangeContent(IReadOnlyList<PlayerStatusChange> players, [ConstantExpected] string header, [ConstantExpected] string emoji)
-        => BuildPlayerStatusNotAvailableChangeContent(players, FantasyType, header, emoji);
+        => new ContentBuilder()
+                .AppendStandardHeader(FantasyType, header)
+                .AppendTextLines(player =>
+                    $"{emoji} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $"- [{player.News}]" : string.Empty)}", players);
 
     private string BuildNewPlayersContent(IReadOnlyList<NewPlayer> players, [ConstantExpected] string header, [ConstantExpected] string emoji)
-        => BuildNewPlayersContent(players, FantasyType, header, emoji);
+        => new ContentBuilder()
+                .AppendStandardHeader(FantasyType, header)
+                .AppendTextLines(player =>
+                    $"{emoji} {player.DisplayName} ({player.Position}) #{player.TeamShortName} - [£{player.Price}m]", players);
 
     private string BuildTransferredPlayersContent(IReadOnlyList<PlayerTransfer> players, [ConstantExpected] string header, [ConstantExpected] string emoji)
-        => BuildTransferredPlayersContent(players, FantasyType, header, emoji);
+        => new ContentBuilder()
+                .AppendStandardHeader(FantasyType, header)
+                .AppendTextLines(player =>
+                    $"{emoji} {player.DisplayName} [#{player.PrevTeamShortName} {Emoji.ArrowRight} #{player.NewTeamShortName}]", players);
 
     private IReadOnlyList<string> BuildDoubleGameweekContent(IReadOnlyList<DoubleGameweek> data)
         => data.Count > 0

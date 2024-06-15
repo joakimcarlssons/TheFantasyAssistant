@@ -4,7 +4,7 @@ using TFA.Slack.Config;
 
 namespace TFA.Presentation.Presenters.BaseData;
 
-public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackPresentModel>
+public sealed class BaseDataSlackBuilder : AbstractContentBuilder<BaseDataPresentModel, SlackPresentModel>
 {
     public override Presenter Presenter => Presenter.Slack;
 
@@ -19,9 +19,15 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
             BuildTransferredPlayersContent(data)
         ];
 
-    private SlackPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
-        => new(BuildPlayerPriceChangeContent(
-            data.Data.PlayerPriceChanges.RisingPlayers, data.FantasyType, BaseDataContentHeaders.PriceRises, Emoji.ArrowUp),
+    private static SlackPresentModel BuildPlayerPriceRiseContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.PlayerPriceChanges.RisingPlayers.Count, 
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.PriceRises}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.ArrowUp} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m", data.Data.PlayerPriceChanges.RisingPlayers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.PriceChanges,
@@ -29,9 +35,15 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private SlackPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
-        => new(BuildPlayerPriceChangeContent(
-            data.Data.PlayerPriceChanges.FallingPlayers, data.FantasyType, BaseDataContentHeaders.PriceFallers, Emoji.ArrowDown),
+    private static SlackPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.PlayerPriceChanges.FallingPlayers.Count,
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.PriceFallers}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.ArrowDown} {player.DisplayName} #{player.TeamShortName} £{player.CurrentPrice.ConvertPriceToString()}m", data.Data.PlayerPriceChanges.FallingPlayers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.PriceChanges,
@@ -39,9 +51,15 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private SlackPresentModel BuildPlayerStatusAvailableChangeContent(BaseDataPresentModel data)
-        => new(BuildPlayerStatusAvailableChangeContent(
-            data.Data.PlayerStatusChanges.AvailablePlayers, data.FantasyType, BaseDataContentHeaders.PlayersAvailable, Emoji.WhiteCheckMark),
+    private static SlackPresentModel BuildPlayerStatusAvailableChangeContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.PlayerStatusChanges.AvailablePlayers.Count,
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.PlayersAvailable}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.WhiteCheckMark} {player.DisplayName} #{player.TeamShortName}", data.Data.PlayerStatusChanges.AvailablePlayers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.Updates,
@@ -49,9 +67,15 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private SlackPresentModel BuildPlayerStatusDoubtfulChangeContent(BaseDataPresentModel data)
-        => new(BuildPlayerStatusNotAvailableChangeContent(
-            data.Data.PlayerStatusChanges.DoubtfulPlayers, data.FantasyType, BaseDataContentHeaders.PlayersDoubtful, Emoji.Warning),
+    private static SlackPresentModel BuildPlayerStatusDoubtfulChangeContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.PlayerStatusChanges.DoubtfulPlayers.Count,
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.PlayersDoubtful}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.Warning} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $"- [{player.News}]" : string.Empty)}", data.Data.PlayerStatusChanges.DoubtfulPlayers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.Updates,
@@ -59,9 +83,15 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private SlackPresentModel BuildPlayerStatusUnavailableChangeContent(BaseDataPresentModel data)
-        => new(BuildPlayerStatusNotAvailableChangeContent(
-            data.Data.PlayerStatusChanges.UnavailablePlayers, data.FantasyType, BaseDataContentHeaders.PlayersUnavailable, Emoji.X),
+    private static SlackPresentModel BuildPlayerStatusUnavailableChangeContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.PlayerStatusChanges.UnavailablePlayers.Count,
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.PlayersUnavailable}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.X} {player.DisplayName} #{player.TeamShortName} {(!string.IsNullOrWhiteSpace(player.News) ? $"- [{player.News}]" : string.Empty)}", data.Data.PlayerStatusChanges.UnavailablePlayers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.Updates,
@@ -69,9 +99,15 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private SlackPresentModel BuildNewPlayersContent(BaseDataPresentModel data)
-        => new(BuildNewPlayersContent(
-            data.Data.NewPlayers, data.FantasyType, BaseDataContentHeaders.NewPlayers, Emoji.BustInSilhouette),
+    private static SlackPresentModel BuildNewPlayersContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.NewPlayers.Count,
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.NewPlayers}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.BustInSilhouette} {player.DisplayName} ({player.Position}) #{player.TeamShortName} - [£{player.Price}m]", data.Data.NewPlayers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.Updates,
@@ -79,13 +115,22 @@ public sealed class BaseDataSlackBuilder : AbstractBaseDataContentBuilder<SlackP
                 _ => throw new FantasyTypeNotSupportedException()
             });
 
-    private SlackPresentModel BuildTransferredPlayersContent(BaseDataPresentModel data)
-        => new(BuildTransferredPlayersContent(
-            data.Data.PlayerTransfers, data.FantasyType, BaseDataContentHeaders.TransferredPlayers, Emoji.ArrowsCounterClockwise),
+    private static SlackPresentModel BuildTransferredPlayersContent(BaseDataPresentModel data)
+        => new(IgnoreEmptyCollections(
+            data.Data.PlayerTransfers.Count,
+            new ContentBuilder()
+                .AppendFantasyTypeHashTag(data.FantasyType)
+                .AppendText($" {BaseDataContentHeaders.TransferredPlayers}")
+                .AppendLineBreaks(1)
+                .AppendTextLines(player =>
+                    $"{Emoji.ArrowsCounterClockwise} {player.DisplayName} [#{player.PrevTeamShortName} {Emoji.ArrowRight} #{player.NewTeamShortName}]", data.Data.PlayerTransfers)),
             data.FantasyType switch
             {
                 FantasyType.FPL => SlackChannels.Updates,
                 FantasyType.Allsvenskan => SlackChannels.Updates,
                 _ => throw new FantasyTypeNotSupportedException()
             });
+
+    private static string IgnoreEmptyCollections(int collectionCount, string content)
+        => collectionCount == 0 ? string.Empty : content;
 }
