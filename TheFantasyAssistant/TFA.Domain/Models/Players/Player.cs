@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using TFA.Domain.Data;
+﻿using TFA.Domain.Data;
 
 namespace TFA.Domain.Models.Players;
 

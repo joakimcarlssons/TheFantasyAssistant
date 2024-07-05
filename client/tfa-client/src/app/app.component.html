@@ -1,0 +1,9 @@
+<mat-toolbar color="primary">
+  @if (data().length > 0) {
+    <span>{{ data()[0].display_name }}</span>
+  }
+  @else {
+    <p>No data</p>
+  }
+  
+</mat-toolbar>

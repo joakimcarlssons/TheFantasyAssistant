@@ -13,6 +13,13 @@ public class ApiKeyAuthMiddleware(RequestDelegate next, IOptions<AuthOptions> op
 
     public async Task InvokeAsync(HttpContext context) 
     {
+        if (context.Request.Path.StartsWithSegments("/wss"))
+        {
+            // Ignore Api Key Auth for WSS connections
+            await next(context);
+            return;
+        }
+
         if (!context.Request.Headers.TryGetValue(AuthOptions.ApiKeyHeaderName, out StringValues key))
         {
             // In case no key is provided

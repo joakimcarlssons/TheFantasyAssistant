@@ -26,9 +26,19 @@ public class FirebaseRepository : IFirebaseRepository
     {
         _logger = logger;
         _cache = cache;
+
+        TimeSpan cacheSlideExpiration = Env.IsDevelopment()
+            ? TimeSpan.FromHours(23)
+            : TimeSpan.FromSeconds(60);
+
+        TimeSpan cacheAbsoluteExpiration = Env.IsDevelopment()
+            ? TimeSpan.FromHours(23)
+            : TimeSpan.FromMinutes(15);
+
         _cacheOptions = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+            .SetSlidingExpiration(cacheSlideExpiration)
+            .SetAbsoluteExpiration(cacheAbsoluteExpiration);
+
         _clientFactory = clientFactory;
         _firebaseOptions = firebaseOptions.Value;
         _jsonOptions = new JsonSerializerOptions()
