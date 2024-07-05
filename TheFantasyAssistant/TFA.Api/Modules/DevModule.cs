@@ -15,7 +15,7 @@ public sealed class DevModule : IModule
             ISlackService slackService,
             CancellationToken cancellationToken) =>
         {
-            await slackService.SendMessageAsync("Test", "#dev");
+            await slackService.SendWebhookMessageAsync("Test");
             return Results.Ok();
         });
     }

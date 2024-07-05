@@ -11,4 +11,6 @@ public sealed class SlackOptions
 
     [Required]
     public string SigningSecret { get; set; } = string.Empty;
+
+    public string WebhookUrl {  get; set; } = string.Empty;
 }

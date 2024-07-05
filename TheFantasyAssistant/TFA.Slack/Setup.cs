@@ -14,6 +14,7 @@ public static class Setup
             .ValidateDataAnnotations();
 
         services.AddSingleton<ISlackService, SlackService>();
+
         return services;
     }
 

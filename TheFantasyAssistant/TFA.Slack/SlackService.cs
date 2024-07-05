@@ -8,6 +8,7 @@ namespace TFA.Slack;
 public interface ISlackService
 {
     Task SendMessageAsync(string message, string channel);
+    Task SendWebhookMessageAsync(string message);
 }
 
 public class SlackService(IOptions<SlackOptions> options) : ISlackService
@@ -23,5 +24,16 @@ public class SlackService(IOptions<SlackOptions> options) : ISlackService
             Text = message,
             Channel = channel
         });
+    }
+
+    public async Task SendWebhookMessageAsync(string message)
+    {
+        if (!string.IsNullOrWhiteSpace(options.Value.WebhookUrl))
+        {
+            await Client.PostToWebhook(options.Value.WebhookUrl, new Message
+            {
+                Text = message
+            });
+        }
     }
 }

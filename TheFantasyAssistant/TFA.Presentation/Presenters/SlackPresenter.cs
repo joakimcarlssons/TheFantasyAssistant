@@ -25,6 +25,12 @@ public sealed class SlackPresenter(
                 Env.IsDevelopment()
                     ? SlackChannels.Dev
                     : model.ChannelName);
+
+            // Used by FantasyGuiden Slack to get price change updates
+            if (model.ChannelName == SlackChannels.PriceChanges)
+            {
+                await slackService.SendWebhookMessageAsync(model.Message);
+            }
         }
     }
 }
