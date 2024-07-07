@@ -1,12 +1,31 @@
-@if (wss.isConnected$()) {
-    <mat-toolbar color="primary">
-        @for (player of baseData.players$ | async; track player) {
-            {{ player.display_name }}
-        }
-    </mat-toolbar>
-}
-@else {
-    <p>Loading...</p>
-}
+<mat-sidenav-container>
+    <mat-sidenav #sidenav class="min-w-7">
+        <mat-nav-list (click)='sidenav.close()' class="flex flex-col">
+
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <div class="min-w-screen min-h-screen overflow-x-hidden px-4">
+      @if (wss.isConnected$()) {
+        <mat-toolbar color="primary" class="md:h-24">
+            <div class="flex h-full w-full items-center">
+                <img src="tfa_logo_compressed.png" alt="logo" class="h-8" />
+            </div>
+        </mat-toolbar>
+
+        <!-- Main Content -->
+        <div>
+            <router-outlet />
+        </div>
+      }
+      @else {
+          <tfa-page-loader [delayInMs]="200" />
+      }
+    </div>
+
+
+</mat-sidenav-container>
+
+
 
 

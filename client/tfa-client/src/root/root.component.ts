@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { BaseDataService } from '../data/services/baseData.service';
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../data/services/websocket.service';
+import { NgMaterialModule } from '../modules/ngMaterial.module';
+import { PageLoaderComponent } from '../components/loaders/pageLoader.component';
 
 @Component({
     selector: 'tfa-root',
@@ -11,14 +12,14 @@ import { WebSocketService } from '../data/services/websocket.service';
     imports: [
         CommonModule,
         RouterOutlet,
-        MatToolbarModule
+        RouterModule,
+        NgMaterialModule,
+        PageLoaderComponent,
     ],
     templateUrl: './root.component.html',
 })
 
 export class AppComponent {
-    title = 'tfa-client';
-
     public constructor(
         public readonly wss: WebSocketService,
         public readonly baseData: BaseDataService
