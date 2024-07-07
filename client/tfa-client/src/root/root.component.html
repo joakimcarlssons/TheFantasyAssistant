@@ -1,6 +1,8 @@
 @if (wss.isConnected$()) {
     <mat-toolbar color="primary">
-        <p>{{ baseData.data$ | async }}</p>
+        @for (player of baseData.players$ | async; track player) {
+            {{ player.display_name }}
+        }
     </mat-toolbar>
 }
 @else {

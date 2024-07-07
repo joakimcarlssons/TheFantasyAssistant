@@ -13,7 +13,7 @@ import { WebSocketService } from '../data/services/websocket.service';
         RouterOutlet,
         MatToolbarModule
     ],
-    templateUrl: './app.component.html',
+    templateUrl: './root.component.html',
 })
 
 export class AppComponent {

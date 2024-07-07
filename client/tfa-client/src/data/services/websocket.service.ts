@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -7,7 +8,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 export class WebSocketService {
     private readonly connection: HubConnection = new HubConnectionBuilder()
         .withUrl('https://localhost:5000/wss/client')
-        .configureLogging(LogLevel.Information)
+        .configureLogging(LogLevel.None)
         .withAutomaticReconnect()
         .build();
 
@@ -21,12 +22,17 @@ export class WebSocketService {
                 this.onConnect();
             })
             .catch(err => {
-                console.log('Failed to connect');
-                console.error(err);
+                if (!environment.production) {
+                    console.log('Failed to connect');
+                    console.error(err);
+                }
             })
 
         this.connection.onclose(err => {
-            console.log('Disconnected. Reason: ' + err);
+            if (!environment.production) {
+                console.log('Disconnected. Reason: ' + err);
+            }
+
             this.isConnected$.set(false);
             this.hasDisconnected$.set(true);
         })
@@ -43,7 +49,9 @@ export class WebSocketService {
                 this.isConnected$.set(true);
             })
             .catch(err => {
-                console.error(err);
+                if (!environment.production) {
+                    console.error(err);
+                }
             })
     }
 }

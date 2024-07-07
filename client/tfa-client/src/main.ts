@@ -1,6 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
+import { appConfig } from './root/root.config';
+import { AppComponent } from './root/root.component';
 import { WebSocketService } from './data/services/websocket.service';
 
 bootstrapApplication(AppComponent, appConfig)

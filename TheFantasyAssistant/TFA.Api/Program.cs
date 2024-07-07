@@ -37,7 +37,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         builder.Configuration.Bind("Authentication", authOptions);
 
         opt.AddPolicy("Client", builder => builder
-            .WithOrigins(authOptions.ClientUrl, $"{authOptions.ClientUrl}/")
+            .WithOrigins(authOptions.ClientUrl)
             .WithMethods("GET", "OPTIONS")
             .AllowAnyHeader()
             .AllowCredentials());

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using System.Linq;
-using System.Net;
 using TFA.Api.Authentication;
 using TFA.Api.Client;
 

@@ -9,10 +9,10 @@ public class ClientModule : IModule
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
         app.MapGet("client/data", async (
-            IFirebaseRepository db) =>
+            IFirebaseRepository db,
+            CancellationToken cancellationToken) =>
         {
-            FantasyBaseData data = await db.Get<FantasyBaseData>(DataKeys.FAS_BASE_DATA);
-            return Results.Ok(data);
+            return await db.Get<FantasyBaseData>(DataKeys.FAS_BASE_DATA, cancellationToken);
         });
     }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { shareReplay } from "rxjs";
+import { map, shareReplay } from "rxjs";
+import { BaseData } from "../models/baseData.model";
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,8 @@ export class BaseDataService {
 
     public constructor(private readonly http: HttpClient) {}
 
-    public readonly data$ = this.http.get<string>(`${this.baseUrl}/data`)
+    private readonly data$ = this.http.get<BaseData>(`${this.baseUrl}/data`)
         .pipe(shareReplay(1))
+
+    public readonly players$ = this.data$.pipe(map(data => data.players));
 }
