@@ -2,6 +2,7 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using TFA.Api;
+using TFA.Api.Authentication;
 using TFA.Api.Client;
 using TFA.Api.Exceptions;
 using TFA.Api.Middlewares;
@@ -32,12 +33,13 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSignalR();
     builder.Services.AddCors(opt =>
     {
-        string? allowedClient = builder.Configuration["ClientUrl"];
+        AuthOptions authOptions = new();
+        builder.Configuration.Bind("Authentication", authOptions);
 
         opt.AddPolicy("Client", builder => builder
-            .AllowAnyMethod()
+            .WithOrigins(authOptions.ClientUrl, $"{authOptions.ClientUrl}/")
+            .WithMethods("GET", "OPTIONS")
             .AllowAnyHeader()
-            .SetIsOriginAllowed(origin => origin == allowedClient)
             .AllowCredentials());
     });
 
@@ -51,9 +53,6 @@ WebApplication app = builder.Build();
     {
         app.UseSwagger();
         app.UseSwaggerUI();
-
-        app.UseCors("Client");
-        app.MapHub<ClientHub>("wss/client").RequireCors("Client");
     }
 
     app.UseStatusCodePages();
@@ -71,7 +70,10 @@ WebApplication app = builder.Build();
     app.UseStaticFiles();
 }
 
-app.UseMiddleware<ApiKeyAuthMiddleware>();
+app.UseMiddleware<CustomAuthMiddleware>();
+app.UseCors("Client");
+
 app.AddModules<Program>();
+app.MapHub<ClientHub>("wss/client").RequireCors("Client");
 
 app.Run();

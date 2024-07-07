@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import { Player } from '../models/player.model';
 
 @Injectable({
     providedIn: 'root'
@@ -9,17 +8,17 @@ export class WebSocketService {
     private readonly connection: HubConnection = new HubConnectionBuilder()
         .withUrl('https://localhost:5000/wss/client')
         .configureLogging(LogLevel.Information)
+        .withAutomaticReconnect()
         .build();
 
-    public data$ = signal<Player[]>([]);
+    public isConnected$ = signal<boolean>(false);
+    public hasDisconnected$ = signal<boolean>(false);
+    public static connectionId = '';
 
     public init() {
         this.connection.start()
             .then(() => {
-                console.log('Connection established.');
-
-                this.setupHandlers();
-                this.loadData();
+                this.onConnect();
             })
             .catch(err => {
                 console.log('Failed to connect');
@@ -28,17 +27,23 @@ export class WebSocketService {
 
         this.connection.onclose(err => {
             console.log('Disconnected. Reason: ' + err);
-        })   
-    }
+            this.isConnected$.set(false);
+            this.hasDisconnected$.set(true);
+        })
 
-    private setupHandlers() {
-        this.connection.on('GetFantasyData', data => {
-            this.data$.set(data.players);
+        this.connection.onreconnected(() => {
+            this.onConnect();
         })
     }
 
-    private loadData() {
-        this.connection.invoke('GetFantasyData')
-            .catch(err => console.error(err));
+    private onConnect() {
+        this.connection.invoke('Connect')
+            .then(connectionId => {
+                WebSocketService.connectionId = connectionId;
+                this.isConnected$.set(true);
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 }

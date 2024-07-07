@@ -13,7 +13,7 @@ public sealed class SystemModule : IModule
         (ILogger<SystemModule> logger) =>
         {
             logger.LogInformation("Staying alive, staying alive...");
-            return Results.Accepted();
+            return Results.Ok("Staying alive, staying alive...");
         });
     }
 }

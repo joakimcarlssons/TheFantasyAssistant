@@ -1,9 +1,10 @@
-<mat-toolbar color="primary">
-  @if (data().length > 0) {
-    <span>{{ data()[0].display_name }}</span>
-  }
-  @else {
-    <p>No data</p>
-  }
-  
-</mat-toolbar>
+@if (wss.isConnected$()) {
+    <mat-toolbar color="primary">
+        <p>{{ baseData.data$ | async }}</p>
+    </mat-toolbar>
+}
+@else {
+    <p>Loading...</p>
+}
+
+
