@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class WebSocketService {
     private readonly connection: HubConnection = new HubConnectionBuilder()
         .withUrl('https://localhost:5000/wss/client')
-        .configureLogging(environment.production
+        .configureLogging(environment.PRODUCTION
             ? LogLevel.None
             : LogLevel.Information)
         .withAutomaticReconnect()
@@ -24,7 +24,7 @@ export class WebSocketService {
                 this.onConnect();
             })
             .catch(err => {
-                if (!environment.production) {
+                if (!environment.PRODUCTION) {
                     console.log('Failed to connect');
                     console.error(err);
                 }
@@ -33,7 +33,7 @@ export class WebSocketService {
             })
 
         this.connection.onclose(err => {
-            if (!environment.production) {
+            if (!environment.PRODUCTION) {
                 console.log('Disconnected. Reason: ' + err);
             }
 
@@ -53,7 +53,7 @@ export class WebSocketService {
                 this.isConnected$.set(true);
             })
             .catch(err => {
-                if (!environment.production) {
+                if (!environment.PRODUCTION) {
                     console.error(err);
                 }
             })
