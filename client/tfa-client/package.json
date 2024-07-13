@@ -9,6 +9,12 @@
     "test": "ng test",
     "lint": "ng lint"
   },
+  "browser": {
+    "http": false,
+    "https": false,
+    "url": false,
+    "util": false
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.0.0",
