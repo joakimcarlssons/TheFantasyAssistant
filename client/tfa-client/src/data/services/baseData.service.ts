@@ -7,7 +7,7 @@ import { BaseData } from "../models/baseData.model";
     providedIn: 'root'
 })
 export class BaseDataService {
-    private readonly baseUrl = 'https://localhost:5000/client';
+    private readonly baseUrl = process.env['API_URL'] || 'https://localhost:5000/client';
 
     public constructor(private readonly http: HttpClient) {}
 
