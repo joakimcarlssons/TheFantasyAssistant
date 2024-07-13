@@ -2,13 +2,12 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, shareReplay } from "rxjs";
 import { BaseData } from "../models/baseData.model";
-import { environment } from "../../environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class BaseDataService {
-    private readonly baseUrl = environment.apiUrl;
+    private readonly baseUrl = process.env['API_URL'] || 'https://localhost:5000/client';
 
     public constructor(private readonly http: HttpClient) {}
 
