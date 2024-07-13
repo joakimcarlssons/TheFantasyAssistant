@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 })
 export class WebSocketService {
     private readonly connection: HubConnection = new HubConnectionBuilder()
-        .withUrl('https://localhost:5000/wss/client')
+        .withUrl(environment.API_URL)
         .configureLogging(environment.PRODUCTION
             ? LogLevel.None
             : LogLevel.Information)
