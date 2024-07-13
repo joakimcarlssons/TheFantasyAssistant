@@ -8,7 +8,7 @@ import { environment } from "../../environments/environment";
     providedIn: 'root'
 })
 export class BaseDataService {
-    private readonly baseUrl = environment.API_URL;
+    private readonly baseUrl = `${environment.API_URL}/client`;
 
     public constructor(private readonly http: HttpClient) {}
 
