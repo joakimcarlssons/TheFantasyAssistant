@@ -10,7 +10,7 @@ public class PredictedPriceChangePresenter(
 {
     public Task Present(PredictedPriceChangeData data, CancellationToken cancellationToken = default)
         => Task.WhenAll([
-                twitter.Present(data, cancellationToken),
+                //twitter.Present(data, cancellationToken),
                 discord.Present(data, cancellationToken)
             ]);
 }

@@ -3,8 +3,7 @@
 public sealed record HubPlayerRequest(
     [property: JsonPropertyName("team")] HubPlayerTeam Team,
     [property: JsonPropertyName("data")] HubPlayerData Details,
-    [property: JsonPropertyName("fpl")] FantasyPlayerRequest PlayerData,
-    [property: JsonPropertyName("elite_ownership")] int EffectiveOwnership);
+    [property: JsonPropertyName("fpl")] FantasyPlayerRequest PlayerData);
 
 public sealed record HubPlayerTeam(
     [property: JsonPropertyName("code")] int TeamCode,
