@@ -33,7 +33,8 @@ public sealed class BaseDataSlackBuilder : AbstractContentBuilder<BaseDataPresen
                 FantasyType.FPL => SlackChannels.PriceChanges,
                 FantasyType.Allsvenskan => SlackChannels.PriceChanges,
                 _ => throw new FantasyTypeNotSupportedException()
-            });
+            },
+            data.FantasyType);
 
     private static SlackPresentModel BuildPlayerPriceFallContent(BaseDataPresentModel data)
         => new(IgnoreEmptyCollections(
@@ -49,7 +50,8 @@ public sealed class BaseDataSlackBuilder : AbstractContentBuilder<BaseDataPresen
                 FantasyType.FPL => SlackChannels.PriceChanges,
                 FantasyType.Allsvenskan => SlackChannels.PriceChanges,
                 _ => throw new FantasyTypeNotSupportedException()
-            });
+            },
+            data.FantasyType);
 
     private static SlackPresentModel BuildPlayerStatusAvailableChangeContent(BaseDataPresentModel data)
         => new(IgnoreEmptyCollections(

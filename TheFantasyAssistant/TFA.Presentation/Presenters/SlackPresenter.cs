@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
+using TFA.Application.Features.PredictedPriceChanges;
 using TFA.Application.Interfaces.Services;
+using TFA.Domain.Data;
 using TFA.Slack;
 using TFA.Slack.Config;
 using TFA.Utils;
@@ -27,7 +29,7 @@ public sealed class SlackPresenter(
                     : model.ChannelName);
 
             // Used by FantasyGuiden Slack to get price change updates
-            if (model.ChannelName == SlackChannels.PriceChanges)
+            if (model.ChannelName == SlackChannels.PriceChanges && model.FantasyType == FantasyType.Allsvenskan)
             {
                 await slackService.SendWebhookMessageAsync(model.Message);
             }
@@ -35,7 +37,7 @@ public sealed class SlackPresenter(
     }
 }
 
-public readonly record struct SlackPresentModel(string Message, [ConstantExpected] string ChannelName)
+public readonly record struct SlackPresentModel(string Message, [ConstantExpected] string ChannelName, FantasyType FantasyType = FantasyType.Unknown)
 {
     public bool Validate() => !string.IsNullOrWhiteSpace(Message) && !string.IsNullOrWhiteSpace(ChannelName);
 }
