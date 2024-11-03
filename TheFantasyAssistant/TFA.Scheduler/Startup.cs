@@ -44,8 +44,7 @@ public static class ConfigurationBuilderExtensions
 {
     public static IConfigurationBuilder AddAppsettingsFile(this IConfigurationBuilder builder, FunctionsHostBuilderContext context, bool useEnvironment = false)
     {
-        if (context is null)
-            throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(context);
 
         string environmentSection = useEnvironment
             ? $".{context.EnvironmentName}"
