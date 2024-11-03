@@ -36,7 +36,7 @@ jobs:
     if: contains(needs.check_changed_services.outputs.files, 'TheFantasyAssistant/TFA.Scheduler')
     runs-on: ubuntu-latest
     env:
-      DOTNET_VERSION: '6.0.x'
+      DOTNET_VERSION: '8.0.x'
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4
