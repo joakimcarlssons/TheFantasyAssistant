@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout codebase
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
       
@@ -39,7 +39,7 @@ jobs:
       DOTNET_VERSION: '6.0.x'
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
         uses: actions/setup-dotnet@v1
@@ -54,7 +54,7 @@ jobs:
         run: dotnet publish "./TheFantasyAssistant/TFA.Scheduler/TFA.Scheduler.csproj" -c Release -o ${{env.DOTNET_ROOT}}/tfascheduler
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: tfa-scheduler
           path: ${{env.DOTNET_ROOT}}/tfascheduler
@@ -68,7 +68,7 @@ jobs:
   #     DOTNET_VERSION: '6.0.x'
   #   steps:
   #     - name: 'Checkout'
-  #       uses: actions/checkout@v2
+  #       uses: actions/checkout@v4
 
   #     - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
   #       uses: actions/setup-dotnet@v1
@@ -83,7 +83,7 @@ jobs:
   #       run: dotnet publish "./TheFantasyAssistant/TFA.Scraper/TFA.Scraper.csproj" -c Release -o ${{env.DOTNET_ROOT}}/tfascraper
 
   #     - name: Upload artifact
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         name: tfa-scraper
   #         path: ${{env.DOTNET_ROOT}}/tfascraper
@@ -96,7 +96,7 @@ jobs:
       DOTNET_VERSION: '8.0.x'
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
         uses: actions/setup-dotnet@v1
@@ -111,7 +111,7 @@ jobs:
         run: dotnet publish "./TheFantasyAssistant/TFA.Api/TFA.Api.csproj" -c Release -o ${{env.DOTNET_ROOT}}/tfaapi
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: tfa-api
           path: ${{env.DOTNET_ROOT}}/tfaapi
@@ -125,7 +125,7 @@ jobs:
       DOTNET_VERSION: '8.0.x'
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 'Set up .NET ${{ env.DOTNET_VERSION }} environment'
         uses: actions/setup-dotnet@v1
@@ -140,7 +140,7 @@ jobs:
         run: dotnet publish "./TheFantasyAssistant/TFA.Client/TFA.Client.csproj" -c Release -o ${{env.DOTNET_ROOT}}/tfaclient
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: tfa-client
           path: ${{env.DOTNET_ROOT}}/tfaclient
@@ -152,7 +152,7 @@ jobs:
     needs: build_scheduler
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: tfa-scheduler
 
@@ -171,7 +171,7 @@ jobs:
   #   needs: build_scraper
   #   steps:
   #     - name: Download artifact from build job
-  #       uses: actions/download-artifact@v2
+  #       uses: actions/download-artifact@v4
   #       with:
   #         name: tfa-scraper
 
@@ -190,13 +190,13 @@ jobs:
     needs: build_api
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: tfa-api
       
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v4
         with:
           app-name: 'thefantasyassistant'
           slot-name: 'Production'
@@ -209,13 +209,13 @@ jobs:
     needs: build_client
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: tfa-client
       
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v4
         with:
           app-name: 'fantasyassistant'
           slot-name: 'Production'
