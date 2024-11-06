@@ -15,7 +15,7 @@ public interface IEmailService
     /// <summary>
     /// Sends an email to ourselves. Primarily used for error logging.
     /// </summary>
-    /// <param name="content">The content of the email.</param>
+    /// <param name="content">The content of the email</param>
     Task SendAsync(string subject, string content);
 }
 
