@@ -15,7 +15,7 @@ public class SchedulerService
     }
 
     [FunctionName(nameof(Every30Minutes))]
-    public async Task Every30Minutes([TimerTrigger(RunTimes.Every30Minutes)] TimerInfo timer, CancellationToken cancellationToken)
+    public async Task Every30Minutes([TimerTrigger(RunTimes.Every30Minutes, RunOnStartup = true)] TimerInfo timer, CancellationToken cancellationToken)
     {
         await _requestService.HandleScheduledRequests(RunTime.Every30Minutes, cancellationToken);
     }
