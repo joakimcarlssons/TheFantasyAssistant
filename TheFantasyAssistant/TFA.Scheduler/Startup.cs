@@ -14,11 +14,8 @@ public class Startup : FunctionsStartup
 {
     public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-  
+        ArgumentNullException.ThrowIfNull(builder);
+
         FunctionsHostBuilderContext context = builder.GetContext();
 
         builder.ConfigurationBuilder
